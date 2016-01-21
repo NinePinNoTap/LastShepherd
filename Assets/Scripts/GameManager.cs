@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 {
 	// Material used for all animals
 	public Material diffuseMat;
+	// Materials for throwing ranges
+	public Material throwYellowMat;
+	public Material throwRedMat;
 
 	// Count and display number of steps player takes
 	public Text stepCountText;
@@ -38,6 +41,13 @@ public class GameManager : MonoBehaviour
 
 	// Default height of all animals
 	private float animalHeight = 1.0f;
+
+	// THROWING
+	public bool throwingMode;
+	public List<GameObject>[] throwingBoxes;
+	public GameObject throwTarget;
+	// Directions to throw in
+	private enum Directions {Up, Right, Down, Left};
 	
 	void Start ()
 	{
@@ -46,7 +56,6 @@ public class GameManager : MonoBehaviour
 		// Create animals and assign them to their respective stacks
 		AnimalStack stack1 = new AnimalStack ();
 		GameObject animal1 = CreateAnimal ("Animal1", 2, 3, Color.yellow, stack1);
-		GameObject shepherd = CreateShepherd ("Shepherd", 2, 3, Color.gray, stack1);
 
 		AnimalStack stack2 = new AnimalStack ();
 		GameObject animal2 = CreateAnimal ("Animal2", 9, 8, Color.green, stack2);
@@ -55,7 +64,10 @@ public class GameManager : MonoBehaviour
 		GameObject animal3 = CreateAnimal ("Animal3", 5, 2, Color.red, stack3);
 
 		AnimalStack stack4 = new AnimalStack ();
-		GameObject animal4 = CreateAnimal ("Animal4", 1, 7, Color.magenta, stack4);
+		GameObject animal4 = CreateAnimal ("Animal4", 1, 7, Color.blue, stack4);
+
+		AnimalStack shepherdStack = new AnimalStack ();
+		GameObject shepherd = CreateShepherd ("Shepherd", 2, 0, Color.gray, shepherdStack);
 
 		// Add all stacks to the stacks list
 		stacks = new List<AnimalStack> ();
@@ -63,6 +75,7 @@ public class GameManager : MonoBehaviour
 		stacks.Add (stack2);
 		stacks.Add (stack3);
 		stacks.Add (stack4);
+		stacks.Add (shepherdStack);
 
 		currentStack = stacks [0];
 
@@ -70,13 +83,20 @@ public class GameManager : MonoBehaviour
 		animalIndex = 0;
 		
 		currentAnimal = stacks [stackIndex].animals [animalIndex];
+		throwingMode = false;
 
 		// Set up shaders
 		diffuse = Shader.Find ("Legacy Shaders/Diffuse Fast");
 		outlined = Shader.Find ("Outlined/Silhouetted Diffuse");
 
 		// Highlight first animal
-		ChangeHighlight ();
+		UpdateHighlight ();
+
+		// Set up throwing range lists
+		throwingBoxes = new List<GameObject>[4];
+		for(int i=0; i<4; i++){
+			throwingBoxes[i] = new List<GameObject>();
+		}
 	}
 
 	void Update ()
@@ -96,9 +116,9 @@ public class GameManager : MonoBehaviour
 		animal.transform.localPosition = new Vector3 (StartingX * planeSideLength, animalHeight/2, StartingZ * planeSideLength);
 		animal.GetComponent<Renderer> ().material = diffuseMat;
 		animal.GetComponent<Renderer> ().material.color = col;
-
+		
 		animalStack.animals.Add (animal);
-
+		
 		return animal;
 	}
 	
@@ -107,7 +127,7 @@ public class GameManager : MonoBehaviour
 		GameObject shepherd = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		shepherd.name = shepherdName;
 		shepherd.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
-		shepherd.transform.localPosition = new Vector3 (StartingX * planeSideLength, animalHeight+animalHeight*0.5f, StartingZ * planeSideLength);
+		shepherd.transform.localPosition = new Vector3 (StartingX * planeSideLength, animalHeight/2, StartingZ * planeSideLength);
 		shepherd.GetComponent<Renderer> ().material = diffuseMat;
 		shepherd.GetComponent<Renderer> ().material.color = col;
 		
@@ -130,7 +150,7 @@ public class GameManager : MonoBehaviour
 				plane.name = "Plane " + j.ToString () + " , " + i.ToString ();
 				plane.transform.localScale = new Vector3 (planeSideLength/10, 1.0f, planeSideLength/10);
 				plane.transform.localPosition = new Vector3 (j * planeSideLength, 0.0f, i * planeSideLength);
-
+				
 				plane.GetComponent<Renderer> ().material = diffuseMat;
 				
 				if (i % 2 == 0) {
@@ -152,49 +172,55 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	//
-	void MoveStack(Vector3 movement){
+	// Check if stack will move onto another one
+	AnimalStack StackAtTarget(Vector3 movement){
 		AnimalStack targetStack = null;
-
-		// Check if stack will move onto another one
+		
 		for (int i=0; i<stacks.Count; i++) {
-			if(!stacks[i].Equals(currentStack)){
+			if (!stacks [i].Equals (currentStack)) {
 				// If stack's future position intersects with an existing stack, combine them
-				if(stacks[i].animals[0].transform.localPosition - currentStack.animals[0].transform.localPosition == movement){
-					targetStack = stacks[i];
-					Debug.Log("Stack will add to another stack.");
+				if (stacks [i].animals [0].transform.localPosition - currentStack.animals [0].transform.localPosition == movement) {
+					targetStack = stacks [i];
+					//Debug.Log ("Stack will add to another stack.");
 				}
 			}
 		}
+		
+		return targetStack;
+	}
 
+	// Moves animal stack
+	void MoveStack(Vector3 movement){
+		AnimalStack targetStack = StackAtTarget (movement);
+		
 		// Moving onto another stack
 		if(targetStack!=null){
-			Debug.Log("Moving onto other stack.");
-			TransferAnimals(currentStack, targetStack, movement);
+			//Debug.Log("Moving onto other stack.");
+			TransferAnimals(targetStack, movement);
 		}
 		// Move onto ground
 		else{
 			// If bottom animal is the one moving, there is no need to make new stack
 			if(animalIndex==0){
-				Debug.Log("No need for new stack.");
+				//	Debug.Log("No need for new stack.");
 				MoveAnimals(currentStack.animals, movement);
 			}
 			// Otherwise, create a new stack from the animals leaving previous stack
 			else {
-				Debug.Log("Making new stack.");
+				//Debug.Log("Making new stack.");
 				AnimalStack newStack = new AnimalStack();
 				stacks.Add(newStack);
-				TransferAnimals(currentStack, newStack, movement);
+				TransferAnimals(newStack, movement);
 			}
 		}
-
+		
 		stepCount++;
 	}
 
 	// Transfers animals from one stack to another
 	// Note: "Target" is a newly created List if animals are moving off a stack back to the ground
-	public void TransferAnimals(AnimalStack source, AnimalStack target, Vector3 movement){
-		List<GameObject> sourceStack = source.animals;
+	public void TransferAnimals(AnimalStack target, Vector3 movement){
+		List<GameObject> sourceStack = currentStack.animals;
 		List<GameObject> targetStack = target.animals;
 		
 		// Get height at which animals should be popped onto
@@ -207,7 +233,14 @@ public class GameManager : MonoBehaviour
 		else {
 			if(targetStack[targetStack.Count-1].name.Equals("Shepherd"))
 			{
-				movingHeight = targetStack[targetStack.Count-2].transform.localPosition.y;
+				// If just shepherd in stack, animals go to floor beneath it
+				if(targetStack.Count==1){
+					movingHeight = -animalHeight/2;
+				}
+				// Otherwise move on top of topmost non-shepherd animal
+				else{
+					movingHeight = targetStack[targetStack.Count-2].transform.localPosition.y;
+				}
 			}
 			else
 			{
@@ -230,6 +263,7 @@ public class GameManager : MonoBehaviour
 		MoveAnimals(tempStack, movement);
 		
 		GameObject shepherdTemp = null;
+		// If moving onto stack with shepherd on top, remove shepherd before adding animals
 		if((targetStack.Count > 0) && targetStack[targetStack.Count-1].name.Equals("Shepherd"))
 		{
 			shepherdTemp = targetStack[targetStack.Count-1];
@@ -237,30 +271,38 @@ public class GameManager : MonoBehaviour
 		}
 		// Add animals to the target stack
 		targetStack.AddRange (tempStack);
-		
+
+		// If shepherd was temporarily removed, add it back to the top of the stack
 		if(shepherdTemp != null)
 		{	
 			Vector3 shepherdHeight = targetStack[targetStack.Count-1].transform.localPosition;
-			shepherdHeight.y += 1.0f; 
+			shepherdHeight.y += animalHeight; 
 			shepherdTemp.transform.localPosition = shepherdHeight;
 			targetStack.Add(shepherdTemp);
 		}
-		// Delete AnimalStack source if all animals from it have moved
+		// Remove currentStack from stacks list if all animals from it have moved
 		if (animalIndex == 0) {
-			stacks.Remove(source);
+			stacks.Remove(currentStack);
 		}
-		// Update indexes to give player control to the bottom animal of the new stack
-		animalIndex = 0;
-		stackIndex = stacks.IndexOf (target);
-		// Update current stacks and animals
-		currentStack = target;
-
-		// If adding to an existing stack, update the highlight
-		if (movingHeight > 0.0f) {
+		
+		// If only shepherd was thrown, give control back to animal which did the throwing
+		if (currentAnimal.name.Equals ("Shepherd")) {
+			currentAnimal = lastAnimal;
 			lastAnimal = currentAnimal;
-			currentAnimal = currentStack.animals [animalIndex];
-			ChangeHighlight ();
+			animalIndex = currentStack.animals.IndexOf(currentAnimal);
+		} else {
+			// Control remains with animal added to stack
+			animalIndex = targetStack.Count - tempStack.Count;
+			// Remove 1 from index if shepherd present
+			if (shepherdTemp != null) {
+				animalIndex--;
+			}
+			stackIndex = stacks.IndexOf (target);
+			// Update current stacks and animals
+			currentStack = target;
 		}
+
+		tempStack.Clear ();
 	}
 
 	// Updates all of a stack's animals' position values on the grid
@@ -270,86 +312,314 @@ public class GameManager : MonoBehaviour
 		}
 	}
 	
+	public void ClearThrowingBoxes(){
+		for(int i=0; i<throwingBoxes.Length; i++){
+			for(int j=0; j<throwingBoxes[i].Count; j++){
+				Destroy(throwingBoxes[i][j]);
+			}
+			throwingBoxes[i].Clear();
+		}
+		
+		Destroy(GameObject.Find("Throwing Range Boxes"));
+	}
+	
+	public void LoadThrowingRanges ()
+	{
+		GameObject throwingRanges = new GameObject ();
+		throwingRanges.name = "Throwing Range Boxes";
+		
+		float startingX = currentAnimal.transform.localPosition.x;
+		float startingZ = currentAnimal.transform.localPosition.z;
+		
+		// Right
+		float boxX = startingX;
+		for (int i=0; i<3; i++) {
+			boxX += planeSideLength;
+			if (boxX < gridColumnNumber * planeSideLength) {
+				GameObject box = CreateThrowingBox(boxX, startingZ, throwingRanges);
+				box.name = "Right " + i;
+				throwingBoxes [(int)Directions.Right].Add (box);
+			}
+		}
+		
+		// Left
+		boxX = startingX;
+		for (int i=0; i<3; i++) {
+			boxX -= planeSideLength;
+			if (boxX >= 0) {
+				GameObject box = CreateThrowingBox(boxX, startingZ, throwingRanges);
+				box.name = "Left " + i;
+				throwingBoxes [(int)Directions.Left].Add (box);
+			}
+		}
+		
+		// Up
+		float boxZ = startingZ;
+		for (int i=0; i<3; i++) {
+			boxZ += planeSideLength;
+			if (boxZ < gridColumnNumber*planeSideLength) {
+				GameObject box = CreateThrowingBox(startingX, boxZ, throwingRanges);
+				box.name = "Up " + i;
+				throwingBoxes [(int)Directions.Up].Add (box);
+			}
+		}
+		
+		// Down
+		boxZ = startingZ;
+		for (int i=0; i<3; i++) {
+			boxZ -= planeSideLength;
+			if (boxZ >= 0) {
+				GameObject box = CreateThrowingBox(startingX, boxZ, throwingRanges);
+				box.name = "Down " + i;
+				throwingBoxes [(int)Directions.Down].Add (box);
+			}
+		}
+		
+	}
+	
+	// Throwing boxes represent distances player can throw to
+	public GameObject CreateThrowingBox(float boxX, float boxZ, GameObject throwingRanges){
+		GameObject box = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		box.transform.localScale = new Vector3 (planeSideLength, 0.1f, planeSideLength);
+		box.transform.localPosition = new Vector3 (boxX, 0.05f, boxZ);
+		box.GetComponent<Renderer> ().material = throwYellowMat;
+		
+		box.transform.SetParent (throwingRanges.transform);
+		
+		return box;
+	}
+	
+	// Cycle through targets to throw at
+	public void ChooseThrowingDistance (int desiredDirection)
+	{
+		int currentDirection = -1;
+		int currentDistance = -1;
+		
+		if (throwTarget != null) {
+			for (int i=0; i<throwingBoxes.Length; i++) {
+				if (throwingBoxes [i].Contains (throwTarget)) {
+					currentDirection = i;
+					currentDistance = throwingBoxes [i].IndexOf (throwTarget);
+					break;
+				}
+			}
+		}
+		
+		// No direction already chosen by player yet
+		if (currentDirection == -1) {
+			// Check if player can throw in desired direction
+			if (throwingBoxes [desiredDirection].Count > 0) {
+				throwTarget = throwingBoxes [desiredDirection] [0];
+				throwTarget.GetComponent<Renderer> ().material = throwRedMat;
+			}
+		} 
+		// Direction already chosen by player
+		else {
+			if (desiredDirection == currentDirection) {
+				// If current distance is less than 2, and direction has greater range than selected, then throw range may be increased
+				if (currentDistance < 2 && currentDistance < throwingBoxes [currentDirection].Count-1) {
+					throwTarget = throwingBoxes [currentDirection] [++currentDistance];
+					throwTarget.GetComponent<Renderer>().material = throwRedMat;
+				}
+			}
+			else{
+				// Reset blocks in previously chosen direction to yellow
+				for(int i=0; i<=currentDistance; i++){
+					throwingBoxes[currentDirection][i].GetComponent<Renderer>().material = throwYellowMat;
+				}
+				// Choose first block in new direction (if there is one)
+				if(throwingBoxes[desiredDirection].Count>0){
+					throwTarget = throwingBoxes[desiredDirection][0];
+					throwTarget.GetComponent<Renderer>().material = throwRedMat;
+				}
+			}
+		}
+	}
+	
+	// Throw animals towards target block
+	public void ThrowAnimals (){
+		Vector3 movement = throwTarget.transform.localPosition - currentAnimal.transform.localPosition;
+		movement.y = 0; // Heigh changes calculated in TransferAnimals()
+		AnimalStack targetStack = StackAtTarget (movement);
+		
+		if (targetStack == null) {
+			targetStack = new AnimalStack ();
+			stacks.Add (targetStack);
+		}
+
+		lastAnimal = currentAnimal;
+		
+		// Move current animal to be up one in the stack, as stack being thrown starts there
+		currentAnimal = currentStack.animals [++animalIndex];
+		
+		TransferAnimals (targetStack, movement);
+		
+		throwingMode = false;
+		ClearThrowingBoxes ();
+		UpdateHighlight ();
+	}
+	
 	void HandleInput()
 	{
-		// Move current stack right
-		if(Input.GetKeyDown(KeyCode.D)) {
-			if(currentAnimal.transform.localPosition.x<11*planeSideLength){
-				MoveStack(new Vector3(planeSideLength, 0.0f, 0.0f));
+		// Determine direction and distance to throw animals
+		if (throwingMode) {
+			if (Input.GetKeyDown (KeyCode.W)) ChooseThrowingDistance((int)Directions.Up);
+			if (Input.GetKeyDown (KeyCode.D)) ChooseThrowingDistance((int)Directions.Right);
+			if (Input.GetKeyDown (KeyCode.S)) ChooseThrowingDistance((int)Directions.Down);
+			if (Input.GetKeyDown (KeyCode.A)) ChooseThrowingDistance((int)Directions.Left);
+			
+			if(Input.GetKeyDown (KeyCode.E)){
+				if(throwTarget!=null){
+					ThrowAnimals();
+				}
 			}
 		}
-		// Move current stack left
-		if(Input.GetKeyDown(KeyCode.A)) {
-			if(currentAnimal.transform.localPosition.x>0){
-				MoveStack(new Vector3(-planeSideLength, 0.0f, 0.0f));
+		else{
+			// Move current stack right
+			if (Input.GetKeyDown (KeyCode.D)) {
+				if (currentAnimal.transform.localPosition.x < (gridColumnNumber-1) * planeSideLength) {
+					MoveStack (new Vector3 (planeSideLength, 0.0f, 0.0f));
+				}
+			}
+			// Move current stack left
+			if (Input.GetKeyDown (KeyCode.A)) {
+				if (currentAnimal.transform.localPosition.x > 0) {
+					MoveStack (new Vector3 (-planeSideLength, 0.0f, 0.0f));
+				}
+			}
+			// Move current stack up
+			if (Input.GetKeyDown (KeyCode.W)) {
+				if (currentAnimal.transform.localPosition.z < (gridRowNumber-1) * planeSideLength) {
+					MoveStack (new Vector3 (0.0f, 0.0f, planeSideLength));
+				}
+			}
+			// Move current stack down
+			if (Input.GetKeyDown (KeyCode.S)) {
+				if (currentAnimal.transform.localPosition.z > 0) {
+					MoveStack (new Vector3 (0.0f, 0.0f, -planeSideLength));
+				}
 			}
 		}
-		// Move current stack up
-		if(Input.GetKeyDown(KeyCode.W)) {
-			if(currentAnimal.transform.localPosition.z<11*planeSideLength){
-				MoveStack(new Vector3(0.0f, 0.0f, planeSideLength));
-			}
-		}
-		// Move current stack down
-		if(Input.GetKeyDown(KeyCode.S)) {
-			if(currentAnimal.transform.localPosition.z>0){
-				MoveStack(new Vector3( 0.0f, 0.0f, -planeSideLength));
-			}
-		}
-
-		// Switch current stack
+		
+		// Switch down between animals
 		if(Input.GetKeyDown(KeyCode.Tab)) {
-			SwitchAnimal();
+			SwitchAnimal(false);
 		}
-
+		
+		// Switch up between animals
+		if(Input.GetKeyDown(KeyCode.BackQuote)) {
+			SwitchAnimal(true);
+		}
+		
+		// Switch between throwing and movement modes
+		if (Input.GetKeyDown (KeyCode.Q)) {
+			// Check animal isn't at top of stack (and has no animals to throw)
+			if(animalIndex<currentStack.animals.Count-1){
+				throwingMode = !throwingMode;
+				UpdateHighlight();
+			}
+			if(throwingMode){
+				LoadThrowingRanges();
+			}
+			else{
+				ClearThrowingBoxes();
+			}
+		}
+		
 		// End game
 		if(Input.GetKeyDown(KeyCode.Escape)) {
 			Application.Quit();
 		}
-
+		
 		// Restart level
-		if(Input.GetKeyDown(KeyCode.R)) {
+		if(Input.GetKeyDown(KeyCode.Return)) {
 			Application.LoadLevel(0);
 		}
 	}
 
-	void SwitchAnimal(){
-		// Check if there are animals remaining in current stack
-		if ((animalIndex < currentStack.animals.Count - 1) && !(currentStack.animals[animalIndex+1].name.Equals("Shepherd")) ) {
-			animalIndex++;
-			lastAnimal = currentAnimal;
-			currentAnimal = currentStack.animals [animalIndex];
+	void SwitchAnimal (bool goingUp)
+	{
+		// Switching up
+		if (goingUp) {
+			do {
+				// Check if there are moveable animals remaining in current stack
+				if (animalIndex < currentStack.animals.Count - 1) {
+					animalIndex++;
+				} 
+			// Otherwise, choose new stack
+			else {
+					// Start at beginning of next stack
+					animalIndex = 0;
+					// If at end of stacks list, return to beginning of list
+					if (stackIndex == stacks.Count - 1) {
+						stackIndex = 0;
+					}
+				// Otherwise, choose next stack in list
+				else {
+						stackIndex++;
+					}
+					// Update current stack
+					currentStack = stacks [stackIndex];
+				}
+			} while(stacks[stackIndex].animals[animalIndex].name.Equals("Shepherd"));
 		} 
-		// Otherwise, choose new stack
+		// Switching down
 		else {
-			// Start at beginning of next stack
-			animalIndex = 0;
-			// If at end of stacks list, return to beginning of list
-			if(stackIndex==stacks.Count-1){
-				stackIndex = 0;
-			}
-			// Otherwise, choose next stack in list
-			else{
-				stackIndex++;
-			}
-
-			lastAnimal = currentAnimal;
-			currentStack = stacks[stackIndex];
-			currentAnimal = currentStack.animals[animalIndex];
+			do {
+				// Check if there are moveable animals remaining in current stack
+				if (animalIndex > 0) {
+					animalIndex--;
+				} 
+			// Otherwise, choose new stack
+			else {
+					// If at beginning of stacks list, return to end of list
+					if (stackIndex == 0) {
+						stackIndex = stacks.Count - 1;
+					}
+				// Otherwise, choose next stack in list
+				else {
+						stackIndex--;
+					}
+					// Update current stack
+					currentStack = stacks [stackIndex];
+					// Start at top of stack
+					animalIndex = currentStack.animals.Count - 1;
+				}
+			} while(stacks[stackIndex].animals[animalIndex].name.Equals("Shepherd"));
 		}
+
+		lastAnimal = currentAnimal;
+		currentAnimal = currentStack.animals [animalIndex];
+		
 		// Highlight currently selected animal
-		ChangeHighlight ();
+		UpdateHighlight ();
+		
+		if(throwingMode){
+			// Every animal starts in movement mode
+			throwingMode = false;
+			ClearThrowingBoxes();
+			UpdateHighlight();
+		}
 	}
 
 	// Gives the current animal selected a highlight, and removes highlight from previously selected animal
-	void ChangeHighlight(){
+	// Also changes highlight colour if throwing/movement modes are switched between
+	void UpdateHighlight(){
+		Color highlightColor;
+		
+		if (throwingMode) {
+			highlightColor = Color.magenta;
+		} else {
+			highlightColor = Color.cyan;
+		}
+		
 		// Highlight current animal
 		currentAnimal.GetComponent<Renderer> ().material.shader = outlined;
-		currentAnimal.GetComponent<Renderer> ().material.SetColor ("_OutlineColor", Color.cyan);
+		currentAnimal.GetComponent<Renderer> ().material.SetColor ("_OutlineColor", highlightColor);
 		currentAnimal.GetComponent<Renderer> ().material.SetFloat ("_Outline", 0.25f);
-
+		
 		// Remove highlight from previously selected animal
-		if (lastAnimal != null) {
+		if (lastAnimal != null && lastAnimal!= currentAnimal) {
 			lastAnimal.GetComponent<Renderer> ().material.shader = diffuse;
 		}
 	}
