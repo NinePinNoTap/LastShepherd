@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
 		// Create animals and assign them to their respective stacks
 		AnimalStack stack1 = new AnimalStack ();
 		GameObject animal1 = CreateAnimal ("Animal1", 2, 3, Color.yellow, stack1);
+		GameObject shepherd = CreateShepherd ("Shepherd", 2, 3, Color.gray, stack1);
 
 		AnimalStack stack2 = new AnimalStack ();
 		GameObject animal2 = CreateAnimal ("Animal2", 9, 8, Color.green, stack2);
@@ -100,7 +101,21 @@ public class GameManager : MonoBehaviour
 
 		return animal;
 	}
-
+	
+	GameObject CreateShepherd(string shepherdName, int StartingX, int StartingZ, Color col, AnimalStack animalStack)
+	{
+		GameObject shepherd = GameObject.CreatePrimitive (PrimitiveType.Sphere);
+		shepherd.name = shepherdName;
+		shepherd.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
+		shepherd.transform.localPosition = new Vector3 (StartingX * planeSideLength, animalHeight+animalHeight*0.5f, StartingZ * planeSideLength);
+		shepherd.GetComponent<Renderer> ().material = diffuseMat;
+		shepherd.GetComponent<Renderer> ().material.color = col;
+		
+		animalStack.animals.Add (shepherd);
+		
+		return shepherd;
+	}
+	
 	// Creates grid consisting of planes with alternating white and black materials
 	void CreateGrid()
 	{
@@ -190,7 +205,15 @@ public class GameManager : MonoBehaviour
 		}
 		// Moving onto another stack - get height of topmost animal to place moving animals
 		else {
-			movingHeight = targetStack[targetStack.Count-1].transform.localPosition.y;
+			if(targetStack[targetStack.Count-1].name.Equals("Shepherd"))
+			{
+				movingHeight = targetStack[targetStack.Count-2].transform.localPosition.y;
+			}
+			else
+			{
+				movingHeight = targetStack[targetStack.Count-1].transform.localPosition.y;
+			}
+			
 		}
 
 		// Place moving animals into a temporary list, and remove from previous stack
@@ -205,10 +228,23 @@ public class GameManager : MonoBehaviour
 		}
 		// Move animals to correct x and z positions
 		MoveAnimals(tempStack, movement);
-
+		
+		GameObject shepherdTemp = null;
+		if((targetStack.Count > 0) && targetStack[targetStack.Count-1].name.Equals("Shepherd"))
+		{
+			shepherdTemp = targetStack[targetStack.Count-1];
+			targetStack.RemoveAt(targetStack.Count-1);
+		}
 		// Add animals to the target stack
 		targetStack.AddRange (tempStack);
 		
+		if(shepherdTemp != null)
+		{	
+			Vector3 shepherdHeight = targetStack[targetStack.Count-1].transform.localPosition;
+			shepherdHeight.y += 1.0f; 
+			shepherdTemp.transform.localPosition = shepherdHeight;
+			targetStack.Add(shepherdTemp);
+		}
 		// Delete AnimalStack source if all animals from it have moved
 		if (animalIndex == 0) {
 			stacks.Remove(source);
@@ -279,7 +315,7 @@ public class GameManager : MonoBehaviour
 
 	void SwitchAnimal(){
 		// Check if there are animals remaining in current stack
-		if (animalIndex < currentStack.animals.Count - 1) {
+		if ((animalIndex < currentStack.animals.Count - 1) && !(currentStack.animals[animalIndex+1].name.Equals("Shepherd")) ) {
 			animalIndex++;
 			lastAnimal = currentAnimal;
 			currentAnimal = currentStack.animals [animalIndex];
