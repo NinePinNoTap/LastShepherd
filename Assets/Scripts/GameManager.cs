@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
 		GameObject animal4 = CreateAnimal ("Animal4", 1, 7, Color.blue, stack4);
 
 		AnimalStack shepherdStack = new AnimalStack ();
-		GameObject shepherd = CreateShepherd ("Shepherd", 2, 0, Color.gray, shepherdStack);
+		GameObject shepherd = CreateShepherd ("Shepherd", 6, 7, new Color(230.0f/255.0f, 160.0f/255.0f, 0.0f), shepherdStack);
 
 		// Add all stacks to the stacks list
 		stacks = new List<AnimalStack> ();
