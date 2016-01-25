@@ -3,13 +3,10 @@
 
 	TODO
 	
-	1.
-		Better error checking for creating throwing tiles.
-		Don't create tiles if the stack we want to throw cant fit.
-	2. 
+	1. 
 		Allow animals to step off the stack when already on an upper tile
 		
-	3. 
+	2. 
 		Make sure theres a clear path when moving off a stack to maintain realism? Check with designers!
 
   */
@@ -60,14 +57,16 @@ public class PlayerManager : MonoBehaviour
         // Initialise Level
         CreateStacks();
         CreateThrowing();
+
+        // Highlight starting animal
+        UpdateColour(currentAnimal, Color.black, Color.white, true);
 		
-		// Initialise Starting Vars
+		// Initialise GUI
 		stepCount = 0;
 		stepText.text = "Step Count : " + stepCount;
+
+        // Initialise collision mask
 		tileMask = LayerMask.NameToLayer("Tile");
-        
-		// Highlight starting animal
-		UpdateColour(currentAnimal, Color.black, Color.white, true);
 	}
 
     // Frame Updates
@@ -76,29 +75,35 @@ public class PlayerManager : MonoBehaviour
         // Check for toggle throwing mode
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            isThrowing = !isThrowing;
-            throwingParent.SetActive(isThrowing);
-
-            if (isThrowing)
-            {
-                // Create new ones
-                RefreshThrowingBoxes();
-            }
-            else
-            {
-                // Destroy boxes
-                ClearThrowingBoxes();
-            }
+			// Throw stack
+			if(animalIndex + 1 < currentStack.GetSize())
+			{
+				isThrowing = !isThrowing;
+				throwingParent.SetActive(isThrowing);
+				
+				if (isThrowing)
+				{
+					// Create new ones
+					RefreshThrowingBoxes();
+				}
+				else
+				{
+					// Destroy boxes
+					ClearThrowingBoxes();
+				}
+			}
+			else
+			{
+				Debug.Log ("There's nothing to throw!");
+			}
         }
 
         if (isThrowing)
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                Debug.Log("Lets Throw!");
-
-                // Throw stack
-                Throw();
+                Debug.Log("Lets Fly!");
+				Throw();
             }
             else
             {
@@ -139,7 +144,7 @@ public class PlayerManager : MonoBehaviour
 		stackIndex = 0;
 		animalIndex = 0;
 		currentStack = levelStacks[stackIndex];
-		currentAnimal = currentStack.Get(animalIndex);
+		UpdateAnimal();
     }
 
     private void CreateThrowing()
@@ -210,19 +215,32 @@ public class PlayerManager : MonoBehaviour
 
 	private void Throw()
 	{
-		Vector3 TargetPosition;
+		Vector3 DesiredPosition;
 
 		// Grab the target position
-		TargetPosition = throwTarget.transform.position;
+		DesiredPosition = throwTarget.transform.position;
 
 		// Increase position to where an animal would be
-		TargetPosition.y += 0.45f;
+		DesiredPosition.y += 0.45f;
 
-		MoveStack(TargetPosition);
+		// Increase index so we throw everything above our current
+		animalIndex++;
+		UpdateAnimal();
 
-		isThrowing = false;
-		throwingParent.SetActive(isThrowing);
-		ClearThrowingBoxes();
+        // Check if the desired position can be moved to
+		if (CheckNewPosition(DesiredPosition))
+        {
+			// Move the stack to the new position
+			MoveStack(DesiredPosition);
+			
+			// Increase step counter and refresh text
+			UpdateGUI();
+
+            // Get rid of throwing mode
+            isThrowing = false;
+            throwingParent.SetActive(isThrowing);
+            ClearThrowingBoxes();
+        }
 	}
 
 	private void RefreshThrowingBoxes()
@@ -295,8 +313,11 @@ public class PlayerManager : MonoBehaviour
 				// Check if we can see the throwing range box
 				if(!Physics.Linecast(currentAnimal.transform.position + Height, ObjPos, out hit, 1 << tileMask))
 				{
-					// Create a throwing option
-					throwingBoxes[ID].Add(CreateThrowingBox(ObjPos));
+					if(CheckNewPosition(ObjPos))
+					{
+						// Create a throwing option if the space allows it
+						throwingBoxes[ID].Add(CreateThrowingBox(ObjPos));
+					}
 				}
 			}
 		}
@@ -465,7 +486,14 @@ public class PlayerManager : MonoBehaviour
 		}
 
         // Check if the desired position can be moved to
-		CheckNewPosition(DesiredPosition);
+		if(CheckNewPosition(DesiredPosition))
+		{
+			// Move the stack to the new position
+			MoveStack(DesiredPosition);
+			
+			// Increase step counter and refresh text
+			UpdateGUI();
+		}
 	}
 
 	private void MoveStack(Vector3 position)
@@ -507,7 +535,7 @@ public class PlayerManager : MonoBehaviour
 		RepositionStack();
     }
 
-    private void CheckNewPosition(Vector3 position)
+    private bool CheckNewPosition(Vector3 position)
     {
         int AnimalsToMove;
         RaycastHit hit;
@@ -519,14 +547,10 @@ public class PlayerManager : MonoBehaviour
         if (Physics.Linecast(position, position + new Vector3(0, (AnimalsToMove * animalHeight), 0), out hit))
         {
             // Theres an obstacle in the way so we can't move
-            return;
+            return false;
         }
 
-        // Move the stack to the new position
-        MoveStack(position);
-
-        // Increase step counter and refresh text
-        UpdateGUI();
+        return true;
     }
 
 	private void TransferToNewStack(AnimalStack stack)
@@ -561,12 +585,18 @@ public class PlayerManager : MonoBehaviour
 			}
 		}
 
-		// Reset Vars
-		UpdateColour(currentAnimal, Color.black, Color.white, false);
-		animalIndex = 0;
+		// Grab the new stack
 		currentStack = levelStacks[stackIndex];
-		currentAnimal = currentStack.Get(animalIndex);
-		UpdateColour(currentAnimal, Color.black, Color.white, true);
+
+        // Cycle through stack and find current animal
+		for(int i = 0; i < currentStack.GetSize(); i++)
+		{
+			if(currentStack.Get(i).Equals(currentAnimal))
+			{
+				animalIndex = i;
+				return;
+			}
+		}
 	}
 
 	private void RepositionStack()
@@ -626,9 +656,7 @@ public class PlayerManager : MonoBehaviour
 		}
 
 		// Switch to new animal in stack
-		UpdateColour(currentAnimal, Color.black, Color.white, false);
-		currentAnimal = currentStack.Get(animalIndex);
-		UpdateColour(currentAnimal, Color.black, Color.white, true);
+		UpdateAnimal();
 	}
 
 	private AnimalStack FindStack(Vector3 position)
@@ -664,6 +692,21 @@ public class PlayerManager : MonoBehaviour
 			// Highlight current animal
 			obj.GetComponent<Renderer> ().material.SetColor ("_Color", b);
 		}
+	}
+
+	private void UpdateAnimal()
+	{
+		// Turn off highlighting
+		if(currentAnimal)
+		{
+			UpdateColour (currentAnimal, Color.black, Color.white, false);
+		}
+
+		// Select new animal
+		currentAnimal = currentStack.Get(animalIndex);
+
+		// Turn on highlightning
+		UpdateColour(currentAnimal, Color.black, Color.white, true);
 	}
 	
 	private void UpdateGUI()
