@@ -9,6 +9,9 @@
 	2. 
 		Make sure theres a clear path when moving off a stack to maintain realism? Check with designers!
 
+	3. 
+		Improve switching. When wanting to switch, sort stacks by their distance to the current stack
+
   */
 
 using UnityEngine;
