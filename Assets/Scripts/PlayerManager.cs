@@ -120,10 +120,10 @@ public class PlayerManager : MonoBehaviour
         else
         {
             // Check for movement input
-            MoveObject(KeyCode.W, new Vector3(0, 0, 1)); // Forward
-            MoveObject(KeyCode.A, new Vector3(-1, 0, 0)); // Left
-            MoveObject(KeyCode.D, new Vector3(1, 0, 0)); // Right
-            MoveObject(KeyCode.S, new Vector3(0, 0, -1)); // Back
+            MoveObject(KeyCode.W, (new Vector3(0, 0, 1)*Time.deltaTime)); // Forward
+			MoveObject(KeyCode.A, (new Vector3(-1, 0, 0)*Time.deltaTime)); // Left
+			MoveObject(KeyCode.D, (new Vector3(1, 0, 0)*Time.deltaTime)); // Right
+			MoveObject(KeyCode.S, (new Vector3(0, 0, -1)*Time.deltaTime)); // Back
 
             // Check for switching animals/stacks
             SwitchSelected(KeyCode.Tab, KeyCode.LeftShift);
@@ -341,7 +341,7 @@ public class PlayerManager : MonoBehaviour
 	private void MoveObject(KeyCode key, Vector3 direction)
 	{
 		// If the required key hasnt been pressed
-		if(!Input.GetKeyDown(key))
+		if(!Input.GetKey(key))
 		{
 			// Dont continue
 			return;
@@ -354,7 +354,7 @@ public class PlayerManager : MonoBehaviour
 		
 		// Get position of current animal and move amount
 		CurrentPosition = currentAnimal.transform.position;
-		MoveAmount = direction * tileWidth;
+		MoveAmount = direction;
 
 		// Position we want to move to
 		DesiredPosition = CurrentPosition;
