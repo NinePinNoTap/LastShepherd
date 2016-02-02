@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour {
 			// Create a stack and add an animal to it
 			AnimalStack temp = new AnimalStack();
 			temp.Add(levelManager.GetAnimal(i));
-			levelManager.GetAnimal(i).GetComponent<AnimalBehaviour>().SetOwner(temp);
+			levelManager.GetAnimal(i).GetComponent<AnimalBehaviour>().SetOwner(temp,0);
 			
 			levelManager.GetAnimal(i).GetComponent<AnimalBehaviour>().SetGameManager(this);
 			levelStacks.Add(temp);

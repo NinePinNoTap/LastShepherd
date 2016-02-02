@@ -9,8 +9,11 @@ public class AnimalBehaviour : MonoBehaviour
 	public GameManager gm;
 	
 	private AnimalStack owner;
+	private int ownIndex;
 	
 	public float animalHeight = 1.0f;
+	
+	public Vector3 currentVelocity;
 	
 	
 	// Use this for initialization
@@ -23,11 +26,35 @@ public class AnimalBehaviour : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		currentVelocity = new Vector3(0.0f,0.0f,0.0f);
 		if(active)
 		{
 			HandleInput();
 		}
+		else
+		{
+			
+			
+		}
 	
+	}
+	
+	void FixedUpdate()
+	{
+	
+		Vector3 newVelocity = this.gameObject.GetComponent<Rigidbody>().velocity;
+		newVelocity.x = currentVelocity.x;
+		newVelocity.z = currentVelocity.z;
+		this.gameObject.GetComponent<Rigidbody>().velocity = newVelocity;
+		
+		if(ownIndex > 0)
+		{
+			Vector3 correctedPosition = owner.animals[0].gameObject.transform.position;
+		
+			correctedPosition.y += ownIndex*animalHeight;
+		
+			this.gameObject.transform.position = correctedPosition;
+		}
 	}
 	
 	void OnCollisionEnter(Collision collision)
@@ -45,8 +72,10 @@ public class AnimalBehaviour : MonoBehaviour
 			{
 				Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(i+1), 0.0f);
 				oldStack.animals[i].transform.position = temp;
+				oldStack.animals[i].GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
 				newStack.Add(oldStack.animals[i]);
-				oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack);
+				oldStack.animals[i].GetComponent<Rigidbody>().useGravity = false;
+				oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack,(newStack.GetSize()-1));
 				
 			}
 			
@@ -59,18 +88,35 @@ public class AnimalBehaviour : MonoBehaviour
 		}
 		else if(collision.gameObject.tag.Equals("Tile"))
 		{
+			//Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight);
+			
+			if(Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight) )
+			{
+				if((hit.transform.gameObject!=collision.gameObject) && (hit.transform.gameObject.tag.Equals("Tile")))
+				{
+					return;
+				}
+			}
+			
 			//Physics.Raycast(this.gameObject.transform.position, collision.gameObject.transform.position-this.gameObject.transform.position, out hit, animalHeight);
 			//if(!collision.gameObject.Equals(hit.transform.gameObject))
-			//Vector3 distance = collision.gameObject.transform.position-this.gameObject.transform.position;
-			//if(!(distance.y < 0.0f))
-			//{
-				
-				for(int i=0; i<owner.GetSize();i++)
+			Vector3 distance = collision.gameObject.transform.position-this.gameObject.transform.position;
+			if(true)
+			{
+				distance = Vector3.Normalize(distance);
+				if((distance.y < 0.4f) && (distance.y > -0.4f))
 				{
-					owner.animals[i].transform.position = (collision.gameObject.transform.position + new Vector3(0.0f, animalHeight*(i+1),0.0f));
+					
+					for(int i=0; i<owner.GetSize();i++)
+					{
+						owner.animals[i].transform.position = (collision.gameObject.transform.position + new Vector3(0.0f, animalHeight*(i+1),0.0f));
+					}
 				}
-			//}
+			}			
+			
 		}
+		
+		
 	}
 	
 	void HandleInput()
@@ -126,9 +172,9 @@ public class AnimalBehaviour : MonoBehaviour
 			Vector3 newPos = oldStack.animals[i].transform.position + v*1.2f*animalHeight + new Vector3(0.0f, -animalHeight*gm.animalIndex,0.0f);
 			oldStack.animals[i].transform.position = newPos;
 			newStack.Add(oldStack.animals[i]);
-			oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack);
+			oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack, (i-gm.animalIndex));
 		}
-		
+		newStack.animals[0].GetComponent<Rigidbody>().useGravity = true;
 		oldStack.animals.RemoveRange(gm.animalIndex, oldStack.GetSize()-gm.animalIndex);
 		gm.levelStacks.Add(newStack);
 		gm.currentStack = newStack;
@@ -147,12 +193,13 @@ public class AnimalBehaviour : MonoBehaviour
 	
 	void Move(Vector3 v)
 	{
-		Vector3 currentPosition = this.gameObject.transform.position;
+		/*Vector3 currentPosition = this.gameObject.transform.position;
 		
 		currentPosition += v*Time.deltaTime;
 		
 		this.gameObject.transform.position = currentPosition;
-		
+		*/
+		currentVelocity = v;
 	}
 	
 	public void Activate()
@@ -173,9 +220,10 @@ public class AnimalBehaviour : MonoBehaviour
 		return owner;
 	}	
 	
-	public void SetOwner(AnimalStack a)
+	public void SetOwner(AnimalStack a, int i)
 	{
-		owner = a;	
+		owner = a;
+		ownIndex =i;	
 	}
 	
 	public void SetGameManager(GameManager g)
