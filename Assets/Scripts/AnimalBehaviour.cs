@@ -30,6 +30,7 @@ public class AnimalBehaviour : MonoBehaviour
 		if(active)
 		{
 			HandleInput();
+			HandleCollision();
 		}
 		else
 		{
@@ -57,11 +58,91 @@ public class AnimalBehaviour : MonoBehaviour
 		}
 	}
 	
-	void OnCollisionEnter(Collision collision)
+	void HandleCollision()
+	{
+		RaycastHit hit;
+		RaycastHit hit2;
+		for(int i = 0; i< 13; i++)
+		{
+			float x = animalHeight*0.5f * Mathf.Cos(((360.0f/13.0f)*i)*(Mathf.PI /180.0f));
+			float z = animalHeight*0.5f * Mathf.Sin(((360.0f/13.0f)*i)*(Mathf.PI /180.0f));
+			
+			if(Physics.Raycast(this.gameObject.transform.position, new Vector3(x,0.0f,z) , out hit, animalHeight*0.55f))
+			{
+				if( (ownIndex==0) && hit.transform.gameObject.tag.Equals("Animal"))
+				{
+					AnimalStack oldStack = owner;
+					AnimalStack newStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetOwner();
+					int newAnimalIndex = newStack.GetSize();
+					Vector3 newPos = newStack.Get(newStack.GetSize()-1).transform.position;
+					
+					for(int k=0; k<oldStack.GetSize();k++)
+					{
+						Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(k+1), 0.0f);
+						oldStack.animals[k].transform.position = temp;
+						oldStack.animals[k].GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+						newStack.Add(oldStack.animals[k]);
+						oldStack.animals[k].GetComponent<Rigidbody>().useGravity = false;
+						oldStack.animals[k].GetComponent<AnimalBehaviour>().SetOwner(newStack,(newStack.GetSize()-1));
+						
+					}
+					
+					gm.levelStacks.Remove(oldStack);
+					gm.currentStack = newStack;
+					gm.stackIndex = gm.levelStacks.IndexOf(newStack);
+					gm.animalIndex = newAnimalIndex;
+					//gm.levelStacks[gm.stackIndex].animals[gm.animalIndex].GetComponent<AnimalBehaviour>().Activate();
+					
+				}
+				else if( (ownIndex==0) && hit.transform.gameObject.tag.Equals("Tile"))
+				{
+					//Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight);
+					
+					Vector3 start = hit.transform.position;
+					start.y += animalHeight*0.5f;
+					
+					if(Physics.Raycast(start, Vector3.up, out hit2, animalHeight) )
+					{
+						if((hit.transform.gameObject!=hit2.transform.gameObject) && (hit2.transform.gameObject.tag.Equals("Tile")))
+						{
+							return;
+						}
+					}
+					
+					for(int j=0; j<owner.GetSize();j++)
+					{
+						owner.animals[j].transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight*(j+1),0.0f));
+					}
+					//Physics.Raycast(this.gameObject.transform.position, collision.gameObject.transform.position-this.gameObject.transform.position, out hit, animalHeight);
+					//if(!collision.gameObject.Equals(hit.transform.gameObject))
+					/*Vector3 distance = hit.transform.gameObject.transform.position-this.gameObject.transform.position;
+				if(true)
+				{
+					distance = Vector3.Normalize(distance);
+					if((distance.y < 0.4f) && (distance.y > -0.4f))
+					{
+						
+						for(int i=0; i<owner.GetSize();i++)
+						{
+							owner.animals[i].transform.position = (hit.transform.gameObject.transform.position + new Vector3(0.0f, animalHeight*(i+1),0.0f));
+						}
+					}
+				}			
+				*/
+				}
+				
+				return;
+			}
+		}
+		
+		
+	}
+	
+	/*void OnCollisionEnter(Collision collision)
 	{
 		RaycastHit hit;
 		Debug.Log("Collison detected");
-		if(active && owner.animals[0].Equals(this.gameObject) && collision.gameObject.tag.Equals("Animal"))
+		if(active && (ownIndex==0) && collision.gameObject.tag.Equals("Animal"))
 		{
 			AnimalStack oldStack = owner;
 			AnimalStack newStack = collision.gameObject.GetComponent<AnimalBehaviour>().GetOwner();
@@ -86,7 +167,7 @@ public class AnimalBehaviour : MonoBehaviour
 			//gm.levelStacks[gm.stackIndex].animals[gm.animalIndex].GetComponent<AnimalBehaviour>().Activate();
 			
 		}
-		else if(collision.gameObject.tag.Equals("Tile"))
+		else if(active && (ownIndex==0) && collision.gameObject.tag.Equals("Tile"))
 		{
 			//Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight);
 			
@@ -117,7 +198,7 @@ public class AnimalBehaviour : MonoBehaviour
 		}
 		
 		
-	}
+	}*/
 	
 	void HandleInput()
 	{
