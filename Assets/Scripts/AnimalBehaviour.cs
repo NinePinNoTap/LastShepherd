@@ -62,6 +62,7 @@ public class AnimalBehaviour : MonoBehaviour
 	{
 		RaycastHit hit;
 		RaycastHit hit2;
+		RaycastHit bottom;
 		for(int i = 0; i< 13; i++)
 		{
 			float x = animalHeight*0.5f * Mathf.Cos(((360.0f/13.0f)*i)*(Mathf.PI /180.0f));
@@ -131,7 +132,35 @@ public class AnimalBehaviour : MonoBehaviour
 				*/
 				}
 				
+				
 				return;
+			}
+			else if(Physics.Raycast(this.gameObject.transform.position, new Vector3(x,z,0.0f) , out bottom, animalHeight*0.55f))
+			{
+				if((ownIndex==0) && bottom.transform.gameObject.tag.Equals("Animal") && !(owner.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetOwner())))
+				{
+					AnimalStack oldStack = owner;
+					AnimalStack newStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetOwner();
+					int newAnimalIndex = newStack.GetSize();
+					Vector3 newPos = newStack.Get(newStack.GetSize()-1).transform.position;
+					
+					for(int k=0; k<oldStack.GetSize();k++)
+					{
+						Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(k+1), 0.0f);
+						oldStack.animals[k].transform.position = temp;
+						oldStack.animals[k].GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+						newStack.Add(oldStack.animals[k]);
+						oldStack.animals[k].GetComponent<Rigidbody>().useGravity = false;
+						oldStack.animals[k].GetComponent<AnimalBehaviour>().SetOwner(newStack,(newStack.GetSize()-1));
+						
+					}
+					
+					gm.levelStacks.Remove(oldStack);
+					gm.currentStack = newStack;
+					gm.stackIndex = gm.levelStacks.IndexOf(newStack);
+					gm.animalIndex = newAnimalIndex;
+				}	
+				
 			}
 		}
 		
@@ -250,7 +279,7 @@ public class AnimalBehaviour : MonoBehaviour
 		
 		for(int i = gm.animalIndex; i < oldStack.GetSize(); i++)
 		{
-			Vector3 newPos = oldStack.animals[i].transform.position + v*1.2f*animalHeight + new Vector3(0.0f, -animalHeight*gm.animalIndex,0.0f);
+			Vector3 newPos = oldStack.animals[i].transform.position + v*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*gm.animalIndex,0.0f);
 			oldStack.animals[i].transform.position = newPos;
 			newStack.Add(oldStack.animals[i]);
 			oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack, (i-gm.animalIndex));
