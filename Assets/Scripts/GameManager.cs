@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 	public int animalIndex;
 
 	[Header("GUI")]
+	public Image[] animalPortaitsBG;
 	public Image[] animalPortaits;
 	 
 	void Awake()
@@ -29,6 +30,11 @@ public class GameManager : MonoBehaviour
 		// Initialise Level
 		//Debug.Log("Set GM for" + this.gameObject.name);
 		CreateStacks();
+
+		for(int i = 0; i < 3; i++)
+		{
+			animalPortaits[i].color = levelManager.GetAnimal(i).GetComponent<ObjectHighlighter>().baseColor;
+		}
 	}
 
 	void Update ()
@@ -71,11 +77,11 @@ public class GameManager : MonoBehaviour
 		{
 			if(levelManager.GetAnimal(i).Equals(levelStacks[stackIndex].animals[animalIndex]))
 			{
-				animalPortaits[i].color = Color.black;
+				animalPortaitsBG[i].color = Color.yellow;
 			}
 			else
 			{
-				animalPortaits[i].color = levelManager.GetAnimal(i).GetComponent<ObjectHighlighter>().baseColor;
+				animalPortaitsBG[i].color = Color.black;
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class GameTimer : MonoBehaviour
 
 	// Bar Properties
 	private Vector2 barSize;
-	private float barMultiplier;
+	private float barMultiplier = 7.0f;
 	
 	void Start ()
 	{
@@ -51,7 +51,7 @@ public class GameTimer : MonoBehaviour
 			roundLength -= updateTime;
 
 			// Calculate size
-			barSize.x = roundLength * 7.0f;
+			barSize.x = roundLength * barMultiplier;
 			timerBar.sizeDelta = barSize;
 
 			// Come back because we not finished
