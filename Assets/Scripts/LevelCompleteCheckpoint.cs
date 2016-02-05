@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameOverCheckpoint : MonoBehaviour
+public class LevelCompleteCheckpoint : MonoBehaviour
 {
-	public GameObject gameoverCheckpoint;
-
 	private bool isActivated = false;
 
 	void Start ()

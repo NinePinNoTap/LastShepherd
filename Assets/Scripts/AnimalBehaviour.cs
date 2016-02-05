@@ -3,7 +3,7 @@ using System.Collections;
 
 public class AnimalBehaviour : MonoBehaviour 
 {
-	private bool active;
+	public bool active;
 	
 	public GameManager gm;
 	
@@ -16,10 +16,9 @@ public class AnimalBehaviour : MonoBehaviour
 	public ObjectHighlighter objHighlighter;
 	
 
-	void Start () 
+	void Awake () 
 	{
 		active = false;
-	
 	}
 
 	void Update () 
@@ -32,8 +31,6 @@ public class AnimalBehaviour : MonoBehaviour
 		}
 		else
 		{
-			
-			
 		}
 	
 	}
@@ -98,13 +95,14 @@ public class AnimalBehaviour : MonoBehaviour
 					//Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight);
 					
 					Vector3 start = hit.transform.position;
-					start.y += animalHeight*0.5f;
+					//start.y += animalHeight*0.5f;
 					
 					if(Physics.Raycast(start, Vector3.up, out hit2, animalHeight) )
 					{
 						if((hit.transform.gameObject!=hit2.transform.gameObject) && (hit2.transform.gameObject.tag.Equals("Tile")))
 						{
-							return;
+							Debug.Log ("HI");
+							continue;
 						}
 					}
 					
@@ -231,22 +229,43 @@ public class AnimalBehaviour : MonoBehaviour
 	{
 		if(owner.animals[0].Equals(this.gameObject))
 		{
+			Vector3 moveVelocity = new Vector3(0,0,0);
+
+			// WINDOWS
 			if(Input.GetKey(KeyCode.W))
 			{
-				MoveStack(new Vector3(0, 0, 3));
+				//MoveStack(new Vector3(0, 0, 3));
+				moveVelocity += new Vector3(0,0,3);
 			}
 			if(Input.GetKey(KeyCode.A))
 			{
-				MoveStack(new Vector3(-3, 0, 0));
+				//MoveStack(new Vector3(-3, 0, 0));
+				moveVelocity += new Vector3(-3,0,0);
 			}
 			if(Input.GetKey(KeyCode.S))
 			{
-				MoveStack(new Vector3(0, 0, -3));	
+				//MoveStack(new Vector3(0, 0, -3));	
+				moveVelocity += new Vector3(0,0,-3);
 			}
 			if(Input.GetKey(KeyCode.D))
 			{
-				MoveStack(new Vector3(3, 0, 0));
+				//MoveStack(new Vector3(3, 0, 0));
+				moveVelocity += new Vector3(3,0,0);
 			}
+
+			if(moveVelocity.x + moveVelocity.z != 0)
+			{
+				MoveStack (moveVelocity);
+			}
+
+			// Xbox
+			float x = Input.GetAxis("XBOX_LEFTSTICK_X") * 3;
+			float y = Input.GetAxis("XBOX_LEFTSTICK_Y") * 3;
+
+			Debug.Log (x);
+			Debug.Log (y);
+
+			MoveStack(new Vector3(x,0,y) * 3);
 		}
 		else
 		{

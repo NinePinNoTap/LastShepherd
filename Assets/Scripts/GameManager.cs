@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using Helper;
 
-public class GameManager : MonoBehaviour {
-
+public class GameManager : MonoBehaviour
+{
 	public LevelManager levelManager;  
 
 	public List<AnimalStack> levelStacks;
 	public AnimalStack currentStack;
 	public int stackIndex;
 	public int animalIndex;
-	
 	 
 	void Awake()
 	{
@@ -54,8 +53,6 @@ public class GameManager : MonoBehaviour {
 		currentStack = levelStacks[stackIndex];
 		
 		levelStacks[stackIndex].animals[animalIndex].GetComponent<AnimalBehaviour>().Activate();
-		
-		
 	}
 	
 	private void SwitchSelected(KeyCode Forward, KeyCode Backward)

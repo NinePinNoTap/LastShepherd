@@ -53,6 +53,9 @@ public class GuardPatrol : MonoBehaviour
 
 	void Update ()
 	{
+		if(!agent)
+			return;
+
 		// Stop once we reach our target
 		if (agent.remainingDistance == 0.0f && !isStanding)
 		{
