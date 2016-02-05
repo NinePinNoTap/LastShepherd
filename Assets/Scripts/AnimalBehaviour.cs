@@ -4,7 +4,7 @@ using System.Collections;
 public class AnimalBehaviour : MonoBehaviour 
 {
 	public bool active;
-	
+	public float moveSpeed = 1.5f;
 	public GameManager gm;
 	
 	private AnimalStack owner;
@@ -259,16 +259,14 @@ public class AnimalBehaviour : MonoBehaviour
 			}
 
 			// Xbox
-			float x = Input.GetAxis("XBOX_LEFTSTICK_X") * 3;
-			float y = Input.GetAxis("XBOX_LEFTSTICK_Y") * 3;
-
-			Debug.Log (x);
-			Debug.Log (y);
+			float x = Input.GetAxis("XBOX_THUMBSTICK_LX") * moveSpeed;
+			float y = Input.GetAxis("XBOX_THUMBSTICK_LY") * moveSpeed;
 
 			MoveStack(new Vector3(x,0,y) * 3);
 		}
 		else
 		{
+			// WINDOWS
 			if(Input.GetKeyDown(KeyCode.W))
 			{
 				HopOffStack(new Vector3(0, 0, 1));
@@ -282,6 +280,24 @@ public class AnimalBehaviour : MonoBehaviour
 				HopOffStack(new Vector3(0, 0, -1));	
 			}
 			else if(Input.GetKeyDown(KeyCode.D))
+			{
+				HopOffStack(new Vector3(1, 0, 0));
+			}
+
+			// XBOX
+			if(Input.GetAxis("XBOX_THUMBSTICK_LY") > 0)
+			{
+				HopOffStack(new Vector3(0, 0, 1));
+			}
+			else if(Input.GetAxis("XBOX_THUMBSTICK_LX") < 0)
+			{
+				HopOffStack(new Vector3(-1, 0, 0));
+			}
+			else if(Input.GetAxis("XBOX_THUMBSTICK_LY") < 0)
+			{
+				HopOffStack(new Vector3(0, 0, -1));	
+			}
+			else if(Input.GetAxis("XBOX_THUMBSTICK_LX") > 0)
 			{
 				HopOffStack(new Vector3(1, 0, 0));
 			}

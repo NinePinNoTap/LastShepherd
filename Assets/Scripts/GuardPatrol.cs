@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Helper;
 
 public class GuardPatrol : MonoBehaviour
 {
 	[Header("AI Properties")]
-	public IList<GameObject> Waypoints;					// List of wayWaypoints
+	public GameObject[] Waypoints;					// List of wayWaypoints
 	private int destPoint = 0;					// Current ID
 	private NavMeshAgent agent;					// Access to pathfinding agent
 	private float waypointThreshold = 0.5f;		// Distance away from target before selecting a new one
@@ -17,8 +18,6 @@ public class GuardPatrol : MonoBehaviour
 	public float FOV = 90.0f;
 	public SphereCollider sphereCollider;
 	public bool isStanding = false;
-	public bool canSeePlayer = false;
-	public GameObject animalTarget;
 
 	[Header("Other")]
 	public IList<GameObject> Animals;
@@ -31,7 +30,7 @@ public class GuardPatrol : MonoBehaviour
 	{
 		// Find the waypoints and arrange by name
 		// This will be replaced later with manual insertion
-		Waypoints = GameObject.FindGameObjectsWithTag("Waypoint").ToList().OrderBy(obj=>obj.name).ToList();
+		//Waypoints = GameObject.FindGameObjectsWithTag("Waypoint").ToList().OrderBy(obj=>obj.name).ToList();
 
 		// Create a list of animals
 		Animals = GameObject.FindGameObjectsWithTag("Animal").ToList();
@@ -43,30 +42,24 @@ public class GuardPatrol : MonoBehaviour
 		sphereCollider = GetComponent<SphereCollider>();
 		sphereCollider.radius = sightDistance;
 
-		// Tracking
-		canSeePlayer = false;
-		animalTarget = null;
-
 		// Set initial target
 		SetNextTarget();
 	}
 
 	void Update ()
 	{
-		if(!agent)
-			return;
-
 		// Stop once we reach our target
-		if (agent.remainingDistance == 0.0f && !isStanding)
+		if (agent)
 		{
-			// Flag we are standing
-			isStanding = true;
+			if(agent.remainingDistance == 0.0f && !isStanding)
+			{
+				// Flag we are standing
+				isStanding = true;
 
-			// Allow to stand
-			StartCoroutine(Stand ());
+				// Allow to stand
+				StartCoroutine(Stand ());
+			}
 		}
-
-		TrackTarget();
 
 		UpdateRays();
 	}
@@ -75,9 +68,6 @@ public class GuardPatrol : MonoBehaviour
 	{
 		// Dont progress if its not an animal
 		if(other.tag != "Animal")
-			return;
-
-		if(animalTarget)
 			return;
 
 		// See if we can see the object inside the radius
@@ -116,28 +106,7 @@ public class GuardPatrol : MonoBehaviour
 
 		return false;
 	}
-
-	private void TrackTarget()
-	{
-		// If we dont have a target then dont progress
-		if(!animalTarget)
-			return;
-
-		// Check if we can still see the target
-		canSeePlayer = RaycastToTarget(animalTarget);
-
-		if(canSeePlayer)
-		{
-			// Can see so update destination
-			agent.destination = animalTarget.transform.position;
-		}
-		else
-		{
-			// Cant see
-			animalTarget = null;
-		}
-	}
-	
+		
 	private void UpdateRays()
 	{
 		LeftRay = Quaternion.AngleAxis(-45, Vector3.up) * transform.forward;
@@ -152,7 +121,7 @@ public class GuardPatrol : MonoBehaviour
 	private void SetNextTarget()
 	{
 		// Returns if no waypoints have been set up
-		if (Waypoints.Count == 0)
+		if (Waypoints.Length == 0)
 			return;
 		
 		// Set the agent to go to the currently selected destination.
@@ -160,12 +129,13 @@ public class GuardPatrol : MonoBehaviour
 		
 		// Choose the next point in the array as the destination,
 		// cycling to the start if necessary.
-		destPoint = (destPoint + 1) % Waypoints.Count;
+		destPoint = (destPoint + 1) % Waypoints.Length;
 	}
 
 	private IEnumerator Stand()
 	{
 		yield return new WaitForSeconds(stopTime);
 		SetNextTarget();
+		isStanding = false;
 	}
 }

@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
 	public AnimalStack currentStack;
 	public int stackIndex;
 	public int animalIndex;
+
+	[Header("GUI")]
+	public Image[] animalPortaits;
 	 
 	void Awake()
 	{
@@ -30,7 +33,14 @@ public class GameManager : MonoBehaviour
 
 	void Update ()
 	{
-		SwitchSelected(KeyCode.Tab, KeyCode.LeftShift);
+		// WINDOWS
+		HandleAnimalSwitching(KeyCode.Tab, KeyCode.LeftShift);
+
+		// XBOX
+		HandleAnimalSwitching("XBOX_BUTTON_LB", -1);
+		HandleAnimalSwitching("XBOX_BUTTON_RB", 1);
+
+		HandleAnimalPortaits();
 	}
 
 	private void CreateStacks()
@@ -54,8 +64,23 @@ public class GameManager : MonoBehaviour
 		
 		levelStacks[stackIndex].animals[animalIndex].GetComponent<AnimalBehaviour>().Activate();
 	}
+
+	private void HandleAnimalPortaits()
+	{
+		for(int i = 0; i < 3; i++)
+		{
+			if(levelManager.GetAnimal(i).Equals(levelStacks[stackIndex].animals[animalIndex]))
+			{
+				animalPortaits[i].color = Color.black;
+			}
+			else
+			{
+				animalPortaits[i].color = levelManager.GetAnimal(i).GetComponent<ObjectHighlighter>().baseColor;
+			}
+		}
+	}
 	
-	private void SwitchSelected(KeyCode Forward, KeyCode Backward)
+	private void HandleAnimalSwitching(KeyCode Forward, KeyCode Backward)
 	{
 		// Check to make sure we do want to switch
 		if(!Input.GetKeyDown(Forward))
@@ -101,7 +126,42 @@ public class GameManager : MonoBehaviour
 			
 			levelStacks[stackIndex].animals[animalIndex].GetComponent<AnimalBehaviour>().Activate();
 		}
+	}
+	private void HandleAnimalSwitching(string buttonname, int value)
+	{
+		// Check to make sure we do want to switch
+		if(!Input.GetButtonDown(buttonname))
+			return;
 		
-		
+		levelStacks[stackIndex].animals[animalIndex].GetComponent<AnimalBehaviour>().Deactivate();
+				
+		// Check to see if we can switch to another animal
+		if (animalIndex + value > 0 && animalIndex + value < currentStack.GetSize())
+		{
+			// Switch to another animal
+			animalIndex += value;
+			
+			// Keep within bounds
+			Utility.Wrap (ref animalIndex, 0, currentStack.GetSize() - 1);
+			
+			levelStacks[stackIndex].animals[animalIndex].GetComponent<AnimalBehaviour>().Activate();
+			
+		}
+		else
+		{
+			// Change Stack Index
+			stackIndex += value;
+			
+			// Keep within bounds
+			Utility.Wrap (ref stackIndex, 0, levelStacks.Count - 1);
+			
+			// Get new stack
+			currentStack = levelStacks[stackIndex];
+			
+			// Reset Animal Index
+			animalIndex = 0;
+			
+			levelStacks[stackIndex].animals[animalIndex].GetComponent<AnimalBehaviour>().Activate();
+		}
 	}
 }

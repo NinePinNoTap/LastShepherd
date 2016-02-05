@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 
 namespace Helper
@@ -31,6 +32,11 @@ namespace Helper
 				value = min;
 			if(value > max)
 				value = max;
+		}
+
+		public static float GridRanking(Vector3 pos)
+		{
+			return pos.x + (pos.z * 100);
 		}
 	}
 }

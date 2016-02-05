@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Helper;
 
 public class LevelManager : MonoBehaviour
 {
@@ -18,8 +19,8 @@ public class LevelManager : MonoBehaviour
 		Animals = GameObject.FindGameObjectsWithTag("Animal");
 
 		// Sort by their position
-		Tiles = Tiles.OrderBy(tile => GridRanking(tile.transform.position));
-		Animals = Animals.OrderBy(animal => GridRanking(animal.transform.position));
+		Tiles = Tiles.OrderBy(tile => Utility.GridRanking(tile.transform.position));
+		Animals = Animals.OrderBy(animal => Utility.GridRanking(animal.transform.position));
 
 		// Convert to an array
 		LevelTiles = Tiles.ToArray();
@@ -36,10 +37,5 @@ public class LevelManager : MonoBehaviour
 	{
 		// Returns a specific animal from the list
 		return LevelAnimals[Index];
-	}
-
-	private float GridRanking(Vector3 pos)
-	{
-		return pos.x + (pos.z * 100);
 	}
 }
