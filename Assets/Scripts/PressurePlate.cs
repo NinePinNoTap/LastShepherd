@@ -3,10 +3,11 @@ using System.Collections;
 
 public class PressurePlate : MonoBehaviour
 {
-	[Header("Objects")]
+	[Header("Components")]
 	public GameObject pressurePlate;		// Access to the pressure plate
 	public GameObject controlledObject;		// Access to the object to be moved
-	private BoxCollider boxCollider;		// Access to trigger box collider
+
+	[Header("Transforms")]
 	private Vector3 plateCurrentPosition;	// Plate current position
 	private Vector3 plateTargetPosition;	// Plate target position
 	private Vector3 objectCurrentPosition;	// Object current position
@@ -21,9 +22,6 @@ public class PressurePlate : MonoBehaviour
 	
 	void Start ()
 	{
-		// Access box collider
-		boxCollider = GetComponent<BoxCollider>();
-
 		// Calculate final pressure plate transform -- TEMP
 		plateCurrentPosition = pressurePlate.transform.position;
 		plateTargetPosition = plateCurrentPosition - new Vector3(0.0f, 0.05f, 0.0f);
@@ -31,15 +29,6 @@ public class PressurePlate : MonoBehaviour
 		// Store start and end positions of object
 		objectCurrentPosition = controlledObject.transform.position;
 		objectTargetPosition = targetLocation.position;
-	}
-
-	void Update ()
-	{
-		// DEBUGGING
-		if(Input.GetKey(KeyCode.U) && !isActivated)
-		{
-			ActivatePressurePlate();
-		}
 	}
 
 	void OnTriggerEnter(Collider collider)
