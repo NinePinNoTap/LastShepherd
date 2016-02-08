@@ -5,11 +5,6 @@ public class LevelCompleteCheckpoint : MonoBehaviour
 {
 	private bool isActivated = false;
 
-	void Start ()
-	{
-	
-	}
-
 	void OnTriggerEnter()
 	{
 		if(isActivated)

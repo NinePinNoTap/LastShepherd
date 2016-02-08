@@ -3,12 +3,12 @@ using System.Collections;
 
 public class AnimalBehaviour : MonoBehaviour 
 {
-	public bool active;
+	public bool isControllable;
 	public float moveSpeed = 1.5f;
-	public GameManager gm;
+	public StackManager stacksManager;
 	
-	private AnimalStack owner;
-	private int ownIndex;
+	private AnimalStack parentStack;
+	public int stackIndex;
 	
 	public float animalHeight = 1.0f;
 	
@@ -18,42 +18,32 @@ public class AnimalBehaviour : MonoBehaviour
 
 	void Awake () 
 	{
-		active = false;
+		isControllable = false;
 	}
 
 	void Update () 
 	{
-		currentVelocity = new Vector3(0.0f,0.0f,0.0f);
-		if(active)
+		if(isControllable)
 		{
-			HandleInput();
 			HandleCollision();
 		}
-		else
-		{
-		}
-	
 	}
 	
 	void FixedUpdate()
 	{
-	
-		Vector3 newVelocity = this.gameObject.GetComponent<Rigidbody>().velocity;
-		newVelocity.x = currentVelocity.x;
-		newVelocity.z = currentVelocity.z;
-		this.gameObject.GetComponent<Rigidbody>().velocity = newVelocity;
+		// Update velocity
+		GetComponent<Rigidbody>().velocity = new Vector3(currentVelocity.x, GetComponent<Rigidbody>().velocity.y, currentVelocity.z);
 		
-		if(ownIndex > 0)
+		if(stackIndex > 0)
 		{
-			Vector3 correctedPosition = owner.animals[0].gameObject.transform.position;
-		
-			correctedPosition.y += ownIndex*animalHeight;
-		
-			this.gameObject.transform.position = correctedPosition;
+			Vector3 correctedPosition = parentStack.Get(0).gameObject.transform.position;
+			correctedPosition.y += stackIndex*animalHeight;
+			transform.position = correctedPosition;
+			GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 		}
 	}
 	
-	void HandleCollision()
+	private void HandleCollision()
 	{
 		RaycastHit hit;
 		RaycastHit hit2;
@@ -65,35 +55,31 @@ public class AnimalBehaviour : MonoBehaviour
 			
 			if(Physics.Raycast(this.gameObject.transform.position, new Vector3(x,0.0f,z) , out hit, animalHeight*0.55f))
 			{
-				if( (ownIndex==0) && hit.transform.gameObject.tag.Equals("Animal"))
+				if( (stackIndex==0) && hit.transform.gameObject.tag.Equals("Animal"))
 				{
-					AnimalStack oldStack = owner;
-					AnimalStack newStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetOwner();
+					AnimalStack oldStack = parentStack;
+					AnimalStack newStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
 					int newAnimalIndex = newStack.GetSize();
 					Vector3 newPos = newStack.Get(newStack.GetSize()-1).transform.position;
 					
 					for(int k=0; k<oldStack.GetSize();k++)
 					{
 						Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(k+1), 0.0f);
-						oldStack.animals[k].transform.position = temp;
-						oldStack.animals[k].GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
-						newStack.Add(oldStack.animals[k]);
-						oldStack.animals[k].GetComponent<Rigidbody>().useGravity = false;
-						oldStack.animals[k].GetComponent<AnimalBehaviour>().SetOwner(newStack,(newStack.GetSize()-1));
-						
+						oldStack.Get(k).transform.position = temp;
+						oldStack.Get(k).GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+						newStack.Add(oldStack.Get(k));
+						oldStack.Get(k).GetComponent<Rigidbody>().useGravity = false;
+						oldStack.Get(k).GetComponent<AnimalBehaviour>().SetParentStack(newStack,(newStack.GetSize()-1));
 					}
 					
-					gm.levelStacks.Remove(oldStack);
-					gm.currentStack = newStack;
-					gm.stackIndex = gm.levelStacks.IndexOf(newStack);
-					gm.animalIndex = newAnimalIndex;
-					//gm.levelStacks[gm.stackIndex].animals[gm.animalIndex].GetComponent<AnimalBehaviour>().Activate();
+					stacksManager.levelStacks.Remove(oldStack);
+					stacksManager.currentStack = newStack;
+					stacksManager.stackIndex = stacksManager.levelStacks.IndexOf(newStack);
+					stacksManager.animalIndex = newAnimalIndex;
 					
 				}
-				else if( (ownIndex==0) && hit.transform.gameObject.tag.Equals("Tile"))
+				else if( (stackIndex==0) && hit.transform.gameObject.tag.Equals("Tile"))
 				{
-					//Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight);
-					
 					Vector3 start = hit.transform.position;
 					//start.y += animalHeight*0.5f;
 					
@@ -106,274 +92,96 @@ public class AnimalBehaviour : MonoBehaviour
 						}
 					}
 					
-					for(int j=0; j<owner.GetSize();j++)
+					for(int j=0; j<parentStack.GetSize();j++)
 					{
-						owner.animals[j].transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight*(j+1),0.0f));
+						parentStack.Get(j).transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight*(j+1),0.0f));
 					}
-					//Physics.Raycast(this.gameObject.transform.position, collision.gameObject.transform.position-this.gameObject.transform.position, out hit, animalHeight);
-					//if(!collision.gameObject.Equals(hit.transform.gameObject))
-					/*Vector3 distance = hit.transform.gameObject.transform.position-this.gameObject.transform.position;
-				if(true)
-				{
-					distance = Vector3.Normalize(distance);
-					if((distance.y < 0.4f) && (distance.y > -0.4f))
-					{
-						
-						for(int i=0; i<owner.GetSize();i++)
-						{
-							owner.animals[i].transform.position = (hit.transform.gameObject.transform.position + new Vector3(0.0f, animalHeight*(i+1),0.0f));
-						}
-					}
-				}			
-				*/
 				}
-				
 				
 				return;
 			}
 			else if(Physics.Raycast(this.gameObject.transform.position, new Vector3(x,z,0.0f) , out bottom, animalHeight*0.55f))
 			{
-				if((ownIndex==0) && bottom.transform.gameObject.tag.Equals("Animal") && !(owner.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetOwner())))
+				if((stackIndex==0) && bottom.transform.gameObject.tag.Equals("Animal") && !(parentStack.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack())))
 				{
-					AnimalStack oldStack = owner;
-					AnimalStack newStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetOwner();
+					AnimalStack oldStack = parentStack;
+					AnimalStack newStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
 					int newAnimalIndex = newStack.GetSize();
 					Vector3 newPos = newStack.Get(newStack.GetSize()-1).transform.position;
 					
 					for(int k=0; k<oldStack.GetSize();k++)
 					{
 						Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(k+1), 0.0f);
-						oldStack.animals[k].transform.position = temp;
-						oldStack.animals[k].GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
-						newStack.Add(oldStack.animals[k]);
-						oldStack.animals[k].GetComponent<Rigidbody>().useGravity = false;
-						oldStack.animals[k].GetComponent<AnimalBehaviour>().SetOwner(newStack,(newStack.GetSize()-1));
+						oldStack.Get(k).transform.position = temp;
+						oldStack.Get(k).GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+						newStack.Add(oldStack.Get(k));
+						oldStack.Get(k).GetComponent<Rigidbody>().useGravity = false;
+						oldStack.Get(k).GetComponent<AnimalBehaviour>().SetParentStack(newStack,(newStack.GetSize()-1));
 						
 					}
 					
-					gm.levelStacks.Remove(oldStack);
-					gm.currentStack = newStack;
-					gm.stackIndex = gm.levelStacks.IndexOf(newStack);
-					gm.animalIndex = newAnimalIndex;
-				}	
-				
-			}
-		}
-		
-		
-	}
-	
-	/*void OnCollisionEnter(Collision collision)
-	{
-		RaycastHit hit;
-		Debug.Log("Collison detected");
-		if(active && (ownIndex==0) && collision.gameObject.tag.Equals("Animal"))
-		{
-			AnimalStack oldStack = owner;
-			AnimalStack newStack = collision.gameObject.GetComponent<AnimalBehaviour>().GetOwner();
-			int newAnimalIndex = newStack.GetSize();
-			Vector3 newPos = newStack.Get(newStack.GetSize()-1).transform.position;
-			
-			for(int i=0; i<oldStack.GetSize();i++)
-			{
-				Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(i+1), 0.0f);
-				oldStack.animals[i].transform.position = temp;
-				oldStack.animals[i].GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
-				newStack.Add(oldStack.animals[i]);
-				oldStack.animals[i].GetComponent<Rigidbody>().useGravity = false;
-				oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack,(newStack.GetSize()-1));
-				
-			}
-			
-			gm.levelStacks.Remove(oldStack);
-			gm.currentStack = newStack;
-			gm.stackIndex = gm.levelStacks.IndexOf(newStack);
-			gm.animalIndex = newAnimalIndex;
-			//gm.levelStacks[gm.stackIndex].animals[gm.animalIndex].GetComponent<AnimalBehaviour>().Activate();
-			
-		}
-		else if(active && (ownIndex==0) && collision.gameObject.tag.Equals("Tile"))
-		{
-			//Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight);
-			
-			if(Physics.Raycast(collision.gameObject.transform.position, Vector3.up, out hit, animalHeight) )
-			{
-				if((hit.transform.gameObject!=collision.gameObject) && (hit.transform.gameObject.tag.Equals("Tile")))
-				{
-					return;
+					stacksManager.levelStacks.Remove(oldStack);
+					stacksManager.currentStack = newStack;
+					stacksManager.stackIndex = stacksManager.levelStacks.IndexOf(newStack);
+					stacksManager.animalIndex = newAnimalIndex;
 				}
 			}
-			
-			//Physics.Raycast(this.gameObject.transform.position, collision.gameObject.transform.position-this.gameObject.transform.position, out hit, animalHeight);
-			//if(!collision.gameObject.Equals(hit.transform.gameObject))
-			Vector3 distance = collision.gameObject.transform.position-this.gameObject.transform.position;
-			if(true)
-			{
-				distance = Vector3.Normalize(distance);
-				if((distance.y < 0.4f) && (distance.y > -0.4f))
-				{
-					
-					for(int i=0; i<owner.GetSize();i++)
-					{
-						owner.animals[i].transform.position = (collision.gameObject.transform.position + new Vector3(0.0f, animalHeight*(i+1),0.0f));
-					}
-				}
-			}			
-			
-		}
-		
-		
-	}*/
-	
-	void HandleInput()
-	{
-		if(owner.animals[0].Equals(this.gameObject))
-		{
-			Vector3 moveVelocity = new Vector3(0,0,0);
-
-			// WINDOWS
-			if(Input.GetKey(KeyCode.W))
-			{
-				//MoveStack(new Vector3(0, 0, 3));
-				moveVelocity += new Vector3(0,0,3);
-			}
-			if(Input.GetKey(KeyCode.A))
-			{
-				//MoveStack(new Vector3(-3, 0, 0));
-				moveVelocity += new Vector3(-3,0,0);
-			}
-			if(Input.GetKey(KeyCode.S))
-			{
-				//MoveStack(new Vector3(0, 0, -3));	
-				moveVelocity += new Vector3(0,0,-3);
-			}
-			if(Input.GetKey(KeyCode.D))
-			{
-				//MoveStack(new Vector3(3, 0, 0));
-				moveVelocity += new Vector3(3,0,0);
-			}
-
-			if(moveVelocity.x + moveVelocity.z != 0)
-			{
-				MoveStack (moveVelocity);
-			}
-
-			// Xbox
-			float x = Input.GetAxis("XBOX_THUMBSTICK_LX") * moveSpeed;
-			float y = Input.GetAxis("XBOX_THUMBSTICK_LY") * moveSpeed;
-
-			MoveStack(new Vector3(x,0,y) * 3);
-		}
-		else
-		{
-			// WINDOWS
-			if(Input.GetKeyDown(KeyCode.W))
-			{
-				HopOffStack(new Vector3(0, 0, 1));
-			}
-			else if(Input.GetKeyDown(KeyCode.A))
-			{
-				HopOffStack(new Vector3(-1, 0, 0));
-			}
-			else if(Input.GetKeyDown(KeyCode.S))
-			{
-				HopOffStack(new Vector3(0, 0, -1));	
-			}
-			else if(Input.GetKeyDown(KeyCode.D))
-			{
-				HopOffStack(new Vector3(1, 0, 0));
-			}
-
-			// XBOX
-			if(Input.GetAxis("XBOX_THUMBSTICK_LY") > 0)
-			{
-				HopOffStack(new Vector3(0, 0, 1));
-			}
-			else if(Input.GetAxis("XBOX_THUMBSTICK_LX") < 0)
-			{
-				HopOffStack(new Vector3(-1, 0, 0));
-			}
-			else if(Input.GetAxis("XBOX_THUMBSTICK_LY") < 0)
-			{
-				HopOffStack(new Vector3(0, 0, -1));	
-			}
-			else if(Input.GetAxis("XBOX_THUMBSTICK_LX") > 0)
-			{
-				HopOffStack(new Vector3(1, 0, 0));
-			}
-		}
-		
+		}		
 	}
 	
-	void HopOffStack(Vector3 v)
+	public void HopOffStack(Vector3 v)
 	{
-		AnimalStack oldStack = owner;
+		AnimalStack oldStack = parentStack;
 		AnimalStack newStack = new AnimalStack();
 		
-		for(int i = gm.animalIndex; i < oldStack.GetSize(); i++)
+		for(int i = stacksManager.animalIndex; i < oldStack.GetSize(); i++)
 		{
-			Vector3 newPos = oldStack.animals[i].transform.position + v*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*gm.animalIndex,0.0f);
-			oldStack.animals[i].transform.position = newPos;
-			newStack.Add(oldStack.animals[i]);
-			oldStack.animals[i].GetComponent<AnimalBehaviour>().SetOwner(newStack, (i-gm.animalIndex));
+			Vector3 newPos = oldStack.Get(i).transform.position + v*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*stacksManager.animalIndex,0.0f);
+			oldStack.Get(i).transform.position = newPos;
+			newStack.Add(oldStack.Get(i));
+			oldStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, (i-stacksManager.animalIndex));
 		}
-		newStack.animals[0].GetComponent<Rigidbody>().useGravity = true;
-		oldStack.animals.RemoveRange(gm.animalIndex, oldStack.GetSize()-gm.animalIndex);
-		gm.levelStacks.Add(newStack);
-		gm.currentStack = newStack;
-		gm.stackIndex = gm.levelStacks.IndexOf(newStack);
-		gm.animalIndex = 0;
+		newStack.Get(0).GetComponent<Rigidbody>().useGravity = true;
+		oldStack.GetList ().RemoveRange(stacksManager.animalIndex, oldStack.GetSize()-stacksManager.animalIndex);
+		stacksManager.levelStacks.Add(newStack);
+		stacksManager.currentStack = newStack;
+		stacksManager.stackIndex = stacksManager.levelStacks.IndexOf(newStack);
+		stacksManager.animalIndex = 0;
 	}
 	
-	
-	void MoveStack(Vector3 v)
+	public void MoveStack(Vector3 v)
 	{
-		for(int i=0; i<owner.GetSize();i++)
+		for(int i=0; i<parentStack.GetSize();i++)
 		{
-			owner.animals[i].GetComponent<AnimalBehaviour>().Move(v);
+			parentStack.Get(i).GetComponent<AnimalBehaviour>().Move(v);
 		}
 	}
 	
 	void Move(Vector3 v)
 	{
-		/*Vector3 currentPosition = this.gameObject.transform.position;
-		
-		currentPosition += v*Time.deltaTime;
-		
-		this.gameObject.transform.position = currentPosition;
-		*/
 		currentVelocity = v;
 	}
 	
 	public void Activate()
 	{
-		active = true;
+		isControllable = true;
 		objHighlighter.Toggle(true);
-		//this.gameObject.GetComponent<Renderer> ().material.SetColor ("_Color", Color.black);
 	}
 	
 	public void Deactivate()
 	{
-		active = false;
+		isControllable = false;
 		objHighlighter.Toggle(false);
-		//this.gameObject.GetComponent<Renderer> ().material.SetColor ("_Color", Color.white);
 	}
-
 	
-	public AnimalStack GetOwner()
+	public AnimalStack GetParentStack()
 	{
-		return owner;
+		return parentStack;
 	}	
 	
-	public void SetOwner(AnimalStack a, int i)
+	public void SetParentStack(AnimalStack a, int i)
 	{
-		owner = a;
-		ownIndex =i;	
+		parentStack = a;
+		stackIndex = i;	
 	}
-	
-	public void SetGameManager(GameManager g)
-	{
-		gm = g;	
-	}
-	
 }

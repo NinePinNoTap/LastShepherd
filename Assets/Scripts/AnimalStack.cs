@@ -5,8 +5,8 @@ using System.Collections.Generic;
 // Represents a stack of animals, and holds information relating to those animals
 public class AnimalStack
 {
-	public List<GameObject> animals;
-	public bool hasShepherd;
+	private List<GameObject> animals;
+	private bool hasShepherd;
 	
 	public AnimalStack()
 	{
@@ -32,6 +32,16 @@ public class AnimalStack
 	public void Clear()
 	{
 		animals.Clear();
+	}
+
+	public bool Contains(GameObject obj)
+	{
+		return animals.Contains(obj);
+	}
+
+	public int GetIndex(GameObject obj)
+	{
+		return animals.IndexOf(obj);
 	}
 
 	public GameObject Get(int Index)
