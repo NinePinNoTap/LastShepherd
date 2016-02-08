@@ -156,19 +156,19 @@ public class InputManager : MonoBehaviour
 		{
 			if(Input.GetKeyDown(KeyCode.W))
 			{
-				controlledAnimal.HopOffStack(new Vector3(0, 0, 1));
+				controlledAnimal.HopOffStack(new Vector3(0, 0, -1));
 			}
 			else if(Input.GetKeyDown(KeyCode.A))
 			{
-				controlledAnimal.HopOffStack(new Vector3(-1, 0, 0));
+				controlledAnimal.HopOffStack(new Vector3(1, 0, 0));
 			}
 			else if(Input.GetKeyDown(KeyCode.S))
 			{
-				controlledAnimal.HopOffStack(new Vector3(0, 0, -1));	
+				controlledAnimal.HopOffStack(new Vector3(0, 0, 1));	
 			}
 			else if(Input.GetKeyDown(KeyCode.D))
 			{
-				controlledAnimal.HopOffStack(new Vector3(1, 0, 0));
+				controlledAnimal.HopOffStack(new Vector3(-1, 0, 0));
 			}
 		}
 	}

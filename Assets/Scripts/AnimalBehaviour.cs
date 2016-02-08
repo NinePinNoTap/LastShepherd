@@ -39,7 +39,6 @@ public class AnimalBehaviour : MonoBehaviour
 			Vector3 correctedPosition = parentStack.Get(0).gameObject.transform.position;
 			correctedPosition.y += stackIndex*animalHeight;
 			transform.position = correctedPosition;
-			GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 		}
 	}
 	
