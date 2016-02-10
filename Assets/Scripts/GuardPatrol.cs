@@ -6,8 +6,11 @@ using Helper;
 
 public class GuardPatrol : MonoBehaviour
 {
+	public enum GuardType { PATROL, LOOKOUT, STAND};
+
 	[Header("AI Properties")]
-	public GameObject[] Waypoints;					// List of wayWaypoints
+	public GameObject[] Waypoints;				// List of wayWaypoints
+	public GuardType guardType;
 	private int destPoint = 0;					// Current ID
 	private NavMeshAgent agent;					// Access to pathfinding agent
 	private float waypointThreshold = 0.5f;		// Distance away from target before selecting a new one
@@ -18,13 +21,12 @@ public class GuardPatrol : MonoBehaviour
 	public float FOV = 90.0f;
 	public SphereCollider sphereCollider;
 	public bool isStanding = false;
+	public bool isLooking = false;
+	private int direction = 1;
 
 	[Header("Other")]
 	public IList<GameObject> Animals;
-
-	[Header("Debugging")]
-	public Vector3 LeftRay;
-	public Vector3 RightRay;
+	public GameManager gameManager;
 	
 	void Start ()
 	{
@@ -35,33 +37,57 @@ public class GuardPatrol : MonoBehaviour
 		// Create a list of animals
 		Animals = GameObject.FindGameObjectsWithTag("Animal").ToList();
 
+		// Get access to gamemanager
+		gameManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<GameManager>();
+
 		// Gain access to the navigation agent
 		agent = GetComponent<NavMeshAgent>();
 
 		// Access the sphere target
 		sphereCollider = GetComponent<SphereCollider>();
 		sphereCollider.radius = sightDistance;
-
-		// Set initial target
-		SetNextTarget();
 	}
 
 	void Update ()
 	{
+		if(!agent)
+			return;
+
 		// Stop once we reach our target
-		if (agent)
+		switch(guardType)
 		{
-			if(agent.remainingDistance == 0.0f && !isStanding)
-			{
-				// Flag we are standing
-				isStanding = true;
+			case GuardType.PATROL:
+				PatrolArea();
+				break;
 
-				// Allow to stand
-				StartCoroutine(Stand ());
-			}
+			case GuardType.LOOKOUT:
+				SearchArea();
+				break;
+
+			case GuardType.STAND:
+				// Nothing to do
+				break;
 		}
+	}
 
-		UpdateRays();
+	private void PatrolArea()
+	{
+		if(agent.remainingDistance == 0.0f && !isStanding)
+		{
+			// Flag we are standing
+			isStanding = true;
+			
+			// Allow to stand
+			StartCoroutine(Stand ());
+		}
+	}
+
+	private void SearchArea()
+	{
+		if(!isLooking)
+		{
+			StartCoroutine(Look());
+		}
 	}
 
 	void OnTriggerStay(Collider other)
@@ -73,10 +99,8 @@ public class GuardPatrol : MonoBehaviour
 		// See if we can see the object inside the radius
 		if(RaycastToTarget(other.gameObject))
 		{
-			Application.LoadLevel(Application.loadedLevel);
-			// Set target
-			//canSeePlayer = true;
-			//animalTarget = other.gameObject;
+			// Process game over
+			gameManager.DoGameOver();
 		}
 	}
 
@@ -106,17 +130,6 @@ public class GuardPatrol : MonoBehaviour
 
 		return false;
 	}
-		
-	private void UpdateRays()
-	{
-		LeftRay = Quaternion.AngleAxis(-45, Vector3.up) * transform.forward;
-		RightRay = Quaternion.AngleAxis(45, Vector3.up) * transform.forward;
-		
-		// Line of sight
-		Debug.DrawRay(transform.position, LeftRay * sightDistance);
-		Debug.DrawRay(transform.position, RightRay * sightDistance);
-		Debug.DrawRay(transform.position, transform.forward * sightDistance);
-	}
 	
 	private void SetNextTarget()
 	{
@@ -124,11 +137,10 @@ public class GuardPatrol : MonoBehaviour
 		if (Waypoints.Length == 0)
 			return;
 		
-		// Set the agent to go to the currently selected destination.
+		// Update destination
 		agent.destination = Waypoints[destPoint].transform.position;
 		
-		// Choose the next point in the array as the destination,
-		// cycling to the start if necessary.
+		// Choose next destination, wrapping if need be
 		destPoint = (destPoint + 1) % Waypoints.Length;
 	}
 
@@ -137,5 +149,29 @@ public class GuardPatrol : MonoBehaviour
 		yield return new WaitForSeconds(stopTime);
 		SetNextTarget();
 		isStanding = false;
+	}
+
+	private IEnumerator Look()
+	{
+		isLooking = true;
+		agent.Stop();
+
+		while(true)
+		{
+			direction = (direction * -1) + 1;
+
+			if(transform.rotation.eulerAngles.y == 0.0)
+			{
+				transform.Rotate(new Vector3(0, -90, 0));
+			}
+			else
+			{
+				transform.Rotate(new Vector3(0, 90, 0));
+			}
+			
+			yield return new WaitForSeconds(stopTime);
+			
+			yield return null;
+		}
 	}
 }
