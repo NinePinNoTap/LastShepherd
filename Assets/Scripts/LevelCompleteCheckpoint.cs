@@ -3,6 +3,7 @@ using System.Collections;
 
 public class LevelCompleteCheckpoint : MonoBehaviour
 {
+	public GameManager gameManager;
 	private bool isActivated = false;
 
 	void OnTriggerEnter()
@@ -11,14 +12,6 @@ public class LevelCompleteCheckpoint : MonoBehaviour
 			return;
 
 		isActivated = true;
-		HandleGameOver();
-	}
-
-	private void HandleGameOver()
-	{
-		// Do something 
-		Debug.Log ("You won!");
-
-		Application.Quit();
+		gameManager.DoGameComplete();
 	}
 }
