@@ -31,8 +31,16 @@ public class AnimalBehaviour : MonoBehaviour
 	
 	void FixedUpdate()
 	{
+
+		/*if (GetComponent<Rigidbody> ().velocity.y < -0.95f) 
+		{
+			GetComponent<Rigidbody>().velocity = new Vector3(0, GetComponent<Rigidbody>().velocity.y, 0);
+		}*/
+
 		// Update velocity
 		GetComponent<Rigidbody>().velocity = new Vector3(currentVelocity.x, GetComponent<Rigidbody>().velocity.y, currentVelocity.z);
+
+
 		
 		if(stackIndex > 0)
 		{
@@ -56,11 +64,23 @@ public class AnimalBehaviour : MonoBehaviour
 			{
 				if( (stackIndex==0) && hit.transform.gameObject.tag.Equals("Animal"))
 				{
-					AnimalStack oldStack = parentStack;
-					AnimalStack newStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
-					int newAnimalIndex = newStack.GetSize();
-					Vector3 newPos = newStack.Get(newStack.GetSize()-1).transform.position;
+					AnimalStack newStack = parentStack;
+					AnimalStack oldStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
+					int newAnimalIndex = 0;
+					Vector3 newPos = oldStack.Get(0).transform.position;
 					
+					for(int k=0; k<newStack.GetSize();k++)
+					{
+						Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(k), 0.0f);
+						newStack.Get(k).transform.position = temp;
+						newStack.Get(k).GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+						//newStack.Add(oldStack.Get(k));
+						//oldStack.Get(k).GetComponent<Rigidbody>().useGravity = false;
+						//oldStack.Get(k).GetComponent<AnimalBehaviour>().SetParentStack(newStack,(newStack.GetSize()-1));
+					}
+
+					newPos = newStack.Get(newStack.GetSize()-1).transform.position;
+
 					for(int k=0; k<oldStack.GetSize();k++)
 					{
 						Vector3 temp = newPos + new Vector3(0.0f, animalHeight*(k+1), 0.0f);

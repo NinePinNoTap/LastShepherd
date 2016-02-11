@@ -9,7 +9,8 @@ public class InputManager : MonoBehaviour
 	public ThrowManager throwManager;					// Access to throwing
 
 	[Header("Properties")]
-	public bool useXboxController = false;				// Flag for whether to use Xbox Controller input
+	public bool useXboxController = false;		// Flag for whether to use Xbox Controller input
+	public bool usePS4Controller = false;  // Flag for whether to use PS4 Controller input
 	private AnimalBehaviour controlledAnimal = null;	// Access to the current controlled animal
 	private int animalIndex;							// Tracker for current animal index
 
@@ -34,13 +35,27 @@ public class InputManager : MonoBehaviour
 	public string animalMoveX = "XBOX_THUMBSTICK_LX";
 	public string animalMoveY = "XBOX_THUMBSTICK_LY";
 
-	public KeyCode animalXboxKey1 = KeyCode.Joystick1Button0;
-	public KeyCode animalXboxKey2 = KeyCode.Joystick1Button1;
-	public KeyCode animalXboxKey3 = KeyCode.Joystick1Button2;
+	public KeyCode animalXboxKey1 = KeyCode.Joystick1Button1;
+	public KeyCode animalXboxKey2 = KeyCode.Joystick1Button2;
+	public KeyCode animalXboxKey3 = KeyCode.Joystick1Button0;
 	public KeyCode animalXboxKey4 = KeyCode.Joystick1Button3;
 
 	public KeyCode animalPreviousXboxKey = KeyCode.Joystick1Button4;
 	public KeyCode animalNextXboxKey = KeyCode.Joystick1Button5;
+
+	[Header("PS4 Keys")]
+	public string animalPS4MoveX = "PS4_THUMBSTICK_LX";
+	public string animalPS4MoveY = "PS4_THUMBSTICK_LY";
+	
+	public KeyCode animalPS4Key1 = KeyCode.Joystick1Button0;
+	public KeyCode animalPS4Key2 = KeyCode.Joystick1Button1;
+	public KeyCode animalPS4Key3 = KeyCode.Joystick1Button2;
+	public KeyCode animalPS4Key4 = KeyCode.Joystick1Button3;
+	
+	public KeyCode animalPreviousPS4Key = KeyCode.Joystick1Button4;
+	public KeyCode animalNextPS4Key = KeyCode.Joystick1Button5;
+
+
 	
 	void Start ()
 	{
@@ -67,9 +82,10 @@ public class InputManager : MonoBehaviour
 		}
 
 		// Handle input based on input type
-		if(useXboxController)
-		{
-			HandleXboxInput();
+		if (useXboxController) {
+			HandleXboxInput ();
+		} else if (usePS4Controller) {
+			HandlePS4Input();
 		}
 		else
 		{
@@ -93,6 +109,23 @@ public class InputManager : MonoBehaviour
 		HandleAnimalControllerMovement();
 	}
 
+	private void HandlePS4Input()
+	{
+		// Setting Animals
+		HandleAnimalSwitching(animalPS4Key1, 0); // X
+		HandleAnimalSwitching(animalPS4Key2, 1); // Circle
+		HandleAnimalSwitching(animalPS4Key3, 2); // Square
+		HandleAnimalSwitching(animalPS4Key4, 3); // Triangle
+		
+		// Switching between stacks
+		HandleAnimalSwitching(animalPreviousPS4Key, animalIndex-1); // LB
+		HandleAnimalSwitching(animalNextPS4Key, animalIndex+1); // RB
+		
+		// Moving Animals
+		HandleAnimalControllerMovement();
+	}
+
+
 	private void HandleKeyboardInput()
 	{
 		// Setting Animals
@@ -114,6 +147,8 @@ public class InputManager : MonoBehaviour
 		// Check to make sure we do want to switch
 		if(!Input.GetKeyDown(key))
 			return;
+
+		controlledAnimal.MoveStack(new Vector3(0,0,0));
 
 		// Change index
 		animalIndex = value;
@@ -177,7 +212,7 @@ public class InputManager : MonoBehaviour
 
 	private void HandleAnimalKeyboardInput()
 	{
-		if(throwManager.isThrowing)
+		if(false)
 		{
 			// Keyboard Moving
 			HandleAnimalKeyboardThrowing();
