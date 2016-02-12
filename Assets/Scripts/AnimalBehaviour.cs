@@ -63,8 +63,8 @@ public class AnimalBehaviour : MonoBehaviour
 		{
 			float x = animalHeight*0.5f * Mathf.Cos(((360.0f/13.0f)*i)*(Mathf.PI /180.0f));
 			float z = animalHeight*0.5f * Mathf.Sin(((360.0f/13.0f)*i)*(Mathf.PI /180.0f));
-			
-			if(Physics.Raycast(this.gameObject.transform.position, new Vector3(x,0.0f,z) , out hit, animalHeight*0.55f))
+
+			if(Physics.Raycast(this.gameObject.transform.position, new Vector3(x,0.0f,z), out hit, animalHeight * 0.55f))
 			{
 				if( (stackIndex==0) && hit.transform.gameObject.tag.Equals("Animal"))
 				{
