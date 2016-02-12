@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum AnimalColour { WHITE, GREEN, BLUE };
+
 public class AnimalBehaviour : MonoBehaviour 
 {
 	public bool isControllable;
@@ -14,6 +16,8 @@ public class AnimalBehaviour : MonoBehaviour
 	
 	public Vector3 currentVelocity;
 	public ObjectHighlighter objHighlighter;
+
+	public AnimalColour animalColour = AnimalColour.WHITE;
 	
 
 	void Awake () 
