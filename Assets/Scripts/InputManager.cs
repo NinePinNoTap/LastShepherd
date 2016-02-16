@@ -28,8 +28,8 @@ public class InputManager : MonoBehaviour
 	public KeyCode animalPreviousWinKey = KeyCode.O;
 	public KeyCode animalNextWinKey = KeyCode.P;
 
-	public KeyCode throwingWinKey = KeyCode.T;
-	public KeyCode throwWinKey = KeyCode.Y;
+	public KeyCode throwingWinKey = KeyCode.E;
+	public KeyCode throwWinKey = KeyCode.Space;
 
 	[Header("Xbox Keys")]
 	public string animalMoveX = "XBOX_THUMBSTICK_LX";
@@ -77,20 +77,17 @@ public class InputManager : MonoBehaviour
 
 	void Update ()
 	{
-		if(controlledAnimal == null)
-		{
-			controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
-		}
-
-		// Handle input based on input type
-		if (useXboxController) {
-			HandleXboxInput ();
-		} else if (usePS4Controller) {
-			HandlePS4Input();
-		}
-		else
-		{
-			HandleKeyboardInput();
+		if (controlledAnimal == null) {
+			controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+		} else {
+			// Handle input based on input type
+			if (useXboxController) {
+				HandleXboxInput ();
+			} else if (usePS4Controller) {
+				HandlePS4Input ();
+			} else {
+				HandleKeyboardInput ();
+			}
 		}
 	}
 
@@ -111,9 +108,6 @@ public class InputManager : MonoBehaviour
 		if (!throwingMode) {
 			// Moving Animals
 			HandleAnimalControllerMovement ();
-		} else {
-			// Throwing Animals
-			HandleAnimalControllerThrowing ();
 		}
 	}
 
@@ -128,9 +122,13 @@ public class InputManager : MonoBehaviour
 		// Switching between stacks
 		HandleAnimalSwitching(animalPreviousPS4Key, animalIndex-1); // LB
 		HandleAnimalSwitching(animalNextPS4Key, animalIndex+1); // RB
-		
-		// Moving Animals
-		HandleAnimalControllerMovement();
+
+		HandleModes ();
+
+		if (!throwingMode) {
+			// Moving Animals
+			HandleAnimalControllerMovement ();
+		}
 	}
 
 
@@ -218,15 +216,10 @@ public class InputManager : MonoBehaviour
 		}
 	}
 
-	private void HandleAnimalControllerThrowing ()
+	private void ControllerThrowCall ()
 	{
-		throwManager.HandleCannonRotation ();
-		
-		if (Input.GetKeyDown (KeyCode.JoystickButton0)) {
-			throwManager.CallThrow (controlledAnimal.GetAnimalAbove ());
-			throwingMode = false;
-			controlledAnimal = null;
-		}
+		throwManager.CallThrow (controlledAnimal.GetAnimalAbove (), true);
+		controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
 	}
 
 	private void HandleAnimalKeyboardMovement()
@@ -291,10 +284,10 @@ public class InputManager : MonoBehaviour
 			throwManager.RotateDown ();
 		}
 		
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			throwManager.CallThrow (controlledAnimal.GetAnimalAbove ());
+		if (Input.GetKeyDown (throwWinKey)) {
+			throwManager.CallThrow (controlledAnimal.GetAnimalAbove (), false);
 			throwingMode = false;
-			controlledAnimal = null;
+			controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
 		}
 	}
 
@@ -302,20 +295,42 @@ public class InputManager : MonoBehaviour
 	{
 		if (controlledAnimal.CanThrow ()) {
 			if (useXboxController) {
-				if (Input.GetAxis ("XBOX_RIGHT_TRIGGER") > 0.0f) {
+				if (Input.GetAxis ("XBOX_TRIGGER_R") > 0.0f) {
+					// Setup throwing mode
 					if (throwingMode == false) {
+						//Stop animal if moving
+						controlledAnimal.currentVelocity = Vector3.zero;
 						throwManager.ActivateThrowingMode (controlledAnimal);
 					}
+					throwManager.HandleCannonRotation ();
 					throwingMode = true;
 				} else {
+					// Trigger released - throw
 					if (throwingMode == true) {
-						throwManager.DeactivateThrowingMode ();
+						ControllerThrowCall ();
 					}
 					throwingMode = false;
 				}
 				
+			} else if(usePS4Controller){
+				if (Input.GetAxis ("PS4_TRIGGER_R") > 0.0f) {
+					// Setup throwing mode
+					if (throwingMode == false) {
+						//Stop animal if moving
+						controlledAnimal.currentVelocity = Vector3.zero;
+						throwManager.ActivateThrowingMode (controlledAnimal);
+					}
+					throwManager.HandleCannonRotation ();
+					throwingMode = true;
+				} else {
+					// Trigger released - throw
+					if (throwingMode == true) {
+						ControllerThrowCall ();
+					}
+					throwingMode = false;
+				}
 			} else {
-				if (Input.GetKeyDown (KeyCode.E)) {
+				if (Input.GetKeyDown (throwingWinKey)) {
 					throwingMode = !throwingMode;
 					
 					if (throwingMode) {

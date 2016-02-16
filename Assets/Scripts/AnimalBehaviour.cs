@@ -20,7 +20,8 @@ public class AnimalBehaviour : MonoBehaviour
 	public AnimalColour animalColour = AnimalColour.WHITE;
 
 	public bool beingThrown;
-	
+
+	public LayerMask layerMask;
 
 	void Awake () 
 	{
@@ -30,25 +31,22 @@ public class AnimalBehaviour : MonoBehaviour
 
 	void Update () 
 	{
+
+	}
+	
+	void FixedUpdate()
+	{
+
 		if(isControllable && !beingThrown)
 		{
 			HandleCollision();
 		}
 		
 		if (beingThrown) {
-			if(Grounded()){
+			if(IsGrounded()){
 				beingThrown = false;
 			}
 		}
-	}
-	
-	void FixedUpdate()
-	{
-
-		/*if (GetComponent<Rigidbody> ().velocity.y < -0.95f) 
-		{
-			GetComponent<Rigidbody>().velocity = new Vector3(0, GetComponent<Rigidbody>().velocity.y, 0);
-		}*/
 
 		if (!beingThrown) {
 			// Update velocity
@@ -190,11 +188,8 @@ public class AnimalBehaviour : MonoBehaviour
 		}
 	}
 
-	public bool Grounded(){
+	public bool IsGrounded(){
 		RaycastHit bottom;
-		
-		LayerMask layerMask = 1 << 10;
-		layerMask = ~layerMask;
 		
 		if (Physics.Raycast(this.gameObject.transform.position, -Vector3.up, out bottom, animalHeight*0.51f, layerMask)) {
 			if(GetComponent<Rigidbody>().velocity.y == 0){

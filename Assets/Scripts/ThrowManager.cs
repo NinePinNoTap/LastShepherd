@@ -8,6 +8,9 @@ public class ThrowManager : MonoBehaviour {
 	public GameObject cannon;							// "Cannon" to aim animals
 	//private Quaternion cannonRotation;
 
+	public float smallAngle = 20;
+	public float bigAngle = 35;
+
 	public GameObject animal;
 
 	private bool fire = false;
@@ -48,6 +51,7 @@ public class ThrowManager : MonoBehaviour {
 		animal.transform.position = trajectories.firingPoint.transform.position;
 		animal.SetActive (true);
 		animal.GetComponent<Rigidbody>().useGravity = true;
+		// Throws upwards?
 		animal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * trajectories.fireStrength * Time.deltaTime,ForceMode.Impulse);
 		
 		animal.GetComponent<AnimalBehaviour> ().beingThrown = true;
@@ -56,10 +60,11 @@ public class ThrowManager : MonoBehaviour {
 	}
 
 	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal){
-		cannon.transform.parent.gameObject.SetActive (true);
 		// Place cannon at animal and orient it properly
 		cannon.transform.position = controlledAnimal.transform.position;
 		cannon.transform.rotation = controlledAnimal.transform.rotation;
+		trajectories.SimulatePath ();
+		cannon.transform.parent.gameObject.SetActive (true);
 	}
 
 	public void DeactivateThrowingMode(){
@@ -83,9 +88,23 @@ public class ThrowManager : MonoBehaviour {
 		cannon.transform.Rotate (new Vector3 (1, 0, 0), Space.Self);
 	}
 
-	public void CallThrow(GameObject animalToThrow){
-		fire = true;
-		this.animal = animalToThrow;
+	public void CallThrow(GameObject animalToThrow, bool usingController){
+		if (usingController) {
+			float x = Input.GetAxis ("XBOX_THUMBSTICK_RX");
+			float y = Input.GetAxis ("XBOX_THUMBSTICK_RY");
+
+			// Check not aiming straight up - if so, don't throw
+			if (x != 0.0f && y != 0.0f) {
+				fire = true;
+				this.animal = animalToThrow;
+			}
+			else{
+				DeactivateThrowingMode();
+			}
+		} else {
+			fire = true;
+			this.animal = animalToThrow;
+		}
 	}
 	
 	public void HandleCannonRotation()
@@ -103,8 +122,6 @@ public class ThrowManager : MonoBehaviour {
 			// Distance of thumbstick away from centre
 			float thumbstickDistance = Mathf.Sqrt(Mathf.Pow(x,2)+Mathf.Pow(y,2));
 			
-			//Debug.Log (thumbstickDistance);
-			
 			SnappyRotation(thumbstickDistance, yAngle);
 			
 		} else {
@@ -118,13 +135,13 @@ public class ThrowManager : MonoBehaviour {
 		if (thumbstickDistance > 0.3f) {
 			// 1 block
 			if (thumbstickDistance < 0.6f) {
-				cannon.transform.rotation = Quaternion.Euler (20, yAngle, cannon.transform.rotation.eulerAngles.z);
-				Debug.Log ("1 block");
+				cannon.transform.rotation = Quaternion.Euler (smallAngle, yAngle, cannon.transform.rotation.eulerAngles.z);
+				//Debug.Log ("1 block");
 			}
 			// 2 blocks
 			else {
-				cannon.transform.rotation = Quaternion.Euler (40, yAngle, cannon.transform.rotation.eulerAngles.z);
-				Debug.Log ("2 blocks");
+				cannon.transform.rotation = Quaternion.Euler (bigAngle, yAngle, cannon.transform.rotation.eulerAngles.z);
+				//Debug.Log ("2 blocks");
 			}
 		}
 	}

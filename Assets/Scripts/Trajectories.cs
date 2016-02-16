@@ -40,7 +40,7 @@ public class Trajectories : MonoBehaviour
 	}
 
 	// Simulate the trajectory of a thrown animal
-	void SimulatePath()
+	public void SimulatePath()
 	{
 		Vector3[] segments = new Vector3[segmentCount];
 		

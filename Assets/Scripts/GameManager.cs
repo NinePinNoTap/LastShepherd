@@ -20,8 +20,9 @@ public class GameManager : MonoBehaviour
 
 	public void DoGameOver()
 	{
-		Debug.Log ("GAME COMPLETE");
-		//Application.LoadLevel(Application.loadedLevel);
+		Debug.Log ("GAME OVER");
+		// Reload level
+		Application.LoadLevel(Application.loadedLevel);
 	}
 }
 
