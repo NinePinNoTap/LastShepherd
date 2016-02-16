@@ -1,100 +1,131 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ThrowManager : MonoBehaviour
-{
-	[Header("Components")]
-	public StackManager stackManager;
-	public GameObject targetObj;
+public class ThrowManager : MonoBehaviour {
 
-	[Header("Properties")]
-	public bool isThrowing;
-	public float throwRadius = 3.0f;
-	public float moveSpeed = 3.0f;
+	public StackManager stacksManager;
+	public Trajectories trajectories;
+	public GameObject cannon;							// "Cannon" to aim animals
+	//private Quaternion cannonRotation;
 
-	void Start ()
-	{
-		Deactivate();
-	}
+	public GameObject animal;
 
-	void Update ()
-	{
-		if(!isThrowing)
-			return;
+	private bool fire = false;
 
-		targetObj.transform.Rotate(0, 3, 0);
 
-		// Could maybe put input here but would think thats the point of InputManager class
-	}
-
-	public void MoveTarget(Vector3 moveAmount)
-	{
-		// Calculate the position we are trying to move to
-		Vector3 newPos = targetObj.transform.position + (moveAmount * Time.deltaTime);
-
-		// Find a suitable position
-		FindSuitablePosition(ref newPos);
-
-		// Find a new suitable height
-		FindSuitableHeight(newPos);
+	// Use this for initialization
+	void Start () {
+	
 	}
 	
-	private void FindSuitablePosition(ref Vector3 position)
-	{
-		// Check the distance between our position 
-		float distance = Vector3.Distance(stackManager.currentAnimal.transform.position, position);
+	// Update is called once per frame
+	void Update () {
+	
+	}
+
+	void FixedUpdate(){
+		if (fire) {
+			TossAnimal();
+			fire = false;
+		}
+	}
+	
+	public void TossAnimal(){
+		AnimalStack oldStack = animal.GetComponent<AnimalBehaviour> ().parentStack;
+		AnimalStack newStack = new AnimalStack();
 		
-		// Check if its out of bounds
-		if(distance > throwRadius)
+		for(int i = stacksManager.animalIndex+1; i < oldStack.GetSize(); i++)
 		{
-			// We aren't okay so calculate a direction vector
-			Vector3 direction = (position - stackManager.currentAnimal.transform.position).normalized;
+			newStack.Add(oldStack.Get(i));
+			oldStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, (i-(stacksManager.animalIndex+1)));
+		}
+
+		oldStack.GetList ().RemoveRange(stacksManager.animalIndex+1, oldStack.GetSize()-(stacksManager.animalIndex+1));
+		stacksManager.levelStacks.Add(newStack);
+
+		stacksManager.UpdateSelectedAnimal (animal);
+
+		animal.transform.position = trajectories.firingPoint.transform.position;
+		animal.SetActive (true);
+		animal.GetComponent<Rigidbody>().useGravity = true;
+		animal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * trajectories.fireStrength * Time.deltaTime,ForceMode.Impulse);
+		
+		animal.GetComponent<AnimalBehaviour> ().beingThrown = true;
+
+		DeactivateThrowingMode ();
+	}
+
+	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal){
+		cannon.transform.parent.gameObject.SetActive (true);
+		// Place cannon at animal and orient it properly
+		cannon.transform.position = controlledAnimal.transform.position;
+		cannon.transform.rotation = controlledAnimal.transform.rotation;
+	}
+
+	public void DeactivateThrowingMode(){
+		cannon.transform.rotation = Quaternion.Euler (Vector3.zero);
+		cannon.transform.parent.gameObject.SetActive (false);
+	}
+
+	public void RotateRight(){
+		cannon.transform.Rotate (new Vector3 (0, 1, 0), Space.World);
+	}
+
+	public void RotateLeft(){
+		cannon.transform.Rotate (new Vector3 (0, -1, 0), Space.World);
+	}
+
+	public void RotateUp(){
+		cannon.transform.Rotate (new Vector3 (-1, 0, 0), Space.Self);
+	}
+
+	public void RotateDown(){
+		cannon.transform.Rotate (new Vector3 (1, 0, 0), Space.Self);
+	}
+
+	public void CallThrow(GameObject animalToThrow){
+		fire = true;
+		this.animal = animalToThrow;
+	}
+	
+	public void HandleCannonRotation()
+	{
+		float x = Input.GetAxis ("XBOX_THUMBSTICK_RX");
+		float y = Input.GetAxis ("XBOX_THUMBSTICK_RY");
+		
+		if (x != 0.0f || y != 0.0f) {
+			// Rotation around y-axis
+			float yAngle = Mathf.Atan2 (y, x) * Mathf.Rad2Deg + 45;
 			
-			// Calculate the next best position within the range
-			position = stackManager.currentAnimal.transform.position + (direction * throwRadius);
-		}
-
-		return;
+			// Rotate around y-axis only
+			cannon.transform.rotation = Quaternion.Euler (cannon.transform.rotation.eulerAngles.x, yAngle, cannon.transform.rotation.eulerAngles.z);
+			
+			// Distance of thumbstick away from centre
+			float thumbstickDistance = Mathf.Sqrt(Mathf.Pow(x,2)+Mathf.Pow(y,2));
+			
+			//Debug.Log (thumbstickDistance);
+			
+			SnappyRotation(thumbstickDistance, yAngle);
+			
+		} else {
+			// Aim straight up when thumbstick released
+			cannon.transform.rotation = Quaternion.Euler (0, cannon.transform.rotation.eulerAngles.y, cannon.transform.rotation.eulerAngles.z);
+		}	
 	}
 
-	private void FindSuitableHeight(Vector3 position)
-	{
-		//
-		// TODO--
-		// BASICALLY HERE WE WANT TO CHECK IF THE NEW POSITION IS SAFE (HAS GROUND BENEATH)
-		// IF NOT THEN WE WANT TO SLOWLY MOVE TOWARDS THE STACK UNTIL WE FIND GROUND
-		// THEN SET POSITION TO THAT 
-		//
-
-		RaycastHit hit;
-
-		// Find ground beneath
-		if(Physics.Raycast(new Vector3(position.x, 100.0f, position.z), -Vector3.up, out hit))
-		{
-			// Put the object above it
-			position.y = hit.point.y;
-		}
-		
-		// Set final position
-		targetObj.transform.position = position;
-	}
 	
-	public bool CheckThrow()
-	{
-		// Return if theres collision beneath
-		return Physics.Raycast(targetObj.transform.position, -Vector3.up);
-	}
-
-	public void Activate()
-	{
-		isThrowing = true;
-		targetObj.SetActive(true);
-		targetObj.transform.position = stackManager.currentAnimal.transform.position + (stackManager.currentAnimal.transform.forward * 2);
-	}
-
-	public void Deactivate()
-	{
-		isThrowing = false;
-		targetObj.SetActive(false);
+	void SnappyRotation(float thumbstickDistance, float yAngle){
+		if (thumbstickDistance > 0.3f) {
+			// 1 block
+			if (thumbstickDistance < 0.6f) {
+				cannon.transform.rotation = Quaternion.Euler (20, yAngle, cannon.transform.rotation.eulerAngles.z);
+				Debug.Log ("1 block");
+			}
+			// 2 blocks
+			else {
+				cannon.transform.rotation = Quaternion.Euler (40, yAngle, cannon.transform.rotation.eulerAngles.z);
+				Debug.Log ("2 blocks");
+			}
+		}
 	}
 }

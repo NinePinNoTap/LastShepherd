@@ -9,7 +9,7 @@ public class AnimalBehaviour : MonoBehaviour
 	public float moveSpeed = 1.5f;
 	public StackManager stacksManager;
 	
-	private AnimalStack parentStack;
+	public AnimalStack parentStack;
 	public int stackIndex;
 	
 	public float animalHeight = 1.0f;
@@ -18,18 +18,27 @@ public class AnimalBehaviour : MonoBehaviour
 	public ObjectHighlighter objHighlighter;
 
 	public AnimalColour animalColour = AnimalColour.WHITE;
+
+	public bool beingThrown;
 	
 
 	void Awake () 
 	{
 		isControllable = false;
+		beingThrown = false;
 	}
 
 	void Update () 
 	{
-		if(isControllable)
+		if(isControllable && !beingThrown)
 		{
 			HandleCollision();
+		}
+		
+		if (beingThrown) {
+			if(Grounded()){
+				beingThrown = false;
+			}
 		}
 	}
 	
@@ -41,9 +50,10 @@ public class AnimalBehaviour : MonoBehaviour
 			GetComponent<Rigidbody>().velocity = new Vector3(0, GetComponent<Rigidbody>().velocity.y, 0);
 		}*/
 
-		// Update velocity
-		GetComponent<Rigidbody>().velocity = new Vector3(currentVelocity.x, GetComponent<Rigidbody>().velocity.y, currentVelocity.z);
-
+		if (!beingThrown) {
+			// Update velocity
+			GetComponent<Rigidbody> ().velocity = new Vector3 (currentVelocity.x, GetComponent<Rigidbody> ().velocity.y, currentVelocity.z);
+		}
 
 		
 		if(stackIndex > 0)
@@ -179,6 +189,21 @@ public class AnimalBehaviour : MonoBehaviour
 			parentStack.Get(i).GetComponent<AnimalBehaviour>().Move(v);
 		}
 	}
+
+	public bool Grounded(){
+		RaycastHit bottom;
+		
+		LayerMask layerMask = 1 << 10;
+		layerMask = ~layerMask;
+		
+		if (Physics.Raycast(this.gameObject.transform.position, -Vector3.up, out bottom, animalHeight*0.51f, layerMask)) {
+			if(GetComponent<Rigidbody>().velocity.y == 0){
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	void Move(Vector3 v)
 	{
@@ -206,5 +231,27 @@ public class AnimalBehaviour : MonoBehaviour
 	{
 		parentStack = a;
 		stackIndex = i;	
+	}
+
+	// returns true if the animal has others above it in the stack
+	public bool CanThrow(){
+		int stackSize = parentStack.GetSize ();
+		
+		if (stackSize <= 1)
+			return false;
+		
+		if (stacksManager.animalIndex < stackSize - 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public GameObject GetAnimalAbove(){
+		if (CanThrow ()) {
+			return parentStack.Get (stacksManager.animalIndex + 1);
+		} else {
+			return null;
+		}
 	}
 }

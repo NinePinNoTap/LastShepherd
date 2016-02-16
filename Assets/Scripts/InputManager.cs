@@ -55,8 +55,9 @@ public class InputManager : MonoBehaviour
 	public KeyCode animalPreviousPS4Key = KeyCode.Joystick1Button4;
 	public KeyCode animalNextPS4Key = KeyCode.Joystick1Button5;
 
+	public bool throwingMode = false;
 
-	
+
 	void Start ()
 	{
 		// Manually find the stack manager if we didnt set it
@@ -105,8 +106,15 @@ public class InputManager : MonoBehaviour
 		HandleAnimalSwitching(animalPreviousXboxKey, animalIndex-1); // LB
 		HandleAnimalSwitching(animalNextXboxKey, animalIndex+1); // RB
 
-		// Moving Animals
-		HandleAnimalControllerMovement();
+		HandleModes ();
+
+		if (!throwingMode) {
+			// Moving Animals
+			HandleAnimalControllerMovement ();
+		} else {
+			// Throwing Animals
+			HandleAnimalControllerThrowing ();
+		}
 	}
 
 	private void HandlePS4Input()
@@ -138,8 +146,15 @@ public class InputManager : MonoBehaviour
 		HandleAnimalSwitching(animalPreviousWinKey, animalIndex-1);
 		HandleAnimalSwitching(animalNextWinKey, animalIndex+1);
 
-		// Moving and Throwing
-		HandleAnimalKeyboardInput();
+		HandleModes ();
+
+		if (!throwingMode) {
+			// Moving Animals
+			HandleAnimalKeyboardMovement ();
+		} else {
+			// Throwing Animals
+			HandleAnimalKeyboardThrowing ();
+		}
 	}
 
 	private void HandleAnimalSwitching(KeyCode key, int value)
@@ -165,6 +180,12 @@ public class InputManager : MonoBehaviour
 		// Update controlled animal
 		controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
 		controlledAnimal.Activate();
+
+		// Revert to movement mode upon animal change
+		if (throwingMode) {
+			throwingMode = false;
+			throwManager.DeactivateThrowingMode ();
+		}
 	}
 
 	private void HandleAnimalControllerMovement()
@@ -197,42 +218,14 @@ public class InputManager : MonoBehaviour
 		}
 	}
 
-	private void HandleAnimalControllerThrowing()
+	private void HandleAnimalControllerThrowing ()
 	{
-		float x = Input.GetAxis(animalMoveX) * throwManager.moveSpeed;
-		float y = Input.GetAxis(animalMoveY) * throwManager.moveSpeed;
-
-		Vector3 moveVelocity = new Vector3(x, 0, y);
-
-		if(moveVelocity.magnitude > 0)
-		{
-			throwManager.MoveTarget(moveVelocity);
-		}
-	}
-
-	private void HandleAnimalKeyboardInput()
-	{
-		if(false)
-		{
-			// Keyboard Moving
-			HandleAnimalKeyboardThrowing();
-
-			// Toggle throwing
-			if(Input.GetKeyDown(throwingWinKey))
-			{
-				throwManager.Deactivate();
-			}
-		}
-		else
-		{
-			// Keyboard Moving
-			HandleAnimalKeyboardMovement();
-
-			// Toggle throwing
-			if(Input.GetKeyDown(throwingWinKey))
-			{	
-				throwManager.Activate();
-			}
+		throwManager.HandleCannonRotation ();
+		
+		if (Input.GetKeyDown (KeyCode.JoystickButton0)) {
+			throwManager.CallThrow (controlledAnimal.GetAnimalAbove ());
+			throwingMode = false;
+			controlledAnimal = null;
 		}
 	}
 
@@ -283,46 +276,56 @@ public class InputManager : MonoBehaviour
 		}
 	}
 
-	private void HandleAnimalKeyboardThrowing()
+	public void HandleAnimalKeyboardThrowing ()
 	{
-		Vector3 moveVelocity = new Vector3(0,0,0);
-		float moveSpeed = throwManager.moveSpeed;
+		if (Input.GetKey (KeyCode.RightArrow)) {
+			throwManager.RotateLeft ();
+		}
+		if (Input.GetKey (KeyCode.LeftArrow)) {
+			throwManager.RotateRight ();
+		}
+		if (Input.GetKey (KeyCode.UpArrow)) {
+			throwManager.RotateUp ();
+		}
+		if (Input.GetKey (KeyCode.DownArrow)) {
+			throwManager.RotateDown ();
+		}
+		
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			throwManager.CallThrow (controlledAnimal.GetAnimalAbove ());
+			throwingMode = false;
+			controlledAnimal = null;
+		}
+	}
 
-		if(Input.GetKey(forwardWinKey))
-		{
-			moveVelocity += new Vector3(0,0,-moveSpeed);
-		}
-		if(Input.GetKey(backWinKey))
-		{
-			moveVelocity += new Vector3(0,0,moveSpeed);
-		}
-		if(Input.GetKey(leftWinKey))
-		{
-			moveVelocity += new Vector3(moveSpeed,0,0);
-		}
-		if(Input.GetKey(rightWinKey))
-		{
-			moveVelocity += new Vector3(-moveSpeed,0,0);
-		}
-
-		// Move target
-		if(moveVelocity.magnitude > 0)
-		{
-			throwManager.MoveTarget(moveVelocity);
-		}
-
-		// Throw
-		if(Input.GetKeyDown(throwWinKey))
-		{
-			// Throw
-			if(throwManager.CheckThrow())
-			{
-				Debug.Log ("CAN THROW!");
-			}
-			else
-			{
-				Debug.Log ("CANT THROW!");
+	private void HandleModes ()
+	{
+		if (controlledAnimal.CanThrow ()) {
+			if (useXboxController) {
+				if (Input.GetAxis ("XBOX_RIGHT_TRIGGER") > 0.0f) {
+					if (throwingMode == false) {
+						throwManager.ActivateThrowingMode (controlledAnimal);
+					}
+					throwingMode = true;
+				} else {
+					if (throwingMode == true) {
+						throwManager.DeactivateThrowingMode ();
+					}
+					throwingMode = false;
+				}
+				
+			} else {
+				if (Input.GetKeyDown (KeyCode.E)) {
+					throwingMode = !throwingMode;
+					
+					if (throwingMode) {
+						throwManager.ActivateThrowingMode (controlledAnimal);
+					} else {
+						throwManager.DeactivateThrowingMode ();
+					}
+				}
 			}
 		}
 	}
+
 }
