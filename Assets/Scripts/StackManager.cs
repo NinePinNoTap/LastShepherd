@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using System.Linq;
 using Helper;
 
+public enum MergePosition { TOP, BOTTOM };
+
 public class StackManager : MonoBehaviour
 {
 	public List<GameObject> gameAnimals;		// List of animals in the game
@@ -13,6 +15,7 @@ public class StackManager : MonoBehaviour
 	public int animalIndex;						// Current animal in the current stack we are working with
 	public AnimalStack currentStack;			// Access to the current stack
 	public GameObject currentAnimal;			// Access to the current animal
+	public float animalHeight = 1.0f;
 
 	void Awake ()
 	{
@@ -26,6 +29,9 @@ public class StackManager : MonoBehaviour
 		InitialiseStacks();
 	}
 
+	//
+	// Create a list of stacks with each animal in its own stack
+	//
 	private void InitialiseStacks()
 	{
 		// Create stacks of each animal
@@ -51,6 +57,9 @@ public class StackManager : MonoBehaviour
 		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
 	}
 
+	//
+	// Update selection to a particular animal
+	//
 	public void UpdateSelectedAnimal(GameObject animal)
 	{
 		// Deactivate the previous animal
@@ -74,5 +83,82 @@ public class StackManager : MonoBehaviour
 
 		// Activate the new animal
 		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
+	}
+
+	public void SplitStack(AnimalStack oldStack, int index, Vector3 moveDirection)
+	{
+		AnimalStack newStack = new AnimalStack();
+
+		// Transfer the stack
+		newStack.GetList().AddRange( oldStack.GetList().GetRange(index, oldStack.GetSize() - index) );
+
+		// Update stack
+		for(int i = 0; i < newStack.GetSize(); i++)
+		{
+			// Move animals in direction
+			newStack.Get(i).transform.position = newStack.Get (i).transform.position + moveDirection*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
+
+			// Update parent and index
+			newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
+		}
+
+		// Enable base animal
+		newStack.Get(0).GetComponent<Rigidbody>().useGravity = true;
+
+		// Remove animals from previous stack
+		oldStack.GetList ().RemoveRange(animalIndex, oldStack.GetSize()-animalIndex);
+
+		// Add new stack to the list
+		levelStacks.Add(newStack);
+
+		// Refresh selection
+		UpdateSelectedAnimal(newStack.Get(0));
+	}
+
+	//
+	// Merges a stack into the current one 
+	// StackA represents the one we want to merge into ours
+	// StackB represents our current stack
+	// pos represents how we want to merge
+	//
+	public void MergeStack(AnimalStack stackA, AnimalStack stackB, MergePosition pos)
+	{
+		AnimalStack newStack = new AnimalStack();
+		Vector3 basePos = stackA.Get(0).transform.position;
+
+		// Define the order to merge stacks
+		switch(pos)
+		{
+			// Places the current stack on top of the new one (i.e. we should use this for walking into a stack)
+			case MergePosition.TOP:
+				newStack.GetList().AddRange(stackB.GetList());
+				newStack.GetList().AddRange(stackA.GetList());
+					break;
+
+			// Places the current stack beneath the new one (i.e. we should use this for falling ontop of the stack)
+			case MergePosition.BOTTOM:
+				newStack.GetList().AddRange(stackA.GetList());
+				newStack.GetList().AddRange(stackB.GetList());
+					break;
+		}
+
+		// Refresh stack
+		for(int i = 0; i < newStack.GetSize(); i++)
+		{
+			// Refresh position
+			newStack.Get(i).transform.position = basePos + new Vector3(0, animalHeight * i, 0);
+			newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
+			newStack.Get(i).GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+		}
+
+		// Remove the old stacks
+		levelStacks.Remove(stackA);
+		levelStacks.Remove(stackB);
+
+		// Add the new one
+		levelStacks.Add(newStack);
+
+		// Refresh selections
+		UpdateSelectedAnimal(currentAnimal);
 	}
 }
