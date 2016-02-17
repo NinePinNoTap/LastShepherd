@@ -59,7 +59,8 @@ public class ThrowManager : MonoBehaviour {
 		DeactivateThrowingMode ();
 	}
 
-	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal){
+	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal)
+    {
 		// Place cannon at animal and orient it properly
 		cannon.transform.position = controlledAnimal.transform.position;
 		cannon.transform.rotation = controlledAnimal.transform.rotation;
@@ -71,6 +72,11 @@ public class ThrowManager : MonoBehaviour {
 		cannon.transform.rotation = Quaternion.Euler (Vector3.zero);
 		cannon.transform.parent.gameObject.SetActive (false);
 	}
+
+    public void Rotate(Vector3 rot)
+    {
+        cannon.transform.Rotate( rot, Space.World );
+    }
 
 	public void RotateRight(){
 		cannon.transform.Rotate (new Vector3 (0, 1, 0), Space.World);

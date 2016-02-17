@@ -8,6 +8,10 @@ public class PenguinBehaviour : AnimalBehaviour
 
 	void Start ()
     {
+        if(!stackManager)
+        {
+            stackManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<StackManager>();
+        }
     }
 	
 	// Update is called once per frame
@@ -18,12 +22,12 @@ public class PenguinBehaviour : AnimalBehaviour
 
     void FixedUpdate()
     {
-        // Call parent fixed update
-        base.FixedUpdate();
-
+        // Check if we are moving so we can stop if need be
         if(isMoving)
         {
             RaycastHit hit;
+
+            // Raycast forward to see if we need to stop
             if(Physics.Raycast(transform.position, GetComponent<Rigidbody>().velocity.normalized, out hit, 0.52f + (moveSpeed * Time.deltaTime)))
             {
                 if(hit.transform.tag.Equals("Wall"))
@@ -34,10 +38,15 @@ public class PenguinBehaviour : AnimalBehaviour
                 }
                 else if(hit.transform.tag.Equals("Animal"))
                 {
-                    // DO SOMETHING HERE
+                    Debug.Log("Hit animal");
+                    isMoving = false;
+                    //GetComponent<Rigidbody>().velocity = currentVelocity = new Vector3(0,0,0);
                 }
             }
         }
+
+        // Call parent fixed update
+        base.FixedUpdate();
     }
 
     public override void MoveAnimal(Vector3 direction)
@@ -58,7 +67,7 @@ public class PenguinBehaviour : AnimalBehaviour
         }
         else
         {
-            stacksManager.SplitStack(parentStack, stacksManager.animalIndex, direction);
+            stackManager.SplitStack(parentStack, stackManager.animalIndex, direction);
         }
 
         isMoving = true;

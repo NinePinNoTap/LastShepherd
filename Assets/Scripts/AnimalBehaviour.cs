@@ -12,7 +12,7 @@ public class AnimalBehaviour : MonoBehaviour
 {
     public bool isControllable;
     public float moveSpeed = 5.0f;
-    public StackManager stacksManager;
+    public StackManager stackManager;
     public AnimalStack parentStack;
     public int stackIndex;
     public float animalHeight = 1.0f;
@@ -28,12 +28,20 @@ public class AnimalBehaviour : MonoBehaviour
         beingThrown = false;
     }
 
+    void Start()
+    {
+        if(!stackManager)
+        {
+            stackManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<StackManager>();
+        }
+    }
+
     void Update()
     {
 
     }
     
-   protected void FixedUpdate()
+   protected virtual void FixedUpdate()
     {
         if (beingThrown)
         {
@@ -81,8 +89,9 @@ public class AnimalBehaviour : MonoBehaviour
                 {
                     AnimalStack colliderStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
 
-                    stacksManager.MergeStack(colliderStack, parentStack, MergePosition.TOP);
-                } else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile"))
+                    stackManager.MergeStack(colliderStack, parentStack, MergePosition.TOP);
+                }
+                else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile"))
                 {
                     Vector3 start = hit.transform.position;
                     //start.y += animalHeight*0.5f;
@@ -109,7 +118,7 @@ public class AnimalBehaviour : MonoBehaviour
                 {
                     AnimalStack colliderStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
 
-                    stacksManager.MergeStack(colliderStack, parentStack, MergePosition.BOTTOM);
+                    stackManager.MergeStack(colliderStack, parentStack, MergePosition.BOTTOM);
                 }
             }
         }       
@@ -123,7 +132,7 @@ public class AnimalBehaviour : MonoBehaviour
         }
         else
         {
-            stacksManager.SplitStack(parentStack, stacksManager.animalIndex, direction);
+            stackManager.SplitStack(parentStack, stackManager.animalIndex, direction);
         }
     }
 
@@ -182,7 +191,7 @@ public class AnimalBehaviour : MonoBehaviour
         if (stackSize <= 1)
             return false;
         
-        if (stacksManager.animalIndex < stackSize - 1)
+        if (stackManager.animalIndex < stackSize - 1)
         {
             return true;
         } else
@@ -195,7 +204,7 @@ public class AnimalBehaviour : MonoBehaviour
     {
         if (CanThrow())
         {
-            return parentStack.Get(stacksManager.animalIndex + 1);
+            return parentStack.Get(stackManager.animalIndex + 1);
         }
         else
         {

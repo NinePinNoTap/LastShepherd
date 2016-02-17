@@ -154,11 +154,8 @@ public class InputManager : MonoBehaviour
         HandleInputDirection(leftWinKey, ref moveVelocity, Vector3.right, Override);
         HandleInputDirection(rightWinKey, ref moveVelocity, -Vector3.right, Override);
 
-        // Only process if we have actually changed
-        if(!moveVelocity.Equals(Vector3.zero))
-        {
-            controlledAnimal.MoveAnimal(moveVelocity);
-        }
+        // Process movement
+        controlledAnimal.MoveAnimal(moveVelocity);
     }
 
     public void HandleAnimalKeyboardThrowing()
@@ -228,11 +225,8 @@ public class InputManager : MonoBehaviour
         HandleInputDirection(animalMoveX, ref moveVelocity, Vector3.right, Override);
         HandleInputDirection(animalMoveY, ref moveVelocity, Vector3.forward, Override);
 
-        // Only process if we have actually changed
-        if(!moveVelocity.Equals(Vector3.zero))
-        {
-            controlledAnimal.MoveAnimal(moveVelocity);
-        }
+        // Process movement
+        controlledAnimal.MoveAnimal(moveVelocity);
     }
 
     //==============================================================================
@@ -296,7 +290,7 @@ public class InputManager : MonoBehaviour
     
     public void HandleInputDirection(KeyCode key, ref Vector3 vector, Vector3 value, bool Override)
     {
-        if(!Input.GetKeyDown(key))
+        if(!Input.GetKey(key))
         {
             return;
         }
