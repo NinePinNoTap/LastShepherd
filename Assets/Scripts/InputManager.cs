@@ -142,52 +142,29 @@ public class InputManager : MonoBehaviour
     
     private void HandleAnimalKeyboardMovement()
     {
+        // Reset movement velocity
         Vector3 moveVelocity = new Vector3(0, 0, 0);
-        
-        if (controlledAnimal.stackIndex == 0)
+
+        // Check if we should override the move direction
+        bool Override = controlledAnimal.stackIndex > 0;
+
+        // Handle input
+        HandleInputDirection(forwardWinKey, ref moveVelocity, -Vector3.forward, Override);
+        HandleInputDirection(backWinKey, ref moveVelocity, Vector3.forward, Override);
+        HandleInputDirection(leftWinKey, ref moveVelocity, Vector3.right, Override);
+        HandleInputDirection(rightWinKey, ref moveVelocity, -Vector3.right, Override);
+
+        // Only process if we have actually changed
+        if(!moveVelocity.Equals(Vector3.zero))
         {
-            if (Input.GetKey(forwardWinKey))
-            {
-                moveVelocity += new Vector3(0, 0, -1);
-            }
-            if (Input.GetKey(backWinKey))
-            {
-                moveVelocity += new Vector3(0, 0, 1);
-            }
-            if (Input.GetKey(leftWinKey))
-            {
-                moveVelocity += new Vector3(1, 0, 0);
-            }
-            if (Input.GetKey(rightWinKey))
-            {
-                moveVelocity += new Vector3(-1, 0, 0);
-            }
-            
             controlledAnimal.MoveAnimal(moveVelocity);
-        }
-        else
-        {
-            if (Input.GetKeyDown(forwardWinKey))
-            {
-                controlledAnimal.MoveAnimal(new Vector3(0, 0, -1));
-            }
-            else if (Input.GetKeyDown(backWinKey))
-            {
-                controlledAnimal.MoveAnimal(new Vector3(0, 0, 1)); 
-            }
-            else if (Input.GetKeyDown(leftWinKey))
-            {
-                controlledAnimal.MoveAnimal(new Vector3(1, 0, 0));
-            }
-            else if (Input.GetKeyDown(rightWinKey))
-            {
-                controlledAnimal.MoveAnimal(new Vector3(-1, 0, 0));
-            }
         }
     }
 
     public void HandleAnimalKeyboardThrowing()
     {
+        // THIS CAN BE RESTRUCTURED USING NEW FUNCTION
+
         if (Input.GetKey(KeyCode.RightArrow))
         {
             throwManager.RotateLeft();
@@ -241,31 +218,20 @@ public class InputManager : MonoBehaviour
 
     private void HandleAnimalPS4Movement()
     {
-        if (controlledAnimal.stackIndex == 0)
+        // Default move velocity
+        Vector3 moveVelocity = new Vector3(0,0,0);
+
+        // Check if its a single movemement we want or not
+        bool Override = controlledAnimal.stackIndex > 0;
+
+        // Check input
+        HandleInputDirection(animalMoveX, ref moveVelocity, Vector3.right, Override);
+        HandleInputDirection(animalMoveY, ref moveVelocity, Vector3.forward, Override);
+
+        // Only process if we have actually changed
+        if(!moveVelocity.Equals(Vector3.zero))
         {
-            float x = Input.GetAxis(animalMoveX);
-            float y = Input.GetAxis(animalMoveY);
-            
-            controlledAnimal.MoveAnimal(new Vector3(x, 0, y));
-        }
-        else
-        {
-            if (Input.GetAxis(animalMoveY) > 0)
-            {
-                controlledAnimal.MoveAnimal(new Vector3(0, 0, 1));
-            }
-            else if (Input.GetAxis(animalMoveY) < 0)
-            {
-                controlledAnimal.MoveAnimal(new Vector3(0, 0, -1));    
-            }
-            else if (Input.GetAxis(animalMoveX) < 0)
-            {
-                controlledAnimal.MoveAnimal(new Vector3(-1, 0, 0));
-            }
-            else if (Input.GetAxis(animalMoveX) > 0)
-            {
-                controlledAnimal.MoveAnimal(new Vector3(1, 0, 0));
-            }
+            controlledAnimal.MoveAnimal(moveVelocity);
         }
     }
 
@@ -325,6 +291,50 @@ public class InputManager : MonoBehaviour
                     throwManager.DeactivateThrowingMode();
                 }
             }
+        }
+    }
+    
+    public void HandleInputDirection(KeyCode key, ref Vector3 vector, Vector3 value, bool Override)
+    {
+        if(!Input.GetKeyDown(key))
+        {
+            return;
+        }
+        
+        // Check if we want to override
+        if(Override)
+        {
+            // Reset 
+            vector = new Vector3(0,0,0);
+        }
+        
+        // Increase vector values
+        vector += value;
+    }
+    
+    public void HandleInputDirection(string key, ref Vector3 vector, Vector3 value, bool Override)
+    {
+        if(Input.GetAxis(key) == 0)
+        {
+            return;
+        }
+        
+        // Check if we want to override
+        if(Override)
+        {
+            // Reset 
+            vector = new Vector3(0,0,0);
+        }
+
+        if(Input.GetAxis(key) > 0)
+        {
+            // Increase vector values
+            vector += value;
+        }
+        else if(Input.GetAxis(key) < 0)
+        {
+            // Increase vector values
+            vector -= value;
         }
     }
 }

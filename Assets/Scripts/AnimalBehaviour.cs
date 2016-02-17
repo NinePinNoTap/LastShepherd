@@ -33,7 +33,7 @@ public class AnimalBehaviour : MonoBehaviour
 
     }
     
-    void FixedUpdate()
+   protected void FixedUpdate()
     {
         if (beingThrown)
         {
@@ -65,7 +65,7 @@ public class AnimalBehaviour : MonoBehaviour
     //
     // THIS NEEDS TO BE FIXED .. SHOULD NOT BE RAYCASTING 13 TIMES
     //
-    private void HandleCollision()
+    protected void HandleCollision()
     {
         RaycastHit hit;
         RaycastHit hit2;
@@ -115,7 +115,7 @@ public class AnimalBehaviour : MonoBehaviour
         }       
     }
 
-    public void MoveAnimal(Vector3 direction)
+    public virtual void MoveAnimal(Vector3 direction)
     {
         if (stackIndex == 0)
         {
