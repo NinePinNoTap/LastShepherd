@@ -30,6 +30,7 @@ public class AnimalBehaviour : MonoBehaviour
     public bool isControllable;
     public float disableMoveDuration = 0.5f;
     public bool canMove;
+	public bool isMoving;
     public float moveSpeed = 5.0f;
     public Vector3 currentVelocity;
 
@@ -39,6 +40,7 @@ public class AnimalBehaviour : MonoBehaviour
         beingThrown = false;
         canMerge = true;
         canMove = true;
+		isMoving = false;
     }
 
     void Start()
@@ -56,21 +58,26 @@ public class AnimalBehaviour : MonoBehaviour
     
     protected virtual void FixedUpdate()
     {
-        if (IsGrounded())
+		if (IsGrounded() && beingThrown)
         {
             beingThrown = false;
         }
 
         if (!beingThrown)
         {
-            if (isControllable)
+			if (isControllable && isMoving)
             {
                 HandleCollision();
             }
 
             // Update velocity
-            GetComponent<Rigidbody>().velocity = new Vector3(currentVelocity.x, GetComponent<Rigidbody>().velocity.y, currentVelocity.z);
+			GetComponent<Rigidbody>().velocity = new Vector3(currentVelocity.x, GetComponent<Rigidbody>().velocity.y, currentVelocity.z);
+
+			// Check if we are moving
+			isMoving = CheckMoving();
         }
+
+
 
         // Force position
         if (stackIndex > 0)
@@ -266,6 +273,12 @@ public class AnimalBehaviour : MonoBehaviour
             return false;
         }
     }
+
+	protected bool CheckMoving()
+	{
+		// Return true if either x/z velocity is not 0
+		return (GetComponent<Rigidbody>().velocity.x != 0) || (GetComponent<Rigidbody>().velocity.z != 0);
+	}
     
     public GameObject GetAnimalAbove()
     {
