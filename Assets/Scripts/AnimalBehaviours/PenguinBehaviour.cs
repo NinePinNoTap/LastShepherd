@@ -40,7 +40,6 @@ public class PenguinBehaviour : AnimalBehaviour
                 {
                     Debug.Log("Hit animal");
                     isMoving = false;
-                    //GetComponent<Rigidbody>().velocity = currentVelocity = new Vector3(0,0,0);
                 }
             }
         }
@@ -51,6 +50,9 @@ public class PenguinBehaviour : AnimalBehaviour
 
     public override void MoveAnimal(Vector3 direction)
     {
+        if(!canMove)
+            return;
+
         if(isMoving)
         {
             return;
@@ -64,12 +66,16 @@ public class PenguinBehaviour : AnimalBehaviour
         if (stackIndex == 0)
         {
             currentVelocity = direction * moveSpeed;
+            isMoving = true;
         }
         else
         {
-            stackManager.SplitStack(parentStack, stackManager.animalIndex, direction);
-        }
+            stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction);
 
-        isMoving = true;
+            if(canMerge)
+            {
+                StartCoroutine(DisableMerge());
+            }
+        }
     }
 }

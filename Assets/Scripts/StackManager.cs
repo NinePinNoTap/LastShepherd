@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using Helper;
 
-public enum MergePosition { TOP, BOTTOM };
+public enum ExecutePosition { TOP, BOTTOM };
 
 public class StackManager : MonoBehaviour
 {
@@ -85,34 +85,71 @@ public class StackManager : MonoBehaviour
 		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
 	}
 
-	public void SplitStack(AnimalStack oldStack, int index, Vector3 moveDirection)
+    //
+    // Splits a stack, adding everything from the index upwards into its own stack
+    // pos represents how we want to split
+    // Top represents stepping of a stack
+    // Bottom represents gecko stepping out beneath stack
+    //
+	public void SplitStack(AnimalStack oldStack, int index, ExecutePosition pos, Vector3 moveDirection)
 	{
 		AnimalStack newStack = new AnimalStack();
 
-		// Transfer the stack
-		newStack.GetList().AddRange( oldStack.GetList().GetRange(index, oldStack.GetSize() - index) );
+        if(pos.Equals(ExecutePosition.TOP))
+        {
+            // Add animals to new stack and remove from old
+            newStack.GetList().AddRange( oldStack.GetList().GetRange(index, oldStack.GetSize() - index) );
+            oldStack.GetList ().RemoveRange(animalIndex, oldStack.GetSize()-animalIndex);
 
-		// Update stack
-		for(int i = 0; i < newStack.GetSize(); i++)
-		{
-			// Move animals in direction
-			newStack.Get(i).transform.position = newStack.Get (i).transform.position + moveDirection*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
+            // Update stack
+            for(int i = 0; i < newStack.GetSize(); i++)
+            {
+                // Move animals in direction
+                newStack.Get(i).transform.position = newStack.Get (i).transform.position + moveDirection*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
+                
+                // Update parent and index
+                newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
+            }
+            
+            // Enable base animal
+            newStack.Get(0).GetComponent<Rigidbody>().useGravity = true;
+            
+            // Refresh selection
+            UpdateSelectedAnimal(newStack.Get(0));
+        }
+        else if(pos.Equals(ExecutePosition.BOTTOM))
+        {
+            Vector3 basePos = oldStack.Get(0).transform.position;
 
-			// Update parent and index
-			newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
-		}
+            // Add gecko to the new stack
+            newStack.GetList().AddRange( oldStack.GetList().GetRange(0, index));
 
-		// Enable base animal
-		newStack.Get(0).GetComponent<Rigidbody>().useGravity = true;
+            // Remove gecko from the old stack
+            oldStack.GetList().RemoveRange(0, index);
 
-		// Remove animals from previous stack
-		oldStack.GetList ().RemoveRange(animalIndex, oldStack.GetSize()-animalIndex);
+            // Reposition the old stack
+            for(int i = 0; i < oldStack.GetSize(); i++)
+            {
+                // Move animals in direction
+                oldStack.Get(i).transform.position = basePos + new Vector3(0.0f, animalHeight*i,0.0f);
+
+                // Refresh index
+                oldStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(oldStack, i);
+            }
+
+            // Reposition the new stack
+            for(int i = 0; i < newStack.GetSize(); i++)
+            {
+                // Move animals in direction
+                newStack.Get(i).transform.position = basePos + moveDirection*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
+                
+                // Refresh index
+                newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
+            }
+        }
 
 		// Add new stack to the list
 		levelStacks.Add(newStack);
-
-		// Refresh selection
-		UpdateSelectedAnimal(newStack.Get(0));
 	}
 
 	//
@@ -121,7 +158,7 @@ public class StackManager : MonoBehaviour
 	// StackB represents our current stack
 	// pos represents how we want to merge
 	//
-	public void MergeStack(AnimalStack stackA, AnimalStack stackB, MergePosition pos)
+    public void MergeStack(AnimalStack stackA, AnimalStack stackB, ExecutePosition pos)
 	{
 		AnimalStack newStack = new AnimalStack();
 		Vector3 basePos = stackA.Get(0).transform.position;
@@ -130,13 +167,13 @@ public class StackManager : MonoBehaviour
 		switch(pos)
 		{
 			// Places the current stack on top of the new one (i.e. we should use this for walking into a stack)
-			case MergePosition.TOP:
+            case ExecutePosition.TOP:
 				newStack.GetList().AddRange(stackB.GetList());
 				newStack.GetList().AddRange(stackA.GetList());
 					break;
 
 			// Places the current stack beneath the new one (i.e. we should use this for falling ontop of the stack)
-			case MergePosition.BOTTOM:
+            case ExecutePosition.BOTTOM:
 				newStack.GetList().AddRange(stackA.GetList());
 				newStack.GetList().AddRange(stackB.GetList());
 					break;

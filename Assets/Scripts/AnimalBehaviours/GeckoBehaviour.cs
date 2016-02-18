@@ -53,17 +53,35 @@ public class GeckoBehaviour : AnimalBehaviour
             currentVelocity = Vector3.zero;
             return;
         }
-
+        
         // Allow to be moved
         GetComponent<Rigidbody>().isKinematic = false;
 
+        if(!canMove)
+            return;
+
+        // Check what its doing
         if (stackIndex == 0)
         {
+            // Check if there are others in the stack above
+            if(parentStack.GetSize() > 1)
+            {
+                stackManager.SplitStack(parentStack, 1, ExecutePosition.BOTTOM, direction * moveSpeed * Time.deltaTime);
+                if(canMerge)
+                {
+                    StartCoroutine(DisableMerge());
+                }
+            }
             HandleGeckoMovement(direction);
         }
         else
         {
-            stackManager.SplitStack(parentStack, stackManager.animalIndex, direction);
+            stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction * moveSpeed * Time.deltaTime);
+
+            if(canMerge)
+            {
+                StartCoroutine(DisableMerge());
+            }
         }
     }
 

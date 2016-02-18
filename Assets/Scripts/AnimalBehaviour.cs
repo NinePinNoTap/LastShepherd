@@ -10,22 +10,35 @@ public enum AnimalColour
 
 public class AnimalBehaviour : MonoBehaviour
 {
-    public bool isControllable;
-    public float moveSpeed = 5.0f;
+    [Header("Components")]
     public StackManager stackManager;
     public AnimalStack parentStack;
     public int stackIndex;
-    public float animalHeight = 1.0f;
-    public Vector3 currentVelocity;
+    public LayerMask layerMask;
     public ObjectHighlighter objHighlighter;
+
+    [Header("Properties")]
     public AnimalColour animalColour = AnimalColour.WHITE;
     public bool beingThrown;
-    public LayerMask layerMask;
+
+    [Header("Stack Merging")]
+    public float disableMergeDuration = 1.0f;
+    public bool canMerge;
+    public float animalHeight = 1.0f;
+
+    [Header("Movement")]
+    public bool isControllable;
+    public float disableMoveDuration = 0.5f;
+    public bool canMove;
+    public float moveSpeed = 5.0f;
+    public Vector3 currentVelocity;
 
     void Awake()
     {
         isControllable = false;
         beingThrown = false;
+        canMerge = true;
+        canMove = true;
     }
 
     void Start()
@@ -41,16 +54,14 @@ public class AnimalBehaviour : MonoBehaviour
 
     }
     
-   protected virtual void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
-        if (beingThrown)
+        if (IsGrounded())
         {
-            if (IsGrounded())
-            {
-                beingThrown = false;
-            }
+            beingThrown = false;
         }
-        else
+
+        if (!beingThrown)
         {
             if (isControllable)
             {
@@ -70,6 +81,11 @@ public class AnimalBehaviour : MonoBehaviour
         }
     }
 
+    
+    //===========================================================================
+    // COLLISION AND MERGING
+    //===========================================================================
+
     //
     // THIS NEEDS TO BE FIXED .. SHOULD NOT BE RAYCASTING 13 TIMES
     //
@@ -78,6 +94,7 @@ public class AnimalBehaviour : MonoBehaviour
         RaycastHit hit;
         RaycastHit hit2;
         RaycastHit bottom;
+
         for (int i = 0; i< 13; i++)
         {
             float x = animalHeight * 0.5f * Mathf.Cos(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
@@ -85,13 +102,15 @@ public class AnimalBehaviour : MonoBehaviour
 
             if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, 0.0f, z), out hit, animalHeight * 0.55f))
             {
-                if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Animal"))
+                if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Animal") && canMerge)
                 {
                     AnimalStack colliderStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
 
-                    stackManager.MergeStack(colliderStack, parentStack, MergePosition.TOP);
+                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
+
+                    StartCoroutine(DisableMovement());
                 }
-                else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile"))
+                else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile") && canMove)
                 {
                     Vector3 start = hit.transform.position;
                     //start.y += animalHeight*0.5f;
@@ -100,7 +119,6 @@ public class AnimalBehaviour : MonoBehaviour
                     {
                         if ((hit.transform.gameObject != hit2.transform.gameObject) && (hit2.transform.gameObject.tag.Equals("Tile")))
                         {
-                            Debug.Log("HI");
                             continue;
                         }
                     }
@@ -109,30 +127,49 @@ public class AnimalBehaviour : MonoBehaviour
                     {
                         parentStack.Get(j).transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight * (j + 1), 0.0f));
                     }
+
+                    StartCoroutine(DisableMovement());
                 }
                 
                 return;
-            } else if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, z, 0.0f), out bottom, animalHeight * 0.55f))
+            }
+            else if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, z, 0.0f), out bottom, animalHeight * 0.55f))
             {
                 if ((stackIndex == 0) && bottom.transform.gameObject.tag.Equals("Animal") && !(parentStack.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack())))
                 {
                     AnimalStack colliderStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
 
-                    stackManager.MergeStack(colliderStack, parentStack, MergePosition.BOTTOM);
+                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
                 }
             }
         }       
     }
 
+    //===========================================================================
+    // MOVEMENT
+    //===========================================================================
+
     public virtual void MoveAnimal(Vector3 direction)
     {
+        if(!canMove)
+            return;
+
+        // Check what position we are in the stack
         if (stackIndex == 0)
         {
+            // Move normally
             currentVelocity = direction * moveSpeed;
         }
         else
         {
-            stackManager.SplitStack(parentStack, stackManager.animalIndex, direction);
+            // Split the stack
+            stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction);
+
+            // Start a cooldown so we dont auto merge again
+            if(canMerge)
+            {
+                StartCoroutine(DisableMerge());
+            }
         }
     }
 
@@ -143,6 +180,10 @@ public class AnimalBehaviour : MonoBehaviour
             obj.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
         }
     }
+
+    //===========================================================================
+    // CHECKS
+    //===========================================================================
 
     public bool IsGrounded()
     {
@@ -158,7 +199,11 @@ public class AnimalBehaviour : MonoBehaviour
         
         return false;
     }
-    
+
+    //===========================================================================
+    // ANIMAL CONTROL
+    //===========================================================================
+
     public void Activate()
     {
         isControllable = true;
@@ -173,6 +218,28 @@ public class AnimalBehaviour : MonoBehaviour
         GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
     }
     
+    protected IEnumerator DisableMerge()
+    {
+        canMerge = false;
+        
+        yield return new WaitForSeconds(disableMergeDuration);
+        
+        canMerge = true;
+    }
+
+    protected IEnumerator DisableMovement()
+    {
+        canMove = false;
+
+        yield return new WaitForSeconds(disableMoveDuration);
+
+        canMove = true;
+    }
+
+    //===========================================================================
+    // GETTERS
+    //===========================================================================
+
     public AnimalStack GetParentStack()
     {
         return parentStack;
