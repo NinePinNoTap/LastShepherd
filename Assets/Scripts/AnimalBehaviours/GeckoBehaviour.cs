@@ -38,7 +38,7 @@ public class GeckoBehaviour : AnimalBehaviour
                 }
                 
                 // Update velocity
-                GetComponent<Rigidbody>().velocity = currentVelocity;
+                rigidBody.velocity = currentVelocity;
             }
         }
         else
@@ -66,6 +66,7 @@ public class GeckoBehaviour : AnimalBehaviour
             {
                 // Animal is above another so just force its position
                 transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
+                rigidBody.velocity = Vector3.zero;
             }
         }
     }
@@ -75,7 +76,7 @@ public class GeckoBehaviour : AnimalBehaviour
         if(direction.Equals(Vector3.zero))
         {
             // Don't allow to be moved so it can act as a platform
-            GetComponent<Rigidbody>().isKinematic = true;
+            rigidBody.isKinematic = true;
 
             // Remove velocity
             currentVelocity = Vector3.zero;
@@ -83,7 +84,7 @@ public class GeckoBehaviour : AnimalBehaviour
         }
         
         // Allow to be moved
-        GetComponent<Rigidbody>().isKinematic = false;
+        rigidBody.isKinematic = false;
 
         if(!canMove)
             return;
@@ -129,7 +130,7 @@ public class GeckoBehaviour : AnimalBehaviour
                 currentVelocity *= moveSpeed;
                 
                 // Disable gravity so we can climb walls
-                GetComponent<Rigidbody>().useGravity = false;
+                rigidBody.useGravity = false;
 
                 // Flag we are on the wall
                 onWall = true;
