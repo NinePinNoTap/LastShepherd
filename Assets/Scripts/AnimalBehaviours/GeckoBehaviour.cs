@@ -6,39 +6,67 @@ public class GeckoBehaviour : AnimalBehaviour
     [Header("Gecko Behaviour")]
     public bool onWall = false;
 
-    void Start()
-    {
-        if(!stackManager)
-        {
-            stackManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<StackManager>();
-        }
-    }
-
     void FixedUpdate()
     {
-        if (IsGrounded())
+        // Check if we are on the ground
+        GroundCheck();
+        
+        // Check if we are moving
+        MovingCheck();
+
+        // Check if we are grounded
+        if (isGrounded)
         {
-            beingThrown = false;
+            // Unflag we are on the wall
             onWall = false;
+
+            // Unflag we are being thrown
+            beingThrown = false;
         }
 
-        if(!beingThrown)
+        // Check if the animal is being controlled
+        if(isControllable)
         {
-            if (isControllable)
+            // Check if we can move
+            if(canMove && !beingThrown)
             {
-                HandleCollision();
+                // Check if we are moving
+                if(isMoving)
+                {
+                    // Update velocity
+                    GetComponent<Rigidbody>().velocity = currentVelocity;
+                    
+                    // Handle collisions with tiles and animals
+                    HandleCollision();
+                }
             }
-            
-            // Update velocity
-            GetComponent<Rigidbody>().velocity = currentVelocity;
         }
-
-        // Force position
-        if (stackIndex > 0)
+        else
         {
-            Vector3 correctedPosition = parentStack.Get(0).gameObject.transform.position;
-            correctedPosition.y += stackIndex * animalHeight;
-            transform.position = correctedPosition;
+            // Check if we are at the bottom of the stack
+            if(stackIndex == 0)
+            {
+                // If the animal is on the ground but has gravity enabled
+                if(isGrounded)
+                {
+                    // Disable gravity
+                    rigidBody.useGravity = false;
+                }
+                else
+                {
+                    // Make sure we aren't on a wall
+                    if(!onWall)
+                    {
+                        // Enable gravity
+                        rigidBody.useGravity = true;
+                    }
+                }
+            }
+            else
+            {
+                // Animal is above another so just force its position
+                transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
+            }
         }
     }
 

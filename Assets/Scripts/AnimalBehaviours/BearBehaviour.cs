@@ -9,8 +9,16 @@ public class BearBehaviour : AnimalBehaviour
 
     void Start()
     {
+        // Call parent start function
+        base.Start();
+
         // Create a sphere for the attack range
         sphereCollider.radius = attackRange;
+    }
+
+    void FixedUpdate()
+    {
+        base.FixedUpdate();
     }
 	
     void OnTriggerEnter(Collider col)

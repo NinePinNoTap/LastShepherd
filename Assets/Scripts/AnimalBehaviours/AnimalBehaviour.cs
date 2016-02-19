@@ -16,75 +16,111 @@ public class AnimalBehaviour : MonoBehaviour
     public int stackIndex;
     public LayerMask layerMask;
     public ObjectHighlighter objHighlighter;
+    public Rigidbody rigidBody;
 
-    [Header("Properties")]
+    [Header("Game Mechanics")]
     public AnimalColour animalColour = AnimalColour.WHITE;
+
+    [Header("Stacking and Merging")]
+    public float disableMergeDuration = 1.0f;
+    public float animalHeight = 1.0f;
+    public Vector3 stackLocalPosition;
+
+    [Header("Flags")]
+    public bool isControllable;
+    public bool isMoving;
+    public bool isGrounded;
+    public bool canMerge;
+    public bool canMove;
     public bool beingThrown;
 
-    [Header("Stack Merging")]
-    public float disableMergeDuration = 1.0f;
-    public bool canMerge;
-    public float animalHeight = 1.0f;
-
     [Header("Movement")]
-    public bool isControllable;
     public float disableMoveDuration = 0.5f;
-    public bool canMove;
-	public bool isMoving;
     public float moveSpeed = 5.0f;
     public Vector3 currentVelocity;
 
-    void Awake()
+    protected void Awake()
     {
         isControllable = false;
-        beingThrown = false;
+        isMoving = false;
+        isGrounded = false;
         canMerge = true;
         canMove = true;
-		isMoving = false;
+        beingThrown = false;
     }
 
-    void Start()
+    protected void Start()
     {
+        // Ensure we have access to the stack manager
         if(!stackManager)
         {
             stackManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<StackManager>();
         }
+
+        // Ensure we have access to the rigidbody
+        if(!rigidBody)
+        {
+            rigidBody = GetComponent<Rigidbody>();
+        }
     }
 
-    void Update()
-    {
-
-    }
-    
     protected virtual void FixedUpdate()
     {
-		if (IsGrounded() && beingThrown)
+        // Check if we are on the ground
+        GroundCheck();
+
+        // Check if we are moving
+        MovingCheck();
+
+        // Check if we were in throwing state
+		if (isGrounded && beingThrown)
         {
+            // Flag we aren't being thrown anymore
             beingThrown = false;
+
+            Debug.Log("Can be thrown again!");
         }
 
-        if (!beingThrown)
+        // Check if we are controllable
+        if(isControllable)
         {
-			if (isControllable && isMoving)
+            // Check if we can move
+            if(canMove && !beingThrown)
             {
-                HandleCollision();
+                // Check if we are moving
+                if(isMoving)
+                {
+                    // Handle collisions with tiles and animals
+                    HandleCollision();
+
+                    Debug.Log("COLLISIONS!");
+                }
+                
+                // Update the rigidbody velocity
+                rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
             }
-
-            // Update velocity
-			GetComponent<Rigidbody>().velocity = new Vector3(currentVelocity.x, GetComponent<Rigidbody>().velocity.y, currentVelocity.z);
-
-			// Check if we are moving
-			isMoving = CheckMoving();
         }
-
-
-
-        // Force position
-        if (stackIndex > 0)
+        else
         {
-            Vector3 correctedPosition = parentStack.Get(0).gameObject.transform.position;
-            correctedPosition.y += stackIndex * animalHeight;
-            transform.position = correctedPosition;
+            // Check if we are at the bottom of the stack
+            if(stackIndex == 0)
+            {
+                // If the animal is on the ground but has gravity enabled
+                if(isGrounded)
+                {
+                    // Disable gravity
+                    rigidBody.useGravity = false;
+                }
+                else
+                {
+                    rigidBody.useGravity = true;
+                }
+            }
+            else
+            {
+                // Animal is above another so just force its position
+                transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
+            }
         }
     }
 
@@ -116,11 +152,12 @@ public class AnimalBehaviour : MonoBehaviour
                     stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
 
                     StartCoroutine(DisableMovement());
+
+                    Debug.Log("MERGED!");
                 }
                 else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile") && canMove)
                 {
                     Vector3 start = hit.transform.position;
-                    //start.y += animalHeight*0.5f;
                     
                     if (Physics.Raycast(start, Vector3.up, out hit2, animalHeight))
                     {
@@ -192,19 +229,33 @@ public class AnimalBehaviour : MonoBehaviour
     // CHECKS
     //===========================================================================
 
-    public bool IsGrounded()
+    protected void GroundCheck()
     {
-        RaycastHit bottom;
+        RaycastHit hit;
         
-        if (Physics.Raycast(this.gameObject.transform.position, -Vector3.up, out bottom, animalHeight * 0.51f, layerMask))
+        if (Physics.Raycast(transform.position, -Vector3.up, out hit, animalHeight * 0.51f, layerMask))
         {
-            if (GetComponent<Rigidbody>().velocity.y == 0)
-            {
-                return true;
-            }
+            isGrounded = true;
         }
-        
-        return false;
+        else
+        {
+            isGrounded = false;
+        }
+    }
+    
+    protected void MovingCheck()
+    {
+        // Return true if either x/z velocity is not 0
+        if(rigidBody.velocity.x == 0 && rigidBody.velocity.z == 0)
+        {
+            // We are stationary
+            isMoving = false;
+        }
+        else
+        {
+            // We are moving
+            isMoving = true;
+        }
     }
 
     //===========================================================================
@@ -213,16 +264,23 @@ public class AnimalBehaviour : MonoBehaviour
 
     public void Activate()
     {
+        // Default flags
         isControllable = true;
+        canMove = true;
+        isMoving = false;
+
+        // Highlight
         objHighlighter.Toggle(true);
-        GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
+
+        // Reset movement velocity
+        rigidBody.velocity = new Vector3(0,0,0);
     }
     
     public void Deactivate()
     {
         isControllable = false;
         objHighlighter.Toggle(false);
-        GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
+        rigidBody.velocity = new Vector3(0,0,0);
     }
     
     protected IEnumerator DisableMerge()
@@ -256,6 +314,9 @@ public class AnimalBehaviour : MonoBehaviour
     {
         parentStack = a;
         stackIndex = i; 
+
+        // Calculate position in stack
+        stackLocalPosition = new Vector3(0, i * animalHeight, 0);
     }
 
     public bool CanThrow()
@@ -273,12 +334,6 @@ public class AnimalBehaviour : MonoBehaviour
             return false;
         }
     }
-
-	protected bool CheckMoving()
-	{
-		// Return true if either x/z velocity is not 0
-		return (GetComponent<Rigidbody>().velocity.x != 0) || (GetComponent<Rigidbody>().velocity.z != 0);
-	}
     
     public GameObject GetAnimalAbove()
     {
