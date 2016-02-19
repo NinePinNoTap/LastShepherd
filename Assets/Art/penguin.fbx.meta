@@ -42,6 +42,28 @@ ModelImporter:
     100068: transform7
     100070: transform8
     100072: transform9
+    100074: bottom_beek
+    100076: eye_left
+    100078: eye_right
+    100080: hair
+    100082: hair1
+    100084: knot
+    100086: mask
+    100088: Penguin1
+    100090: Penguin2
+    100092: penguin_body
+    100094: ski_feet_left
+    100096: ski_feet_right
+    100098: tail
+    100100: tail_knot
+    100102: tail_knot1
+    100104: top_beek
+    100106: transform2
+    100108: transform3
+    100110: transform4
+    100112: transform5
+    100114: wing_left
+    100116: wing_right
     400000: pCone1
     400002: pCone2
     400004: pCone3
@@ -79,9 +101,34 @@ ModelImporter:
     400068: transform7
     400070: transform8
     400072: transform9
+    400074: bottom_beek
+    400076: eye_left
+    400078: eye_right
+    400080: hair
+    400082: hair1
+    400084: knot
+    400086: mask
+    400088: Penguin1
+    400090: Penguin2
+    400092: penguin_body
+    400094: ski_feet_left
+    400096: ski_feet_right
+    400098: tail
+    400100: tail_knot
+    400102: tail_knot1
+    400104: top_beek
+    400106: transform2
+    400108: transform3
+    400110: transform4
+    400112: transform5
+    400114: wing_left
+    400116: wing_right
     2300000: penguin1
+    2300002: Penguin2
     3300000: penguin1
+    3300002: Penguin2
     4300000: penguin1
+    4300002: Penguin2
   materials:
     importMaterials: 1
     materialName: 0
