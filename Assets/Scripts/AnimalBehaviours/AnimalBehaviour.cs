@@ -92,8 +92,6 @@ public class AnimalBehaviour : MonoBehaviour
                 {
                     // Handle collisions with tiles and animals
                     HandleCollision();
-
-                    Debug.Log("COLLISIONS!");
                 }
                 
                 // Update the rigidbody velocity

@@ -32,13 +32,13 @@ public class GeckoBehaviour : AnimalBehaviour
             {
                 // Check if we are moving
                 if(isMoving)
-                {
-                    // Update velocity
-                    GetComponent<Rigidbody>().velocity = currentVelocity;
-                    
+                {                    
                     // Handle collisions with tiles and animals
                     HandleCollision();
                 }
+                
+                // Update velocity
+                GetComponent<Rigidbody>().velocity = currentVelocity;
             }
         }
         else
@@ -104,6 +104,7 @@ public class GeckoBehaviour : AnimalBehaviour
         }
         else
         {
+            Debug.Log("MOVE GECKO!");
             stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction * moveSpeed * Time.deltaTime);
 
             if(canMerge)

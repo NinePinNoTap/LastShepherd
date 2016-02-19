@@ -26,21 +26,45 @@ public class PenguinBehaviour : AnimalBehaviour
             RaycastHit hit;
 
             // Raycast forward to see if we need to stop
-            if(Physics.Raycast(transform.position, rigidBody.velocity.normalized, out hit, 0.55f, 1 << LayerMask.NameToLayer("Animal")))
+            if(Physics.Raycast(transform.position, rigidBody.velocity.normalized, out hit, 0.55f))
             {
                 // Stop moving
                 isMoving = false;
                 rigidBody.velocity = currentVelocity = new Vector3(0,0,0);
 
-                // We need to bump the stack
-                BumpStack(hit.transform.gameObject);
-                
-                Debug.Log("Hit animal");
+                if(hit.transform.tag == "Animal")
+                {
+                    Debug.Log("Hit animal");
+
+                    // We need to bump the stack
+                    BumpStack(hit.transform.gameObject);
+                }
             }
         }
-        
+
         // Update the rigidbody velocity
         rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
+
+        // Check if we are at the bottom of the stack
+        if(stackIndex == 0)
+        {
+            // If the animal is on the ground but has gravity enabled
+            if(isGrounded)
+            {
+                // Disable gravity
+                rigidBody.useGravity = false;
+            }
+            else
+            {
+                // Enable gravity
+                rigidBody.useGravity = true;
+            }
+        }
+        else
+        {
+            // Animal is above another so just force its position
+            transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
+        }
     }
 
     public override void MoveAnimal(Vector3 direction)
@@ -70,6 +94,8 @@ public class PenguinBehaviour : AnimalBehaviour
         {
             // Step off the stack
             stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction);
+
+            currentVelocity = Vector3.zero;
 
             // Disable merging again
             if(canMerge)
