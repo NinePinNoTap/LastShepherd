@@ -181,7 +181,7 @@ public class InputManager : MonoBehaviour
         
         if (Input.GetKeyDown(throwWinKey))
         {
-            throwManager.CallThrow(controlledAnimal.GetAnimalAbove(), false);
+            throwManager.CallThrow(controlledAnimal.gameObject, false);
             throwingMode = false;
             controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
         }
@@ -233,11 +233,13 @@ public class InputManager : MonoBehaviour
     // Throwing Input
     //==============================================================================
 
-    private void ControllerThrowCall()
-    {
-        throwManager.CallThrow(controlledAnimal.GetAnimalAbove(), true);
-        controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
-    }
+	private void ControllerThrowCall ()
+	{
+		if (throwManager.CallThrow (controlledAnimal.gameObject, true)) {
+			// If throw was successful - change controlled animal
+			controlledAnimal = controlledAnimal.GetAnimalAbove ().GetComponent<AnimalBehaviour> ();
+		}
+	}
 
     private void HandleModes()
     {

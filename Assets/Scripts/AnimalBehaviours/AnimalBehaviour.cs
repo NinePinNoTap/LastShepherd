@@ -326,7 +326,11 @@ public class AnimalBehaviour : MonoBehaviour
         
         if (stackManager.animalIndex < stackSize - 1)
         {
-            return true;
+			// Check animal is not falling
+			if(Mathf.Abs(GetComponent<Rigidbody>().velocity.y)<0.1f){
+				return true;
+			}
+			else return false;
         } else
         {
             return false;

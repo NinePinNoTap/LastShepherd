@@ -1,14 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ThrowManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\AnimalBehaviours\AnimalBehaviour.cs">
     <Files>
-      <File FileName="Assets\Scripts\InputManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\AnimalBehaviour.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ThrowManager.cs" Line="70" Column="39" />
-      <File FileName="Assets\Scripts\ObjectHighlighter.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GuardPatrol.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Trajectories.cs" Line="30" Column="2" />
+      <File FileName="Assets\Scripts\AnimalBehaviours\AnimalBehaviour.cs" Line="249" Column="33" />
+      <File FileName="Assets\Scripts\Misc\Trajectories.cs" Line="16" Column="33" />
+      <File FileName="Assets\Scripts\Managers\ThrowManager.cs" Line="24" Column="21" />
+      <File FileName="Assets\Scripts\Managers\InputManager.cs" Line="179" Column="39" />
+      <File FileName="Assets\Scripts\Managers\StackManager.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

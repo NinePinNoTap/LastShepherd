@@ -4,7 +4,7 @@ public class Trajectories : MonoBehaviour
 {
 	// LineRenderer to display the trajectory's path
 	public LineRenderer trajectoryPath;
-
+	
 	public float fireStrength = 25;
 	public Color nextColor = Color.red;
 	
@@ -15,19 +15,19 @@ public class Trajectories : MonoBehaviour
 	
 	// Length for each line segment
 	public float segmentLength;
-
+	
 	// Place from which animals are thrown from
 	public GameObject firingPoint;
 	
 	// closest GameObject hit by trajectory curve
 	private Collider _hitObject;
 	public Collider hitObject { get { return _hitObject; } }
-
+	
 	public LayerMask layerMask;
-
+	
 	// Light to shine upon targeted surface
 	public Light spotlight;
-
+	
 	void Awake()
 	{
 		// Determine length of segments in trajectory curve
@@ -38,7 +38,7 @@ public class Trajectories : MonoBehaviour
 	{
 		SimulatePath();
 	}
-
+	
 	// Simulate the trajectory of a thrown animal
 	public void SimulatePath()
 	{
@@ -82,21 +82,6 @@ public class Trajectories : MonoBehaviour
 				spotlight.transform.position = segments[spotlightIndex];
 				
 				spotlight.transform.LookAt(segments[i]);
-				
-				
-				/* Uncomment to simulate bouncing
-				// correct ending velocity, since we didn't actually travel an entire segment
-				segVelocity = segVelocity - Physics.gravity * (segmentScale - hit.distance) / segVelocity.magnitude;
-				// flip the velocity to simulate a bounce
-				segVelocity = Vector3.Reflect(segVelocity, hit.normal);
-				*/
-				
-				/*
-				 * Here you could check if the object hit by the Raycast had some property - was 
-				 * sticky, would cause the ball to explode, or was another ball in the air for 
-				 * instance. You could then end the simulation by setting all further points to 
-				 * this last point and then breaking this for loop.
-				 */
 			}
 			// If our raycast hit no objects, then set the next position to the last one plus v*t
 			else
