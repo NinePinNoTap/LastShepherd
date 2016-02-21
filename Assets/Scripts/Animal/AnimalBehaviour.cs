@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum AnimalColour
+public enum AnimalSpecies
 {
-    WHITE,
-    GREEN,
-    BLUE
+    NONE,
+    BEAR,
+    GECKO,
+    PENGUIN,
+    TURTLE
 };
 
 public class AnimalBehaviour : MonoBehaviour
@@ -19,7 +21,7 @@ public class AnimalBehaviour : MonoBehaviour
     public Rigidbody rigidBody;
 
     [Header("Game Mechanics")]
-    public AnimalColour animalColour = AnimalColour.WHITE;
+    public AnimalSpecies animalSpecies = AnimalSpecies.NONE;
 
     [Header("Stacking and Merging")]
     public float disableMergeDuration = 1.0f;
@@ -97,6 +99,17 @@ public class AnimalBehaviour : MonoBehaviour
                 // Update the rigidbody velocity
                 rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
             }
+
+			// If the animal is on the ground but has gravity enabled
+			if(isGrounded)
+			{
+				// Disable gravity
+				rigidBody.useGravity = false;
+			}
+			else
+			{
+				rigidBody.useGravity = true;
+			}
         }
         else
         {
@@ -204,6 +217,12 @@ public class AnimalBehaviour : MonoBehaviour
         }
         else
         {
+			// Make sure we have a direction before splitting
+			if(direction.Equals(Vector3.zero))
+			{
+				return;
+			}
+
             // Split the stack
             stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction);
 
@@ -230,7 +249,15 @@ public class AnimalBehaviour : MonoBehaviour
     protected void GroundCheck()
     {
         RaycastHit hit;
-        
+
+        // We will never be grounded if we are being throw upwards
+        if(rigidBody.velocity.y >= 0.0f && beingThrown)
+        {
+            isGrounded = false;
+            return;
+        }
+
+        // Raycast downwards (ignoring NPC/PC) and see if we hit ground
         if (Physics.Raycast(transform.position, -Vector3.up, out hit, animalHeight * 0.51f, layerMask))
         {
             isGrounded = true;

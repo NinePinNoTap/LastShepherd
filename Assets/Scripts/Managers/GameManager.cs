@@ -24,5 +24,10 @@ public class GameManager : MonoBehaviour
 		// Reload level
 		Application.LoadLevel(Application.loadedLevel);
 	}
+
+	public void DoNextLevel(string sceneName)
+	{
+		LoadingScreenManager.LoadScene(sceneName);
+	}
 }
 

@@ -21,6 +21,8 @@ public class StackManager : MonoBehaviour
 	{
 		// Get a list of animals in the level (DEPRECIATED IF WE HAVE A SET ORDER)
 		gameAnimals = GameObject.FindGameObjectsWithTag("Animal").ToList();
+
+		gameAnimals = gameAnimals.OrderBy(animal => animal.name).ToList();
 	}
 
 	void Start()
@@ -105,7 +107,7 @@ public class StackManager : MonoBehaviour
             for(int i = 0; i < newStack.GetSize(); i++)
             {
                 // Move animals in direction
-                newStack.Get(i).transform.position = newStack.Get (i).transform.position + moveDirection*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
+				newStack.Get(i).transform.position = newStack.Get (i).transform.position + moveDirection*1.1f*animalHeight;// + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
                 
                 // Update parent and index
                 newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
@@ -141,7 +143,7 @@ public class StackManager : MonoBehaviour
             for(int i = 0; i < newStack.GetSize(); i++)
             {
                 // Move animals in direction
-                newStack.Get(i).transform.position = basePos + moveDirection*1.1f*animalHeight + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
+				newStack.Get(i).transform.position = basePos + moveDirection*1.1f*animalHeight;// + new Vector3(0.0f, -animalHeight*animalIndex,0.0f);
                 
                 // Refresh index
                 newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);

@@ -3,7 +3,7 @@ guid: 4ed6dc80dfbba8b43a84a3a16b126f53
 timeCreated: 1455641791
 licenseType: Free
 ModelImporter:
-  serializedVersion: 18
+  serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
     100002: pCube1
@@ -345,6 +345,14 @@ ModelImporter:
     100674: Teal1
     100676: Teal2
     100678: Teal_Button
+    100680: Climbable_Pink1
+    100682: Climbable_Pink2
+    100684: Climbable_Teal1
+    100686: Climbable_Teal2
+    100688: Floor1
+    100690: Floor2
+    100692: Floor3
+    100694: Game_Complete
     400000: //RootNode
     400002: pCube1
     400004: pCube10
@@ -685,6 +693,14 @@ ModelImporter:
     400674: Teal1
     400676: Teal2
     400678: Teal_Button
+    400680: Climbable_Pink1
+    400682: Climbable_Pink2
+    400684: Climbable_Teal1
+    400686: Climbable_Teal2
+    400688: Floor1
+    400690: Floor2
+    400692: Floor3
+    400694: Game_Complete
     2300000: pCube1
     2300002: pCube10
     2300004: pCube100
@@ -818,6 +834,14 @@ ModelImporter:
     2300260: Teal1
     2300262: Teal2
     2300264: Teal_Button
+    2300266: Climbable_Pink1
+    2300268: Climbable_Pink2
+    2300270: Climbable_Teal1
+    2300272: Climbable_Teal2
+    2300274: Floor1
+    2300276: Floor2
+    2300278: Floor3
+    2300280: Game_Complete
     3300000: pCube1
     3300002: pCube10
     3300004: pCube100
@@ -951,6 +975,14 @@ ModelImporter:
     3300260: Teal1
     3300262: Teal2
     3300264: Teal_Button
+    3300266: Climbable_Pink1
+    3300268: Climbable_Pink2
+    3300270: Climbable_Teal1
+    3300272: Climbable_Teal2
+    3300274: Floor1
+    3300276: Floor2
+    3300278: Floor3
+    3300280: Game_Complete
     4300000: pCube1
     4300002: pCube2
     4300004: pCube3
@@ -1084,6 +1116,32 @@ ModelImporter:
     4300260: Pink
     4300262: Grey3
     4300264: Pink2
+    4300266: Game_Complete
+    4300268: Floor1
+    4300270: Floor3
+    4300272: Floor2
+    4300274: Climbable_Teal1
+    4300276: Climbable_Teal2
+    4300278: Climbable_Pink1
+    4300280: Climbable_Pink2
+    6400000: Blue_Square
+    6400002: Brown_Wide
+    6400004: Climbable_Pink1
+    6400006: Climbable_Pink2
+    6400008: Climbable_Teal1
+    6400010: Climbable_Teal2
+    6400012: Floor1
+    6400014: Floor2
+    6400016: Floor3
+    6400018: Game_Complete
+    6400020: Green_Square
+    6400022: Green_Wide
+    6400024: Pink
+    6400026: Pink2
+    6400028: Pink_Button
+    6400030: Teal1
+    6400032: Teal2
+    6400034: Teal_Button
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -1092,6 +1150,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    resampleRotations: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -1099,9 +1158,9 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 1
-    animationRotationError: .5
-    animationPositionError: .5
-    animationScaleError: .5
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     clipAnimations: []
@@ -1110,7 +1169,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -1125,24 +1184,25 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
     normalImportMode: 0
-    tangentImportMode: 1
-  importAnimation: 1
+    tangentImportMode: 4
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     human: []
     skeleton: []
-    armTwist: .5
-    foreArmTwist: .5
-    upperLegTwist: .5
-    legTwist: .5
-    armStretch: .0500000007
-    legStretch: .0500000007
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

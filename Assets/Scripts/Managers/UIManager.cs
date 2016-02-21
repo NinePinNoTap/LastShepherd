@@ -16,11 +16,12 @@ public class UIManager : MonoBehaviour
 
 	[Header("Portaits UI Properties")]
 	public StackManager stackManager;			// Access to the stack manager
-	public GameObject[] animalPortaits;				// List of Images for portait foreground
+	public GameObject[] animalPortaits;			// List of Images for portait foreground
+	public Color normalColor = Color.black;		// Outline normal colour
+	public Color highlightColor = Color.white;	// Outline highlighted colour
 
 	void Start ()
 	{
-		InitialisePortaits();
 		InitialiseTimer();
 	}
 
@@ -32,14 +33,6 @@ public class UIManager : MonoBehaviour
 	//========================================================================================
 	// PORTAITS
 	//========================================================================================
-	private void InitialisePortaits()
-	{
-		// Change the colour of the portaits to the same as the animals
-		for(int i = 0; i < animalPortaits.Length; i++)
-		{
-			animalPortaits[i].GetComponent<Image>().color = stackManager.gameAnimals[i].GetComponent<ObjectHighlighter>().baseColor;
-		}
-	}
 	
 	private void HandleAnimalPortaits()
 	{
@@ -47,17 +40,17 @@ public class UIManager : MonoBehaviour
 		{
 			if(stackManager.gameAnimals[i].Equals(stackManager.currentAnimal))
 			{
-				animalPortaits[i].GetComponent<Outline>().effectColor = Color.yellow;
+				animalPortaits[i].GetComponent<Outline>().effectColor = highlightColor;
 			}
 			else
 			{
-				animalPortaits[i].GetComponent<Outline>().effectColor = Color.black;
+				animalPortaits[i].GetComponent<Outline>().effectColor = normalColor;
 			}
 		}
 	}
 
 	//========================================================================================
-	// PORTAITS
+	// GAME TIMER
 	//========================================================================================
 	private void InitialiseTimer()
 	{
@@ -73,6 +66,7 @@ public class UIManager : MonoBehaviour
 	
 	private IEnumerator Timer()
 	{
+		// Keep looping
 		while(roundLength > currentTime)
 		{
 			// Reduce length
@@ -85,17 +79,11 @@ public class UIManager : MonoBehaviour
 			// Come back because we not finished
 			yield return null;
 		}
-		
-		DoGameOver();
+
+		// Reset level?
+		gameManager.DoGameOver();
 		
 		yield return new WaitForEndOfFrame();
-	}
-	
-	private void DoGameOver()
-	{
-		// Do something here
-		Debug.Log ("Game Over Bitches!");
-		Application.LoadLevel(Application.loadedLevel);
 	}
 }
 
