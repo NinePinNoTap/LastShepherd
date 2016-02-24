@@ -113,31 +113,33 @@ public class InputManager : MonoBehaviour
         if (!Input.GetKeyDown(key))
             return;
         
-        // Disable move velocity
-        controlledAnimal.Stop();
+		// Check animal is not being thrown
+		if (!controlledAnimal.beingThrown) {
+			// Disable move velocity
+			controlledAnimal.Stop ();
         
-        // Change index
-        animalIndex = value;
+			// Change index
+			animalIndex = value;
         
-        // Keep within the range
-        Utility.Wrap(ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
+			// Keep within the range
+			Utility.Wrap (ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
         
-        // Disable current animal
-        controlledAnimal.Deactivate();
+			// Disable current animal
+			controlledAnimal.Deactivate ();
         
-        // Tell the stack manager to update to the correct animal
-        stackManager.UpdateSelectedAnimal(stackManager.gameAnimals [animalIndex]);
+			// Tell the stack manager to update to the correct animal
+			stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
         
-        // Update controlled animal
-        controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
-        controlledAnimal.Activate();
+			// Update controlled animal
+			controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+			controlledAnimal.Activate ();
         
-        // Revert to movement mode upon animal change
-        if (throwingMode)
-        {
-            throwingMode = false;
-            throwManager.DeactivateThrowingMode();
-        }
+			// Revert to movement mode upon animal change
+			if (throwingMode) {
+				throwingMode = false;
+				throwManager.DeactivateThrowingMode ();
+			}
+		}
     }
     
     private void HandleAnimalKeyboardMovement()

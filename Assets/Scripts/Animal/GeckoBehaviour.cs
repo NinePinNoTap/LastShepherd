@@ -8,7 +8,7 @@ public class GeckoBehaviour : AnimalBehaviour
 
     void FixedUpdate()
     {
-        // Check if we are on the ground
+		// Check if we are on the ground - DONE IN GROUNDCHECKER NOW
         GroundCheck();
         
         // Check if we are moving
@@ -34,7 +34,7 @@ public class GeckoBehaviour : AnimalBehaviour
                 if(isMoving)
                 {                    
                     // Handle collisions with tiles and animals
-                    HandleCollision();
+                    HandleCollisions();
                 }
                 
                 // Update velocity

@@ -41,6 +41,11 @@ public class AnimalBehaviour : MonoBehaviour
     public float moveSpeed = 5.0f;
     public Vector3 currentVelocity;
 
+	[Header("Collision Detectors")]
+	public GameObject frontCollider;
+	public float colliderSize = 0.1f;
+	public GameObject bottomCollider;
+
     protected void Awake()
     {
         isControllable = false;
@@ -49,6 +54,34 @@ public class AnimalBehaviour : MonoBehaviour
         canMerge = true;
         canMove = true;
         beingThrown = false;
+
+		bottomCollider = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		Physics.IgnoreCollision (gameObject.GetComponent<Collider> (), bottomCollider.GetComponent<Collider> ());
+		bottomCollider.transform.localPosition = new Vector3 (transform.position.x, transform.position.y - (animalHeight - colliderSize)/2, transform.position.z);
+		bottomCollider.transform.parent = gameObject.transform;
+		bottomCollider.transform.localScale = new Vector3 (1, colliderSize, 1);
+		bottomCollider.GetComponent<Collider> ().isTrigger = true;
+		bottomCollider.AddComponent<ColliderChecker> ();
+		bottomCollider.name = "Bottom Collider";
+		bottomCollider.GetComponent<MeshRenderer> ().enabled = false;
+
+		frontCollider = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		Physics.IgnoreCollision (gameObject.GetComponent<Collider> (), frontCollider.GetComponent<Collider> ());
+		Physics.IgnoreCollision (frontCollider.GetComponent<Collider> (), bottomCollider.GetComponent<Collider> ());
+		frontCollider.transform.localPosition = new Vector3 (transform.position.x + (animalHeight + colliderSize)/2, transform.position.y+0.01f, transform.position.z);
+		frontCollider.transform.parent = gameObject.transform;
+		frontCollider.transform.localScale = new Vector3 (colliderSize, 0.96f, 1); // Raise front collider off the ground
+		frontCollider.GetComponent<Collider> ().isTrigger = true;
+		frontCollider.AddComponent<ColliderChecker> ();
+		frontCollider.name = "Front Collider";
+		frontCollider.GetComponent<MeshRenderer> ().enabled = false;
+
+		int colliderLayer = LayerMask.NameToLayer ("AnimalColliders");
+
+		bottomCollider.layer = colliderLayer;
+		frontCollider.layer = colliderLayer;
+		Physics.IgnoreLayerCollision (colliderLayer, colliderLayer);
+
     }
 
     protected void Start()
@@ -93,7 +126,7 @@ public class AnimalBehaviour : MonoBehaviour
                 if(isMoving)
                 {
                     // Handle collisions with tiles and animals
-                    HandleCollision();
+                    HandleCollisions();
                 }
                 
                 // Update the rigidbody velocity
@@ -140,65 +173,71 @@ public class AnimalBehaviour : MonoBehaviour
     // COLLISION AND MERGING
     //===========================================================================
 
-    //
-    // THIS NEEDS TO BE FIXED .. SHOULD NOT BE RAYCASTING 13 TIMES
-    //
-    protected void HandleCollision()
-    {
-        RaycastHit hit;
-        RaycastHit hit2;
-        RaycastHit bottom;
+	protected void HandleCollisions()
+	{
+		bool frontHasCollided = frontCollider.GetComponent<ColliderChecker> ().hasCollided;
 
-        for (int i = 0; i< 13; i++)
-        {
-            float x = animalHeight * 0.5f * Mathf.Cos(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
-            float z = animalHeight * 0.5f * Mathf.Sin(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
+		// Check front collisions
+		if (frontHasCollided) {
 
-            if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, 0.0f, z), out hit, animalHeight * 0.55f))
-            {
-                if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Animal") && canMerge)
-                {
-                    AnimalStack colliderStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
+			GameObject collidedObject = frontCollider.GetComponent<ColliderChecker>().collidedObject;
 
-                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
+			// Move onto animal stack
+			if ((stackIndex == 0) && collidedObject.tag.Equals("Animal") && canMerge)
+			{
+				AnimalStack colliderStack = collidedObject.GetComponent<AnimalBehaviour>().GetParentStack();
 
-                    StartCoroutine(DisableMovement());
+				if(colliderStack!=parentStack){
+					stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
+					
+					StartCoroutine(DisableMovement());
+					
+					Debug.Log("MERGED!");
+				}
 
-                    Debug.Log("MERGED!");
-                }
-                else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile") && canMove)
-                {
-                    Vector3 start = hit.transform.position;
-                    
-                    if (Physics.Raycast(start, Vector3.up, out hit2, animalHeight))
-                    {
-                        if ((hit.transform.gameObject != hit2.transform.gameObject) && (hit2.transform.gameObject.tag.Equals("Tile")))
-                        {
-                            continue;
-                        }
-                    }
-                    
-                    for (int j=0; j<parentStack.GetSize(); j++)
-                    {
-                        parentStack.Get(j).transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight * (j + 1), 0.0f));
-                    }
+				// Reset front colliders
+				frontCollider.GetComponent<ColliderChecker>().collidedObject = null;
+				collidedObject = null;
+			}
+			// Move onto tile
+			else if ((stackIndex == 0) && collidedObject.tag.Equals("Tile") && canMove)
+			{
+				Vector3 start = collidedObject.transform.position;
 
-                    StartCoroutine(DisableMovement());
-                }
-                
-                return;
-            }
-            else if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, z, 0.0f), out bottom, animalHeight * 0.55f))
-            {
-                if ((stackIndex == 0) && bottom.transform.gameObject.tag.Equals("Animal") && !(parentStack.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack())))
-                {
-                    AnimalStack colliderStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
+				RaycastHit hit;
+				// Raycast directly upwards by animal height
+				if (Physics.Raycast(start, Vector3.up, out hit, animalHeight))
+				{
+					// If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
+					if ((collidedObject == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Tile")))
+					{
+						return;
+					}
+				}
 
-                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
-                }
-            }
-        }       
-    }
+				// If possible to move onto tile, move all animals accordingly
+				for (int j=0; j<parentStack.GetSize(); j++)
+				{
+					parentStack.Get(j).transform.position = (collidedObject.transform.position + new Vector3(0.0f, animalHeight * (j + 1), 0.0f));
+				}
+				
+				StartCoroutine(DisableMovement());
+			}
+		}
+
+		/*bool bottomHasCollided = bottomCollider.GetComponent<ColliderChecker> ().hasCollided;
+
+		if (bottomHasCollided)
+		{
+			GameObject collidedObject = bottomCollider.GetComponent<ColliderChecker>().collidedObject;
+			if ((stackIndex == 0) && collidedObject.tag.Equals("Animal") && !(parentStack.Equals(collidedObject.GetComponent<AnimalBehaviour>().GetParentStack())))
+			{
+				AnimalStack colliderStack = collidedObject.GetComponent<AnimalBehaviour>().GetParentStack();
+				
+				stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
+			}
+		}*/
+	}
 
     //===========================================================================
     // MOVEMENT
@@ -206,8 +245,25 @@ public class AnimalBehaviour : MonoBehaviour
 
     public virtual void MoveAnimal(Vector3 direction)
     {
-        if(!canMove)
+        if(!canMove || beingThrown)
             return;
+
+		if (!direction.Equals (Vector3.zero)) {
+			// Rotate direction to correspond to viewing axis vs controller axis due to isometric projection
+			direction = Quaternion.Euler (0, -45, 0) * direction;
+
+			// Normalise direction
+			direction.Normalize ();
+
+			// Calculate rotation that animal is to face
+			float rotation = Mathf.DeltaAngle (Mathf.Atan2 (direction.x, direction.z) * Mathf.Rad2Deg,
+		                               Mathf.Atan2 (0, 1) * Mathf.Rad2Deg);
+			// Align rotation to camera view
+			rotation -= 90;
+
+			// Rotate animal
+			transform.rotation = Quaternion.Euler (new Vector3 (transform.rotation.x, -rotation, transform.rotation.z));
+		}
 
         // Check what position we are in the stack
         if (stackIndex == 0)
@@ -248,24 +304,16 @@ public class AnimalBehaviour : MonoBehaviour
 
     protected void GroundCheck()
     {
-        RaycastHit hit;
-
-        // We will never be grounded if we are being throw upwards
-        if(rigidBody.velocity.y >= 0.0f && beingThrown)
-        {
-            isGrounded = false;
-            return;
-        }
-
-        // Raycast downwards (ignoring NPC/PC) and see if we hit ground
-        if (Physics.Raycast(transform.position, -Vector3.up, out hit, animalHeight * 0.51f, layerMask))
-        {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
+        // We will never be grounded if we are being thrown upwards
+        if (Mathf.Abs(rigidBody.velocity.y) > 0.1f && beingThrown) {
+			isGrounded = false;
+			Debug.Log("Here");
+			return;
+		}
+		// Otherwise, check GroundChecker
+		else {
+			isGrounded = bottomCollider.GetComponent<ColliderChecker>().hasCollided;
+		}
     }
     
     protected void MovingCheck()
@@ -375,4 +423,66 @@ public class AnimalBehaviour : MonoBehaviour
             return null;
         }
     }
+
+	//
+	// THIS NEEDS TO BE FIXED .. SHOULD NOT BE RAYCASTING 13 TIMES
+	//
+	/*protected void HandleCollisionOLD()
+    {
+        RaycastHit hit;
+        RaycastHit hit2;
+        RaycastHit bottom;
+
+        for (int i = 0; i< 13; i++)
+        {
+            float x = animalHeight * 0.5f * Mathf.Cos(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
+            float z = animalHeight * 0.5f * Mathf.Sin(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
+
+            if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, 0.0f, z), out hit, animalHeight * 0.55f))
+            {
+                if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Animal") && canMerge)
+                {
+                    AnimalStack colliderStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
+
+                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
+
+                    StartCoroutine(DisableMovement());
+
+                    Debug.Log("MERGED!");
+                }
+                else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile") && canMove)
+                {
+                    Vector3 start = hit.transform.position;
+                    
+                    if (Physics.Raycast(start, Vector3.up, out hit2, animalHeight))
+                    {
+                        if ((hit.transform.gameObject != hit2.transform.gameObject) && (hit2.transform.gameObject.tag.Equals("Tile")))
+                        {
+                            continue;
+                        }
+                    }
+                    
+                    for (int j=0; j<parentStack.GetSize(); j++)
+                    {
+                        parentStack.Get(j).transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight * (j + 1), 0.0f));
+                    }
+
+                    StartCoroutine(DisableMovement());
+                }
+                
+                return;
+            }
+            else if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, z, 0.0f), out bottom, animalHeight * 0.55f))
+            {
+                if ((stackIndex == 0) && bottom.transform.gameObject.tag.Equals("Animal") && !(parentStack.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack())))
+                {
+                    AnimalStack colliderStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
+
+                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
+                }
+            }
+        }      
+    }*/
+	
+
 }
