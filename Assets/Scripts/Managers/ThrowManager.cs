@@ -145,6 +145,8 @@ public class ThrowManager : MonoBehaviour {
 		if (x != 0.0f || y != 0.0f) {
 			// Rotation around y-axis
 			float yAngle = Mathf.Atan2 (y, x) * Mathf.Rad2Deg;
+
+			yAngle += 45;
 			
 			// Rotate around y-axis only
 			cannon.transform.rotation = Quaternion.Euler (cannon.transform.rotation.eulerAngles.x, yAngle, cannon.transform.rotation.eulerAngles.z);

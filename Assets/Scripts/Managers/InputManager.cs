@@ -113,8 +113,8 @@ public class InputManager : MonoBehaviour
         if (!Input.GetKeyDown(key))
             return;
         
-		// Check animal is not being thrown
-		if (!controlledAnimal.beingThrown) {
+		// Check animal is not being thrown or in mid-air
+		if (!controlledAnimal.beingThrown && controlledAnimal.isGrounded) {
 			// Disable move velocity
 			controlledAnimal.Stop ();
         
@@ -124,15 +124,11 @@ public class InputManager : MonoBehaviour
 			// Keep within the range
 			Utility.Wrap (ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
         
-			// Disable current animal
-			controlledAnimal.Deactivate ();
-        
 			// Tell the stack manager to update to the correct animal
 			stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
         
 			// Update controlled animal
 			controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
-			controlledAnimal.Activate ();
         
 			// Revert to movement mode upon animal change
 			if (throwingMode) {
@@ -148,7 +144,7 @@ public class InputManager : MonoBehaviour
         Vector3 moveVelocity = new Vector3(0, 0, 0);
 
         // Check if we should override the move direction
-        bool Override = controlledAnimal.stackIndex > 0;
+        bool Override = controlledAnimal.animalIndex > 0;
 
         // Handle input
         HandleInputDirection(forwardWinKey, ref moveVelocity, -Vector3.forward, Override);
@@ -221,7 +217,7 @@ public class InputManager : MonoBehaviour
         Vector3 moveVelocity = new Vector3(0,0,0);
 
         // Check if its a single movemement we want or not
-        bool Override = controlledAnimal.stackIndex > 0;
+        bool Override = controlledAnimal.animalIndex > 0;
 
         // Check input
         HandleInputDirection(animalMoveX, ref moveVelocity, Vector3.right, Override);

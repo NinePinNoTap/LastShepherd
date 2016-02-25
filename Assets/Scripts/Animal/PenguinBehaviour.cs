@@ -46,7 +46,7 @@ public class PenguinBehaviour : AnimalBehaviour
         rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
 
         // Check if we are at the bottom of the stack
-        if(stackIndex == 0)
+        if(animalIndex == 0)
         {
             // If the animal is on the ground but has gravity enabled
             if(isGrounded)
@@ -82,7 +82,7 @@ public class PenguinBehaviour : AnimalBehaviour
             return;
 
         // If its at the base of the stack
-        if (stackIndex == 0)
+        if (animalIndex == 0)
         {
             // Set movement velocity
             currentVelocity = direction * moveSpeed;
@@ -100,7 +100,7 @@ public class PenguinBehaviour : AnimalBehaviour
             // Disable merging again
             if(canMerge)
             {
-                StartCoroutine(DisableMerge());
+                StartCoroutine(DisableMergeWithBeneath());
             }
         }
     }
