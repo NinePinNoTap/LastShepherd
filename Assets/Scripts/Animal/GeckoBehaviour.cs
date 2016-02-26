@@ -8,7 +8,7 @@ public class GeckoBehaviour : AnimalBehaviour
 
     void FixedUpdate()
     {
-        // Check if we are on the ground
+		// Check if we are on the ground - DONE IN GROUNDCHECKER NOW
         GroundCheck();
         
         // Check if we are moving
@@ -34,7 +34,7 @@ public class GeckoBehaviour : AnimalBehaviour
                 if(isMoving)
                 {                    
                     // Handle collisions with tiles and animals
-                    HandleCollision();
+                    HandleCollisions();
                 }
                 
                 // Update velocity
@@ -44,7 +44,7 @@ public class GeckoBehaviour : AnimalBehaviour
         else
         {
             // Check if we are at the bottom of the stack
-            if(stackIndex == 0)
+            if(animalIndex == 0)
             {
                 // If the animal is on the ground but has gravity enabled
                 if(isGrounded)
@@ -90,15 +90,18 @@ public class GeckoBehaviour : AnimalBehaviour
             return;
 
         // Check what its doing
-        if (stackIndex == 0)
+        if (animalIndex == 0)
         {
             // Check if there are others in the stack above
             if(parentStack.GetSize() > 1)
             {
+				// Get animal directly beneath animal leaving the stack
+				GameObject animalBeneath = parentStack.Get(stackManager.animalIndex-1);
+
                 stackManager.SplitStack(parentStack, 1, ExecutePosition.BOTTOM, direction * moveSpeed * Time.deltaTime);
                 if(canMerge)
                 {
-                    StartCoroutine(DisableMerge());
+                    StartCoroutine(DisableMergeWithBeneath(animalBeneath));
                 }
             }
             HandleGeckoMovement(direction);
@@ -110,7 +113,7 @@ public class GeckoBehaviour : AnimalBehaviour
 
             if(canMerge)
             {
-                StartCoroutine(DisableMerge());
+                StartCoroutine(DisableMergeWithBeneath());
             }
         }
     }

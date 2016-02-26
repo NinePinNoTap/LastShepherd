@@ -1,18 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\AnimalBehaviours\AnimalBehaviour.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\Innovation and Professional Dev\Top Down Prototype\Assets\Scripts\PlayerMovement.cs">
     <Files>
-      <File FileName="Assets\Scripts\AnimalBehaviours\AnimalBehaviour.cs" Line="249" Column="33" />
-      <File FileName="Assets\Scripts\Misc\Trajectories.cs" Line="16" Column="33" />
-      <File FileName="Assets\Scripts\Managers\ThrowManager.cs" Line="24" Column="21" />
-      <File FileName="Assets\Scripts\Managers\InputManager.cs" Line="179" Column="39" />
-      <File FileName="Assets\Scripts\Managers\StackManager.cs" Line="1" Column="1" />
+      <File FileName="..\Innovation and Professional Dev\Top Down Prototype\Assets\Scripts\PlayerMovement.cs" Line="67" Column="50" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\ThrowManager.cs" line="54" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

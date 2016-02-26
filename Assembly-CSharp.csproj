@@ -46,26 +46,29 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\AnimalBehaviours\AnimalBehaviour.cs" />
-     <Compile Include="Assets\Scripts\AnimalBehaviours\BearBehaviour.cs" />
-     <Compile Include="Assets\Scripts\AnimalBehaviours\GeckoBehaviour.cs" />
-     <Compile Include="Assets\Scripts\AnimalBehaviours\PenguinBehaviour.cs" />
+     <Compile Include="Assets\Scripts\Animal\AnimalBehaviour.cs" />
+     <Compile Include="Assets\Scripts\Animal\AnimalStack.cs" />
+     <Compile Include="Assets\Scripts\Animal\BearBehaviour.cs" />
+     <Compile Include="Assets\Scripts\Animal\ColliderChecker.cs" />
+     <Compile Include="Assets\Scripts\Animal\GeckoBehaviour.cs" />
+     <Compile Include="Assets\Scripts\Animal\PenguinBehaviour.cs" />
      <Compile Include="Assets\Scripts\Guard\ConeOfSight.cs" />
      <Compile Include="Assets\Scripts\Guard\GuardPatrol.cs" />
-     <Compile Include="Assets\Scripts\LevelMechanics\ColouredTile.cs" />
-     <Compile Include="Assets\Scripts\LevelMechanics\LevelCompleteCheckpoint.cs" />
-     <Compile Include="Assets\Scripts\LevelMechanics\PressurePlate.cs" />
      <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
      <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\LoadingScreenManager.cs" />
      <Compile Include="Assets\Scripts\Managers\StackManager.cs" />
      <Compile Include="Assets\Scripts\Managers\ThrowManager.cs" />
      <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
+     <Compile Include="Assets\Scripts\Mechanics\ColouredTile.cs" />
+     <Compile Include="Assets\Scripts\Mechanics\Interactable.cs" />
+     <Compile Include="Assets\Scripts\Mechanics\LevelCompleteCheckpoint.cs" />
      <Compile Include="Assets\Scripts\Misc\ObjectHighlighter.cs" />
      <Compile Include="Assets\Scripts\Misc\Trajectories.cs" />
      <Compile Include="Assets\Scripts\Misc\Utility.cs" />
-     <Compile Include="Assets\Scripts\UI\AnimalStack.cs" />
-     <Compile Include="Assets\Scripts\UI\ButtonLoadingScreen.cs" />
-     <Compile Include="Assets\Scripts\UI\ButtonPlayGame.cs" />
+     <Compile Include="Assets\Scripts\UI\Buttons\ButtonExitGame.cs" />
+     <Compile Include="Assets\Scripts\UI\Buttons\ButtonLoadingScreen.cs" />
+     <Compile Include="Assets\Scripts\UI\Buttons\ButtonPlayGame.cs" />
      <None Include="Assets\Shader\Gradient.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

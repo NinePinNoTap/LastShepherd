@@ -67,6 +67,13 @@ public class StackManager : MonoBehaviour
 		// Deactivate the previous animal
 		currentAnimal.GetComponent<AnimalBehaviour>().Deactivate();
 
+		UpdateIndices (animal);
+
+		// Activate the new animal
+		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
+	}
+
+	public void UpdateIndices(GameObject animal){
 		// Search all stacks and set index's
 		for(int stack = 0; stack < levelStacks.Count; stack++)
 		{
@@ -78,13 +85,10 @@ public class StackManager : MonoBehaviour
 				currentStack = levelStacks[stackIndex];
 				animalIndex = currentStack.GetIndex(animal);
 				currentAnimal = levelStacks[stackIndex].Get (animalIndex);
-
+				
 				break;
 			}
 		}
-
-		// Activate the new animal
-		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
 	}
 
     //
@@ -184,6 +188,13 @@ public class StackManager : MonoBehaviour
 		// Refresh stack
 		for(int i = 0; i < newStack.GetSize(); i++)
 		{
+			
+			// Make animals above base animal non-kinematic
+			if(i>0){
+				newStack.Get(i).GetComponent<Rigidbody>().isKinematic = false;
+				newStack.Get(i).GetComponent<Rigidbody>().useGravity = false;
+			}
+
 			// Refresh position
 			newStack.Get(i).transform.position = basePos + new Vector3(0, animalHeight * i, 0);
 			newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
@@ -198,6 +209,6 @@ public class StackManager : MonoBehaviour
 		levelStacks.Add(newStack);
 
 		// Refresh selections
-		UpdateSelectedAnimal(currentAnimal);
+		UpdateIndices(currentAnimal);
 	}
 }

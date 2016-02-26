@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
 
 	void Update ()
 	{
-		HandleAnimalPortaits();
+		//HandleAnimalPortaits();
 	}
 
 	//========================================================================================

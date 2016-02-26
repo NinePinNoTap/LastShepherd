@@ -48,7 +48,7 @@ public class ThrowManager : MonoBehaviour {
 		throwAnimal.GetComponent<Rigidbody>().useGravity = true;
 		throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * trajectories.fireStrength * newStack.GetSize() * Time.deltaTime,ForceMode.Impulse);
 		
-		Physics.IgnoreCollision (throwAnimal.GetComponent<Collider> (), throwingAnimal.GetComponent<Collider> ());
+		StartCoroutine (DisableAnimalCollisions ());
 		
 		throwAnimal.GetComponent<AnimalBehaviour> ().beingThrown = true;
 		
@@ -72,6 +72,16 @@ public class ThrowManager : MonoBehaviour {
 
 */
 		DeactivateThrowingMode ();
+	}
+
+	// Temporarily disables collisions between colliders of animal being thrown and animal doing the throwing
+	protected IEnumerator DisableAnimalCollisions()
+	{
+		Physics.IgnoreCollision (throwAnimal.GetComponent<Collider> (), throwingAnimal.GetComponent<Collider> (), true);
+		
+		yield return new WaitForSeconds(0.1f);
+		
+		Physics.IgnoreCollision (throwAnimal.GetComponent<Collider> (), throwingAnimal.GetComponent<Collider> (), false);
 	}
 	
 	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal){
@@ -135,6 +145,8 @@ public class ThrowManager : MonoBehaviour {
 		if (x != 0.0f || y != 0.0f) {
 			// Rotation around y-axis
 			float yAngle = Mathf.Atan2 (y, x) * Mathf.Rad2Deg;
+
+			yAngle += 45;
 			
 			// Rotate around y-axis only
 			cannon.transform.rotation = Quaternion.Euler (cannon.transform.rotation.eulerAngles.x, yAngle, cannon.transform.rotation.eulerAngles.z);
