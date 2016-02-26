@@ -1,0 +1,217 @@
+fileFormatVersion: 2
+guid: fdeb4189d5875dc4987c5cbc3f50290c
+timeCreated: 1456485203
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: beek_bottom
+    100002: beek_top
+    100004: body
+    100006: eye_left
+    100008: eye_right
+    100010: foot_ski_left
+    100012: foot_ski_right
+    100014: hair1
+    100016: hair2
+    100018: knot
+    100020: knot_tail1
+    100022: knot_tail2
+    100024: mask
+    100026: //RootNode
+    100028: tail
+    100030: transform22
+    100032: Wing_left
+    100034: Wing_right
+    400000: beek_bottom
+    400002: beek_top
+    400004: body
+    400006: eye_left
+    400008: eye_right
+    400010: foot_ski_left
+    400012: foot_ski_right
+    400014: hair1
+    400016: hair2
+    400018: knot
+    400020: knot_tail1
+    400022: knot_tail2
+    400024: mask
+    400026: //RootNode
+    400028: tail
+    400030: transform22
+    400032: Wing_left
+    400034: Wing_right
+    2300000: beek_bottom
+    2300002: beek_top
+    2300004: body
+    2300006: eye_left
+    2300008: eye_right
+    2300010: foot_ski_left
+    2300012: foot_ski_right
+    2300014: hair1
+    2300016: hair2
+    2300018: knot
+    2300020: knot_tail1
+    2300022: knot_tail2
+    2300024: mask
+    2300026: tail
+    2300028: Wing_left
+    2300030: Wing_right
+    3300000: beek_bottom
+    3300002: beek_top
+    3300004: body
+    3300006: eye_left
+    3300008: eye_right
+    3300010: foot_ski_left
+    3300012: foot_ski_right
+    3300014: hair1
+    3300016: hair2
+    3300018: knot
+    3300020: knot_tail1
+    3300022: knot_tail2
+    3300024: mask
+    3300026: tail
+    3300028: Wing_left
+    3300030: Wing_right
+    4300000: body
+    4300002: beek_top
+    4300004: beek_bottom
+    4300006: Wing_right
+    4300008: Wing_left
+    4300010: foot_ski_right
+    4300012: hair1
+    4300014: tail
+    4300016: eye_right
+    4300018: mask
+    4300020: foot_ski_left
+    4300022: eye_left
+    4300024: hair2
+    4300026: knot
+    4300028: knot_tail1
+    4300030: knot_tail2
+    7400000: idle
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: idle
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: beek_bottom
+        weight: 1
+      - path: beek_top
+        weight: 1
+      - path: body
+        weight: 1
+      - path: eye_left
+        weight: 1
+      - path: eye_right
+        weight: 1
+      - path: foot_ski_left
+        weight: 1
+      - path: foot_ski_right
+        weight: 1
+      - path: hair1
+        weight: 1
+      - path: hair2
+        weight: 1
+      - path: knot
+        weight: 1
+      - path: knot_tail1
+        weight: 1
+      - path: knot_tail2
+        weight: 1
+      - path: mask
+        weight: 1
+      - path: tail
+        weight: 1
+      - path: transform22
+        weight: 1
+      - path: Wing_left
+        weight: 1
+      - path: Wing_right
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
