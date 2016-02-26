@@ -22,6 +22,11 @@ public class UIManager : MonoBehaviour
 
 	void Start ()
 	{
+		if(!gameManager)
+		{
+			GetComponent<GameManager>();
+		}
+
 		InitialiseTimer();
 	}
 
