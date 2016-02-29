@@ -48,13 +48,18 @@ public class AnimalBehaviour : MonoBehaviour
 
     protected void Awake()
     {
+		// Default flags
         isControllable = false;
         isMoving = false;
         isGrounded = false;
         canMerge = true;
         canMove = true;
-        beingThrown = false;
+		beingThrown = false;
+		
+		// Get the height of the animal
+		animalHeight = transform.localScale.y;
 
+		// Create colliders
 		bottomCollider = GameObject.CreatePrimitive (PrimitiveType.Cube);
 		Physics.IgnoreCollision (gameObject.GetComponent<Collider> (), bottomCollider.GetComponent<Collider> ());
 		bottomCollider.transform.localPosition = new Vector3 (transform.position.x, transform.position.y - (animalHeight - colliderSize)/2, transform.position.z);
@@ -81,7 +86,6 @@ public class AnimalBehaviour : MonoBehaviour
 		bottomCollider.layer = colliderLayer;
 		frontCollider.layer = colliderLayer;
 		Physics.IgnoreLayerCollision (colliderLayer, colliderLayer);
-
     }
 
     protected void Start()
@@ -158,10 +162,10 @@ public class AnimalBehaviour : MonoBehaviour
                 else
                 {
                     rigidBody.useGravity = true;
-                }
+				}
             }
             else
-            {
+			{
                 // Animal is above another so just force its position
                 transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
             }
@@ -178,8 +182,8 @@ public class AnimalBehaviour : MonoBehaviour
 		bool frontHasCollided = frontCollider.GetComponent<ColliderChecker> ().hasCollided;
 
 		// Check front collisions
-		if (frontHasCollided) {
-
+		if (frontHasCollided)
+		{
 			GameObject collidedObject = frontCollider.GetComponent<ColliderChecker>().collidedObject;
 
 			// Move onto animal stack
@@ -187,7 +191,8 @@ public class AnimalBehaviour : MonoBehaviour
 			{
 				AnimalStack colliderStack = collidedObject.GetComponent<AnimalBehaviour>().GetParentStack();
 
-				if(colliderStack!=parentStack){
+				if(colliderStack!=parentStack)
+				{
 					stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
 					
 					StartCoroutine(DisableMovement());
@@ -238,7 +243,8 @@ public class AnimalBehaviour : MonoBehaviour
 			if ((animalIndex == 0) && collidedObject.tag.Equals("Animal") && canMerge)
 			{
 				Debug.Log("Merging from above!");
-				if(!parentStack.Equals(collidedObject.GetComponent<AnimalBehaviour>().GetParentStack())){
+				if(!parentStack.Equals(collidedObject.GetComponent<AnimalBehaviour>().GetParentStack()))
+				{
 					AnimalStack colliderStack = collidedObject.GetComponent<AnimalBehaviour>().GetParentStack();
 					
 					stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
@@ -258,7 +264,8 @@ public class AnimalBehaviour : MonoBehaviour
         if(!canMove || beingThrown)
             return;
 
-		if (!direction.Equals (Vector3.zero)) {
+		if (!direction.Equals (Vector3.zero))
+		{
 			// Rotate direction to correspond to viewing axis vs controller axis due to isometric projection
 			direction = Quaternion.Euler (0, -45, 0) * direction;
 
@@ -266,13 +273,13 @@ public class AnimalBehaviour : MonoBehaviour
 			direction.Normalize ();
 
 			// Calculate rotation that animal is to face
-			float rotation = Mathf.DeltaAngle (Mathf.Atan2 (direction.x, direction.z) * Mathf.Rad2Deg,
-		                               Mathf.Atan2 (0, 1) * Mathf.Rad2Deg);
+			float rotation = Mathf.DeltaAngle (Mathf.Atan2 (direction.x, direction.z) * Mathf.Rad2Deg, Mathf.Atan2 (0, 1) * Mathf.Rad2Deg);
 			// Align rotation to camera view
 			rotation -= 90;
 
 			// Rotate animal
-			transform.rotation = Quaternion.Euler (new Vector3 (transform.rotation.x, -rotation, transform.rotation.z));
+			//transform.rotation = Quaternion.Euler (new Vector3 (transform.rotation.x, -rotation, transform.rotation.z));
+			parentStack.RotateStack(-rotation);
 		}
 
         // Check what position we are in the stack
@@ -322,12 +329,14 @@ public class AnimalBehaviour : MonoBehaviour
     protected void GroundCheck()
     {
         // We will never be grounded if we are being thrown upwards
-        if (Mathf.Abs(rigidBody.velocity.y) > 0.1f && beingThrown) {
+        if (Mathf.Abs(rigidBody.velocity.y) > 0.1f && beingThrown)
+		{
 			isGrounded = false;
 			return;
 		}
 		// Otherwise, check GroundChecker
-		else {
+		else
+		{
 			isGrounded = bottomCollider.GetComponent<ColliderChecker>().hasCollided;
 		}
     }
@@ -365,6 +374,9 @@ public class AnimalBehaviour : MonoBehaviour
         rigidBody.velocity = new Vector3(0,0,0);
 
 		rigidBody.isKinematic = false;
+
+		// Activate collider
+		bottomCollider.SetActive(true);
     }
     
     public void Deactivate()
@@ -374,11 +386,17 @@ public class AnimalBehaviour : MonoBehaviour
         rigidBody.velocity = new Vector3(0,0,0);
 
 		// If animal is above others in a stack, disable isKinematic
-		if (animalIndex > 0) {
+		if (animalIndex > 0)
+		{
 			rigidBody.isKinematic = false;
-		} else {
+		}
+		else
+		{
 			rigidBody.isKinematic = true;
 		}
+		
+		// Activate collider
+		bottomCollider.SetActive(false);
     }
     
 	// DisableMerge when animal is hopping off stack with animals beneath it
@@ -440,11 +458,16 @@ public class AnimalBehaviour : MonoBehaviour
         if (stackManager.animalIndex < stackSize - 1)
         {
 			// Check animal is not falling
-			if(Mathf.Abs(GetComponent<Rigidbody>().velocity.y)<0.1f){
+			if(Mathf.Abs(GetComponent<Rigidbody>().velocity.y) < 0.1f)
+			{
 				return true;
 			}
-			else return false;
-        } else
+			else
+			{
+				return false;
+			}
+        }
+		else
         {
             return false;
         }
@@ -461,66 +484,4 @@ public class AnimalBehaviour : MonoBehaviour
             return null;
         }
     }
-
-	//
-	// THIS NEEDS TO BE FIXED .. SHOULD NOT BE RAYCASTING 13 TIMES
-	//
-	/*protected void HandleCollisionOLD()
-    {
-        RaycastHit hit;
-        RaycastHit hit2;
-        RaycastHit bottom;
-
-        for (int i = 0; i< 13; i++)
-        {
-            float x = animalHeight * 0.5f * Mathf.Cos(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
-            float z = animalHeight * 0.5f * Mathf.Sin(((360.0f / 13.0f) * i) * (Mathf.PI / 180.0f));
-
-            if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, 0.0f, z), out hit, animalHeight * 0.55f))
-            {
-                if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Animal") && canMerge)
-                {
-                    AnimalStack colliderStack = hit.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
-
-                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
-
-                    StartCoroutine(DisableMovement());
-
-                    Debug.Log("MERGED!");
-                }
-                else if ((stackIndex == 0) && hit.transform.gameObject.tag.Equals("Tile") && canMove)
-                {
-                    Vector3 start = hit.transform.position;
-                    
-                    if (Physics.Raycast(start, Vector3.up, out hit2, animalHeight))
-                    {
-                        if ((hit.transform.gameObject != hit2.transform.gameObject) && (hit2.transform.gameObject.tag.Equals("Tile")))
-                        {
-                            continue;
-                        }
-                    }
-                    
-                    for (int j=0; j<parentStack.GetSize(); j++)
-                    {
-                        parentStack.Get(j).transform.position = (hit.transform.position + new Vector3(0.0f, animalHeight * (j + 1), 0.0f));
-                    }
-
-                    StartCoroutine(DisableMovement());
-                }
-                
-                return;
-            }
-            else if (Physics.Raycast(this.gameObject.transform.position, new Vector3(x, z, 0.0f), out bottom, animalHeight * 0.55f))
-            {
-                if ((stackIndex == 0) && bottom.transform.gameObject.tag.Equals("Animal") && !(parentStack.Equals(bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack())))
-                {
-                    AnimalStack colliderStack = bottom.transform.gameObject.GetComponent<AnimalBehaviour>().GetParentStack();
-
-                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
-                }
-            }
-        }      
-    }*/
-	
-
 }

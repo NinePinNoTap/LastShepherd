@@ -68,4 +68,12 @@ public class AnimalStack
 	{
 		return animals.ToArray().Length;
 	}
+
+	public void RotateStack(float rotation)
+	{
+		foreach(GameObject obj in animals)
+		{
+			obj.transform.rotation = Quaternion.Euler (new Vector3 (obj.transform.rotation.x, rotation, obj.transform.rotation.z));
+		}
+	}
 }

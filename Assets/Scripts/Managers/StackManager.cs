@@ -57,6 +57,9 @@ public class StackManager : MonoBehaviour
 
 		// Activate the animal
 		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
+
+		// Get height of the animals
+		animalHeight = currentAnimal.transform.localScale.y;
 	}
 
 	//
@@ -73,7 +76,8 @@ public class StackManager : MonoBehaviour
 		currentAnimal.GetComponent<AnimalBehaviour>().Activate();
 	}
 
-	public void UpdateIndices(GameObject animal){
+	public void UpdateIndices(GameObject animal)
+	{
 		// Search all stacks and set index's
 		for(int stack = 0; stack < levelStacks.Count; stack++)
 		{
@@ -190,7 +194,8 @@ public class StackManager : MonoBehaviour
 		{
 			
 			// Make animals above base animal non-kinematic
-			if(i>0){
+			if(i>0)
+			{
 				newStack.Get(i).GetComponent<Rigidbody>().isKinematic = false;
 				newStack.Get(i).GetComponent<Rigidbody>().useGravity = false;
 			}
@@ -199,6 +204,9 @@ public class StackManager : MonoBehaviour
 			newStack.Get(i).transform.position = basePos + new Vector3(0, animalHeight * i, 0);
 			newStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, i);
 			newStack.Get(i).GetComponent<AnimalBehaviour>().currentVelocity = new Vector3(0.0f,0.0f,0.0f);
+
+			// Keep rotation same as base rotation
+			newStack.Get (i).transform.rotation = newStack.Get(0).transform.rotation;
 		}
 
 		// Remove the old stacks

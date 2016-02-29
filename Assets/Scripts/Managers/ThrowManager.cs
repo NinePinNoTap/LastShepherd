@@ -28,7 +28,8 @@ public class ThrowManager : MonoBehaviour {
 		}
 	}
 	
-	public void TossAnimal(){
+	public void TossAnimal()
+	{
 		AnimalStack oldStack = throwAnimal.GetComponent<AnimalBehaviour> ().parentStack;
 		AnimalStack newStack = new AnimalStack();
 		
@@ -84,7 +85,8 @@ public class ThrowManager : MonoBehaviour {
 		Physics.IgnoreCollision (throwAnimal.GetComponent<Collider> (), throwingAnimal.GetComponent<Collider> (), false);
 	}
 	
-	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal){
+	public void ActivateThrowingMode(AnimalBehaviour controlledAnimal)
+	{
 		// Place cannon at animal and orient it properly
 		cannon.transform.position = controlledAnimal.transform.position;
 		cannon.transform.rotation = controlledAnimal.transform.rotation;
@@ -92,16 +94,19 @@ public class ThrowManager : MonoBehaviour {
 		cannon.transform.parent.gameObject.SetActive (true);
 	}
 	
-	public void DeactivateThrowingMode(){
+	public void DeactivateThrowingMode()
+	{
 		cannon.transform.rotation = Quaternion.Euler (Vector3.zero);
 		cannon.transform.parent.gameObject.SetActive (false);
 	}
 	
-	public void RotateRight(){
+	public void RotateRight()
+	{
 		cannon.transform.Rotate (new Vector3 (0, 1, 0), Space.World);
 	}
 	
-	public void RotateLeft(){
+	public void RotateLeft()
+	{
 		cannon.transform.Rotate (new Vector3 (0, -1, 0), Space.World);
 	}
 	

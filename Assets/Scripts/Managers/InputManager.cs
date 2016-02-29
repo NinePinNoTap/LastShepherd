@@ -114,7 +114,8 @@ public class InputManager : MonoBehaviour
             return;
         
 		// Check animal is not being thrown or in mid-air
-		if (!controlledAnimal.beingThrown && controlledAnimal.isGrounded) {
+		if (!controlledAnimal.beingThrown && controlledAnimal.isGrounded)
+		{
 			// Disable move velocity
 			controlledAnimal.Stop ();
         
@@ -131,7 +132,8 @@ public class InputManager : MonoBehaviour
 			controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
         
 			// Revert to movement mode upon animal change
-			if (throwingMode) {
+			if (throwingMode)
+			{
 				throwingMode = false;
 				throwManager.DeactivateThrowingMode ();
 			}
@@ -158,23 +160,21 @@ public class InputManager : MonoBehaviour
 
     public void HandleAnimalKeyboardThrowing()
     {
-        // THIS CAN BE RESTRUCTURED USING NEW FUNCTION
-
         if (Input.GetKey(KeyCode.RightArrow))
-        {
-            throwManager.RotateLeft();
+		{
+			throwManager.RotateRight();
         }
         if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            throwManager.RotateRight();
+		{
+			throwManager.RotateLeft();
         }
         if (Input.GetKey(KeyCode.UpArrow))
-        {
-            throwManager.RotateUp();
+		{
+			throwManager.RotateDown();
         }
         if (Input.GetKey(KeyCode.DownArrow))
-        {
-            throwManager.RotateDown();
+		{
+			throwManager.RotateUp();
         }
         
         if (Input.GetKeyDown(throwWinKey))
