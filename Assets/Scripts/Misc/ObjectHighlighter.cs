@@ -3,8 +3,8 @@ using System.Collections;
 
 public class ObjectHighlighter : MonoBehaviour
 {
-	public Color baseColor = new Color(1,1,1,1);
-	public Color highlightColor = new Color(1,1,1,1);
+	public Shader baseShader;
+	public Shader highlightShader;
 
 	private Material material;
 
@@ -19,11 +19,11 @@ public class ObjectHighlighter : MonoBehaviour
 	{
 		if(Flag)
 		{
-			material.SetColor("_Color", highlightColor);
+			material.shader = highlightShader;
 		}
 		else
 		{
-			material.SetColor("_Color", baseColor);
+			material.shader = baseShader;
 		}
 	}
 }

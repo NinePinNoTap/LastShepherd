@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ThrowManager : MonoBehaviour {
+public class ThrowManager : MonoBehaviour
+{
 	
 	public StackManager stacksManager;
 	public Trajectories trajectories;
@@ -9,6 +10,7 @@ public class ThrowManager : MonoBehaviour {
 	
 	public float smallAngle = 20;
 	public float bigAngle = 35;
+	public float throwRadius = 12;
 	
 	public GameObject throwAnimal;
 	public GameObject throwingAnimal;
@@ -170,7 +172,7 @@ public class ThrowManager : MonoBehaviour {
 	
 	void SmoothRotation(float thumbstickDistance, float yAngle){
 		
-		float xRotation = thumbstickDistance * 12;
+		float xRotation = thumbstickDistance * throwRadius;
 		
 		cannon.transform.rotation = Quaternion.Euler (xRotation, yAngle, cannon.transform.rotation.eulerAngles.z);
 	}

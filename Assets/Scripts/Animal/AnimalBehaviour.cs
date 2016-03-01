@@ -62,7 +62,7 @@ public class AnimalBehaviour : MonoBehaviour
 		// Create colliders
 		bottomCollider = GameObject.CreatePrimitive (PrimitiveType.Cube);
 		Physics.IgnoreCollision (gameObject.GetComponent<Collider> (), bottomCollider.GetComponent<Collider> ());
-		bottomCollider.transform.localPosition = new Vector3 (transform.position.x, transform.position.y - (animalHeight - colliderSize)/2, transform.position.z);
+		bottomCollider.transform.localPosition = new Vector3 (transform.position.x, transform.position.y - (animalHeight/2), transform.position.z);
 		bottomCollider.transform.parent = gameObject.transform;
 		bottomCollider.transform.localScale = new Vector3 (1, colliderSize, 1);
 		bottomCollider.GetComponent<Collider> ().isTrigger = true;
@@ -374,9 +374,6 @@ public class AnimalBehaviour : MonoBehaviour
         rigidBody.velocity = new Vector3(0,0,0);
 
 		rigidBody.isKinematic = false;
-
-		// Activate collider
-		bottomCollider.SetActive(true);
     }
     
     public void Deactivate()
@@ -394,9 +391,6 @@ public class AnimalBehaviour : MonoBehaviour
 		{
 			rigidBody.isKinematic = true;
 		}
-		
-		// Activate collider
-		bottomCollider.SetActive(false);
     }
     
 	// DisableMerge when animal is hopping off stack with animals beneath it
