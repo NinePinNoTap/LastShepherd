@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class ConeOfSight : MonoBehaviour
 {
 	[Header("Components")]
-	public GuardPatrol guardController;
+	public GuardController guardController;
 
 	[Header("Properties")]
 	public float coneRadius = 5;
@@ -21,7 +21,7 @@ public class ConeOfSight : MonoBehaviour
 		meshFilter = GetComponent<MeshFilter>();
 		if(!guardController)
 		{
-			guardController = transform.parent.GetComponent<GuardPatrol>();
+			guardController = transform.parent.GetComponent<GuardController>();
 		}
 
 		// Define radius from sight distance

@@ -19,12 +19,15 @@ public class ThrowManager : MonoBehaviour
 	
 	
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 
 	}
 	
-	void FixedUpdate(){
-		if (fire) {
+	void FixedUpdate()
+	{
+		if (fire)
+		{
 			TossAnimal();
 			fire = false;
 		}
@@ -33,47 +36,28 @@ public class ThrowManager : MonoBehaviour
 	public void TossAnimal()
 	{
 		AnimalStack oldStack = throwAnimal.GetComponent<AnimalBehaviour> ().parentStack;
-		AnimalStack newStack = new AnimalStack();
-		
-		for(int i = stacksManager.animalIndex+1; i < oldStack.GetSize(); i++)
-		{
-			newStack.Add(oldStack.Get(i));
-			oldStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, (i-(stacksManager.animalIndex+1)));
-		}
-		
-		oldStack.GetList ().RemoveRange(stacksManager.animalIndex+1, oldStack.GetSize()-(stacksManager.animalIndex+1));
-		stacksManager.levelStacks.Add(newStack);
-		
+
+		int throwStackSize = 1;//oldStack.GetSize() - stacksManager.animalIndex;
+
+		// Split the stack
+		stacksManager.SplitStack(oldStack, stacksManager.animalIndex+1, ExecutePosition.TOP, Vector3.zero);
+				
+		// Update the animal
 		stacksManager.UpdateSelectedAnimal (throwAnimal);
-		
+
+		// Throw the animal
 		throwAnimal.transform.position = trajectories.firingPoint.transform.position;
 		throwAnimal.SetActive (true);
 		throwAnimal.GetComponent<Rigidbody>().useGravity = true;
-		throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * trajectories.fireStrength * newStack.GetSize() * Time.deltaTime,ForceMode.Impulse);
-		
+		throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * trajectories.fireStrength * throwStackSize * Time.deltaTime,ForceMode.Impulse);
+
+		// Disable animal collisions
 		StartCoroutine (DisableAnimalCollisions ());
-		
+
+		// Flag we are throwing
 		throwAnimal.GetComponent<AnimalBehaviour> ().beingThrown = true;
-		
-		/* THIS WORKS
-		// Firing point is the same as in simulation
-		// Initial Velocity is the same as well
 
-		Vector3 initialVel = trajectories.firingPoint.transform.up * trajectories.fireStrength * Time.deltaTime;
-
-		throwAnimal = GameObject.Instantiate (throwAnimal);
-		throwAnimal.transform.position = trajectories.firingPoint.transform.position;
-		throwAnimal.SetActive (true);
-		throwAnimal.GetComponent<Rigidbody>().useGravity = true;
-		throwAnimal.GetComponent<Rigidbody>().AddForce(initialVel,ForceMode.Impulse);
-		//throwAnimal.GetComponent<Rigidbody> ().velocity = initialVel;
-
-		Physics.IgnoreCollision (throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>());
-
-		Debug.Log ("INITIAL VELOCITY: " + initialVel);
-		Debug.Log("Should be same: " + throwAnimal.GetComponent<Rigidbody>().velocity);
-
-*/
+		// Stop throwing mode
 		DeactivateThrowingMode ();
 	}
 

@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
+	public static int FALL_THRESHOLD = -10;
+
 	void Start ()
 	{
 	

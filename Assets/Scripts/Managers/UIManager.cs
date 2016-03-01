@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
 
 	void Start ()
 	{
+		// Access the game manager
 		if(!gameManager)
 		{
 			GetComponent<GameManager>();
@@ -39,12 +40,17 @@ public class UIManager : MonoBehaviour
 		// Initialise data
 		for(int i = 0; i < animalData.Length; i++)
 		{
+			if(animalData[i].animatorControl)
+			{
+				animalData[i].animatorControl.speed = 0.0f;
+			}
+
 			animalData[i].backgroundOutline.effectColor = normalColor;
-			animalData[i].animatorControl.speed = 0.0f;
 			animalData[i].portaitLight.enabled = false;
 			animalData[i].isSelected = false;
 		}
 
+		// Create and start the timer
 		InitialiseTimer();
 	}
 
@@ -59,14 +65,19 @@ public class UIManager : MonoBehaviour
 	
 	private void HandleAnimalPortaits()
 	{
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < animalData.Length; i++)
 		{
 			if(stackManager.gameAnimals[i].Equals(stackManager.currentAnimal))
 			{
 				if(!animalData[i].isSelected)
 				{
+					if(animalData[i].animatorControl)
+					{
+						animalData[i].animatorControl.Play("idle", 0, 0.0f);
+						animalData[i].animatorControl.speed = 1.0f;
+					}
+
 					animalData[i].backgroundOutline.effectColor = highlightColor;
-					animalData[i].animatorControl.speed = 1.0f;
 					animalData[i].portaitLight.enabled = true;
 					animalData[i].isSelected = true;
 				}
@@ -75,8 +86,13 @@ public class UIManager : MonoBehaviour
 			{
 				if(animalData[i].isSelected)
 				{
+					if(animalData[i].animatorControl)
+					{
+						animalData[i].animatorControl.Play("idle", 0, 0.0f);
+						animalData[i].animatorControl.speed = 0.0f;
+					}
+
 					animalData[i].backgroundOutline.effectColor = normalColor;
-					animalData[i].animatorControl.speed = 0.0f;
 					animalData[i].portaitLight.enabled = false;
 					animalData[i].isSelected = false;
 				}
