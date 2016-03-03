@@ -98,17 +98,13 @@ public class LoadingScreenManager : MonoBehaviour
 			{
 				lastProgress = asyncOperation.progress;
 			}
-
-			Debug.Log("Progress : " + lastProgress);
 		}
 
-		Debug.Log("Done Loading..");
 		float waitTime = maxTime - Time.time;
 
 		// Check to see if we can continue or wait for a bit
 		if(Time.time < maxTime)
 		{
-			Debug.Log("Wait for : " + waitTime);
 			yield return new WaitForSeconds(waitTime);
 		}
 

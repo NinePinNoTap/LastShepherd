@@ -116,18 +116,13 @@ public class AnimalCollider : MonoBehaviour
                     StartCoroutine(animalBehaviour.DisableMovement());
                 }
             }
-            else
+            else if(obj.tag == "Tile")
             {
                 Debug.Log("We are grounded!");
                 isGrounded = true;
             }
         }
-
-        //===================================
-        // Check if object is in front of us
-        //===================================
-        
-        if(RaycastToTarget(obj))
+        else if(RaycastToTarget(obj))
         {
             if(obj.tag == "Animal")
             {
@@ -139,8 +134,6 @@ public class AnimalCollider : MonoBehaviour
                 Debug.Log("Tile is front");
                 HandleSteppingUp(obj);
             }
-
-            return;
         }
     }
     
@@ -199,7 +192,15 @@ public class AnimalCollider : MonoBehaviour
     
     private bool CheckBelow(GameObject obj)
     {
-        return objParent.transform.position.y - obj.transform.position.y > heightThreshold;
+        float bottomAnimal = objParent.transform.position.y - (animalBehaviour.animalHeight / 2);
+        float minHeight = bottomAnimal - heightThreshold;
+
+        if(obj.transform.position.y >= minHeight && obj.transform.position.y <= bottomAnimal)
+            return true;
+        else
+            return false;
+
+        //return (objParent.transform.position.y - obj.transform.position.y) <= heightThreshold;
     }
 
     private bool RaycastToTarget(GameObject obj)

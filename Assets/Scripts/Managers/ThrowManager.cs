@@ -34,7 +34,7 @@ public class ThrowManager : MonoBehaviour
     {
         AnimalStack oldStack = throwAnimal.GetComponent<AnimalBehaviour>().parentStack;
 
-        int throwStackSize = 1;//oldStack.GetSize() - stacksManager.animalIndex;
+        float fireStrength = trajectories.fireStrength;
                 
         // Update the current animal to the throwing one
         stacksManager.UpdateSelectedAnimal(throwAnimal);
@@ -46,7 +46,7 @@ public class ThrowManager : MonoBehaviour
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
         throwAnimal.SetActive(true);
         throwAnimal.GetComponent<Rigidbody>().useGravity = true;
-        throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * trajectories.fireStrength * throwStackSize * Time.deltaTime, ForceMode.Impulse);
+        throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * fireStrength, ForceMode.Impulse);
 
         // Disable animal collisions
         StartCoroutine(DisableAnimalCollisions());
