@@ -79,7 +79,6 @@ public class AnimalCollider : MonoBehaviour
     {
         if(objInRange.Contains(col.gameObject))
         {
-            Debug.Log("Handle");
             HandleCollision(col.gameObject);
         }
     }
@@ -116,13 +115,11 @@ public class AnimalCollider : MonoBehaviour
                     
                     StartCoroutine(animalBehaviour.DisableMovement());
                 }
-                return;
             }
             else
             {
                 Debug.Log("We are grounded!");
                 isGrounded = true;
-                return;
             }
         }
 
@@ -202,7 +199,7 @@ public class AnimalCollider : MonoBehaviour
     
     private bool CheckBelow(GameObject obj)
     {
-        return objParent.transform.position.y - heightThreshold > obj.transform.position.y;
+        return objParent.transform.position.y - obj.transform.position.y > heightThreshold;
     }
 
     private bool RaycastToTarget(GameObject obj)
