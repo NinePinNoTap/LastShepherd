@@ -1,8 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\Innovation and Professional Dev\Top Down Prototype\Assets\Scripts\PlayerMovement.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Animal\AnimalBehaviour.cs">
     <Files>
-      <File FileName="..\Innovation and Professional Dev\Top Down Prototype\Assets\Scripts\PlayerMovement.cs" Line="67" Column="50" />
+      <File FileName="Assets\Scripts\Managers\ThrowManager.cs" Line="166" Column="6" />
+      <File FileName="Assets\Scripts\Animal\AnimalBehaviour.cs" Line="131" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
