@@ -279,6 +279,7 @@ public class InputManager : MonoBehaviour
                 if (throwingMode)
                 {
                     throwManager.ActivateThrowingMode(controlledAnimal);
+                    controlledAnimal.currentVelocity = Vector3.zero;
                 }
                 else
                 {
