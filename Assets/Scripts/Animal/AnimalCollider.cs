@@ -35,6 +35,18 @@ public class AnimalCollider : MonoBehaviour
         Disable();
     }
 
+    void Update()
+    {
+        Vector3 LeftRay = Quaternion.AngleAxis(-90 - (FOV/2), Vector3.up) * objParent.transform.forward;
+        Vector3 ForwardRay = Quaternion.AngleAxis(-90, Vector3.up) * objParent.transform.forward;
+        Vector3 RightRay = Quaternion.AngleAxis(-90 + (FOV/2), Vector3.up) * objParent.transform.forward;
+        
+        // Line of sight
+        Debug.DrawRay(objParent.transform.position, LeftRay * 2);
+        Debug.DrawRay(objParent.transform.position, RightRay * 2);
+        Debug.DrawRay(objParent.transform.position, ForwardRay * 2);
+    }
+
     //==================================
     // Active and Deactive the Collider 
     //==================================
@@ -60,14 +72,21 @@ public class AnimalCollider : MonoBehaviour
         if(!objInRange.Contains(col.gameObject))
         {
             objInRange.Add(col.gameObject);
+        }
+    }
 
+    void OnTriggerStay(Collider col)
+    {
+        if(objInRange.Contains(col.gameObject))
+        {
+            Debug.Log("Handle");
             HandleCollision(col.gameObject);
         }
     }
 
     void OnTriggerExit(Collider col)
     {
-        if(!objInRange.Contains(col.gameObject))
+        if(objInRange.Contains(col.gameObject))
         {
             objInRange.Remove(col.gameObject);
         }
@@ -82,6 +101,30 @@ public class AnimalCollider : MonoBehaviour
         //===============================
         // Check if object is beneath us
         //===============================
+
+        if(CheckBelow(obj))
+        {            
+            if(obj.tag == "Animal")
+            {
+                Debug.Log("We fell on an animal");
+                
+                if (!animalBehaviour.parentStack.Equals(obj.GetComponent<AnimalBehaviour>().GetParentStack()))
+                {
+                    AnimalStack colliderStack = obj.GetComponent<AnimalBehaviour>().GetParentStack();
+                    
+                    stackManager.MergeStack(colliderStack, animalBehaviour.parentStack, ExecutePosition.BOTTOM);
+                    
+                    StartCoroutine(animalBehaviour.DisableMovement());
+                }
+                return;
+            }
+            else
+            {
+                Debug.Log("We are grounded!");
+                isGrounded = true;
+                return;
+            }
+        }
 
         //===================================
         // Check if object is in front of us
@@ -102,34 +145,12 @@ public class AnimalCollider : MonoBehaviour
 
             return;
         }
-
-        if(CheckBelow(obj))
-        {
-            if(obj.tag == "Animal")
-            {
-                Debug.Log("We fell on an animal");
-
-                if (!animalBehaviour.parentStack.Equals(obj.GetComponent<AnimalBehaviour>().GetParentStack()))
-                {
-                    AnimalStack colliderStack = obj.GetComponent<AnimalBehaviour>().GetParentStack();
-                    
-                    stackManager.MergeStack(colliderStack, animalBehaviour.parentStack, ExecutePosition.BOTTOM);
-                    
-                    StartCoroutine(animalBehaviour.DisableMovement());
-                }
-            }
-            else
-            {
-                Debug.Log("We are grounded!");
-                isGrounded = true;
-            }
-        }
     }
     
     private void HandleStacking(GameObject obj)
     {
         // Can't progress if we cant merge anyway
-        if(!animalBehaviour.canMerge)
+        if(!stackManager.canMerge)
             return;
 
         AnimalStack colliderStack = obj.GetComponent<AnimalBehaviour>().GetParentStack();
@@ -139,6 +160,8 @@ public class AnimalCollider : MonoBehaviour
             stackManager.MergeStack(colliderStack, animalBehaviour.parentStack, ExecutePosition.TOP);
             
             StartCoroutine(animalBehaviour.DisableMovement());
+
+            animalBehaviour.Stop();
 
             Debug.Log("Stacks Merged!");
         }

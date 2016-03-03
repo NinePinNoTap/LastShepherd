@@ -49,7 +49,6 @@
      <Compile Include="Assets\Scripts\Animal\AnimalBehaviour.cs" />
      <Compile Include="Assets\Scripts\Animal\AnimalCollider.cs" />
      <Compile Include="Assets\Scripts\Animal\AnimalStack.cs" />
-     <Compile Include="Assets\Scripts\Animal\ColliderChecker.cs" />
      <Compile Include="Assets\Scripts\Animal\FrogBehaviour.cs" />
      <Compile Include="Assets\Scripts\Animal\MonkeyBehaviour.cs" />
      <Compile Include="Assets\Scripts\Animal\PenguinBehaviour.cs" />

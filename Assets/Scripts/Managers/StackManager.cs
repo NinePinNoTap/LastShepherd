@@ -9,13 +9,20 @@ public enum ExecutePosition { TOP, BOTTOM };
 
 public class StackManager : MonoBehaviour
 {
+    [Header("Lists")]
 	public List<GameObject> gameAnimals;		// List of animals in the game
 	public List<AnimalStack> levelStacks;		// List of stacks in the game
+
+    [Header("Current Animal")]
 	public int stackIndex;						// Current stack we are working with
 	public int animalIndex;						// Current animal in the current stack we are working with
 	public AnimalStack currentStack;			// Access to the current stack
 	public GameObject currentAnimal;			// Access to the current animal
 	public float animalHeight = 1.0f;
+
+    [Header("Merging")]
+    public bool canMerge;
+    public float disableMergeDuration = 0.5f;
 
 	void Awake ()
 	{
@@ -28,7 +35,10 @@ public class StackManager : MonoBehaviour
 	void Start()
 	{
 		// Build a stack for each animal
-		InitialiseStacks();
+        InitialiseStacks();
+
+        // Initialise flags
+        canMerge = true;
 	}
 
 	//
@@ -158,6 +168,9 @@ public class StackManager : MonoBehaviour
             }
         }
 
+        // Stop merging for a period
+        DisableMerge();
+
 		// Add new stack to the list
 		levelStacks.Add(newStack);
 	}
@@ -218,5 +231,22 @@ public class StackManager : MonoBehaviour
 
 		// Refresh selections
 		UpdateIndices(currentAnimal);
+
+        // Stop merging for a period
+        DisableMerge();
 	}
+
+    public void DisableMerge()
+    {
+        StartCoroutine(DisableMergeProcess());
+    }
+    
+    private IEnumerator DisableMergeProcess()
+    {
+        canMerge = false;
+        
+        yield return new WaitForSeconds(disableMergeDuration);
+        
+        canMerge = true;
+    }
 }

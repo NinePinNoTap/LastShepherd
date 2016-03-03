@@ -98,9 +98,9 @@ public class PenguinBehaviour : AnimalBehaviour
             currentVelocity = Vector3.zero;
 
             // Disable merging again
-            if(canMerge)
+            if(stackManager.canMerge)
             {
-                StartCoroutine(DisableMergeWithBeneath());
+                stackManager.DisableMerge();
             }
         }
     }

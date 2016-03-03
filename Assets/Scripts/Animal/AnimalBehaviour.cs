@@ -25,7 +25,6 @@ public class AnimalBehaviour : MonoBehaviour
     public AnimalSpecies animalSpecies = AnimalSpecies.NONE;
 
     [Header("Stacking and Merging")]
-    public float disableMergeDuration = 0.1f;
     public float animalHeight = 1.0f;
     public Vector3 stackLocalPosition;
 
@@ -33,13 +32,12 @@ public class AnimalBehaviour : MonoBehaviour
     public bool isControllable;
     public bool isMoving;
     public bool isGrounded;
-    public bool canMerge;
     public bool canMove;
     public bool beingThrown;
 
     [Header("Movement")]
-    public float disableMoveDuration = 0.5f;
     public float moveSpeed = 5.0f;
+    public float disableMoveDuration = 0.5f;
     public Vector3 currentVelocity;
     public Vector3 startPosition;
 
@@ -52,7 +50,6 @@ public class AnimalBehaviour : MonoBehaviour
         isControllable = false;
         isMoving = false;
         isGrounded = false;
-        canMerge = true;
         canMove = true;
         beingThrown = false;
 		
@@ -279,9 +276,9 @@ public class AnimalBehaviour : MonoBehaviour
             stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction);
 
             // Start a cooldown so we dont auto merge again
-            if (canMerge)
+            if (stackManager.canMerge)
             {
-                StartCoroutine(DisableMergeWithBeneath(animalBeneath));
+                stackManager.DisableMerge();
             }
         }
     }
@@ -315,7 +312,14 @@ public class AnimalBehaviour : MonoBehaviour
 		else
         {
             // Otherwise, check GroundChecker
-            isGrounded = triggerBox.GetComponent<AnimalCollider>().isGrounded;
+            if(animalIndex == 0)
+            {
+                isGrounded = triggerBox.GetComponent<AnimalCollider>().isGrounded;
+            }
+            else
+            {
+                isGrounded = true;
+            }
         }
     }
     
@@ -373,28 +377,6 @@ public class AnimalBehaviour : MonoBehaviour
         }
 
         triggerBox.GetComponent<AnimalCollider>().Disable();
-    }
-    
-    // DisableMerge when animal is hopping off stack with animals beneath it
-    // Disables collision between bottom and front colliders of controlled animal and animal previously beneath's collider, to prevent merging back
-    public IEnumerator DisableMergeWithBeneath(GameObject animalBeneath)
-    {
-        //Physics.IgnoreCollision(bottomCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), true);
-        //Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), true);
-        
-        yield return new WaitForSeconds(disableMergeDuration);
-
-        //Physics.IgnoreCollision(bottomCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), false);
-        //Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), false);
-    }
-
-    public IEnumerator DisableMergeWithBeneath()
-    {
-        canMerge = false;
-		
-        yield return new WaitForSeconds(disableMergeDuration);
-		
-        canMerge = true;
     }
 
     public IEnumerator DisableMovement()

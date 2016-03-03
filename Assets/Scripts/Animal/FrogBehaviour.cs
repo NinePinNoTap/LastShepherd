@@ -99,9 +99,9 @@ public class FrogBehaviour : AnimalBehaviour
 				GameObject animalBeneath = parentStack.Get(stackManager.animalIndex-1);
 
                 stackManager.SplitStack(parentStack, 1, ExecutePosition.BOTTOM, direction * moveSpeed * Time.deltaTime);
-                if(canMerge)
+                if(stackManager.canMerge)
                 {
-                    StartCoroutine(DisableMergeWithBeneath(animalBeneath));
+                    stackManager.DisableMerge();
                 }
             }
             HandleGeckoMovement(direction);
@@ -111,9 +111,9 @@ public class FrogBehaviour : AnimalBehaviour
             Debug.Log("MOVE GECKO!");
             stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction * moveSpeed * Time.deltaTime);
 
-            if(canMerge)
+            if(stackManager.canMerge)
             {
-                StartCoroutine(DisableMergeWithBeneath());
+                stackManager.DisableMerge();
             }
         }
     }
