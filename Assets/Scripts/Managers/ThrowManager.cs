@@ -33,8 +33,6 @@ public class ThrowManager : MonoBehaviour
     public void TossAnimal()
     {
         AnimalStack oldStack = throwAnimal.GetComponent<AnimalBehaviour>().parentStack;
-
-        float fireStrength = trajectories.fireStrength;
                 
         // Update the current animal to the throwing one
         stacksManager.UpdateSelectedAnimal(throwAnimal);
@@ -42,17 +40,24 @@ public class ThrowManager : MonoBehaviour
         // Split the stack
         stacksManager.SplitStack(oldStack, stacksManager.animalIndex, ExecutePosition.TOP, Vector3.zero);
 
+        // Calculate fire strength
+        float fireStrength = trajectories.fireStrength * throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize();
+
         // Throw the animal
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
         throwAnimal.SetActive(true);
         throwAnimal.GetComponent<Rigidbody>().useGravity = true;
-        throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * fireStrength, ForceMode.Impulse);
+        throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * fireStrength * Time.deltaTime, ForceMode.Impulse);
 
         // Disable animal collisions
         StartCoroutine(DisableAnimalCollisions());
+        //throwingAnimal.GetComponent<AnimalBehaviour>().DisableTriggerBox();
 
         // Flag we are throwing
         throwAnimal.GetComponent<AnimalBehaviour>().beingThrown = true;
+
+        // Stop merging
+        stacksManager.DisableMerge();
 
         // Stop throwing mode
         DeactivateThrowingMode();

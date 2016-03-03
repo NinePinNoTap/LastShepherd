@@ -34,7 +34,7 @@ public class FrogBehaviour : AnimalBehaviour
                 if(isMoving)
                 {                    
                     // Handle collisions with tiles and animals
-                    HandleCollisions();
+                    //HandleCollisions();
                 }
                 
                 // Update velocity

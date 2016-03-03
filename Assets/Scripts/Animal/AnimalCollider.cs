@@ -79,7 +79,11 @@ public class AnimalCollider : MonoBehaviour
     {
         if(objInRange.Contains(col.gameObject))
         {
-            HandleCollision(col.gameObject);
+            // We dont want to merge if we arent at the base
+            if(animalBehaviour.animalIndex == 0)
+            {            
+                HandleCollision(col.gameObject);
+            }
         }
     }
 
@@ -105,7 +109,11 @@ public class AnimalCollider : MonoBehaviour
         {            
             if(obj.tag == "Animal")
             {
-                Debug.Log("We fell on an animal");
+                // We don't want to merge if we cant
+                if(!stackManager.canMerge)
+                    return;
+                
+                Debug.Log("We fell on an animal!");
                 
                 if (!animalBehaviour.parentStack.Equals(obj.GetComponent<AnimalBehaviour>().GetParentStack()))
                 {
@@ -196,17 +204,20 @@ public class AnimalCollider : MonoBehaviour
         float minHeight = bottomAnimal - heightThreshold;
 
         if(obj.transform.position.y >= minHeight && obj.transform.position.y <= bottomAnimal)
+        {
             return true;
+        }
         else
+        {
             return false;
-
-        //return (objParent.transform.position.y - obj.transform.position.y) <= heightThreshold;
+        }
     }
 
     private bool RaycastToTarget(GameObject obj)
     {
         // Calculate a direction vector between the guard and the animal
         Vector3 direction = obj.transform.position - objParent.transform.position;
+        direction.y = 0.0f;
         
         // Calculate the angle between the guard and animal
         float angle = Vector3.Angle(direction, objParent.transform.forward) - 90;
@@ -232,4 +243,3 @@ public class AnimalCollider : MonoBehaviour
         return false;
     }
 }
-

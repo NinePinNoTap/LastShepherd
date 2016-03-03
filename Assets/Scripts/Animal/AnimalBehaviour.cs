@@ -139,6 +139,8 @@ public class AnimalBehaviour : MonoBehaviour
             }
             else
             {
+                rigidBody.useGravity = false;
+                rigidBody.velocity = Vector3.zero;
                 // Animal is above another so just force its position
                 transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
             }
@@ -362,19 +364,19 @@ public class AnimalBehaviour : MonoBehaviour
     
     public void Deactivate()
     {
+        // Default flags
         isControllable = false;
+        canMove = false;
+        isMoving = false;
+
+        // Unhighlight
         objHighlighter.Toggle(false);
+
+        // Reset velocity
         rigidBody.velocity = new Vector3(0, 0, 0);
 
         // If animal is above others in a stack, disable isKinematic
-        if (animalIndex > 0)
-        {
-            rigidBody.isKinematic = false;
-        }
-        else
-        {
-            rigidBody.isKinematic = true;
-        }
+        rigidBody.isKinematic = true;
 
         triggerBox.GetComponent<AnimalCollider>().Disable();
     }
