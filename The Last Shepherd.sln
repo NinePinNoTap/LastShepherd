@@ -1,7 +1,7 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{74A8557D-F3D2-EBF5-502F-1DCCE412DECB}"
+# Visual Studio 2008
+
+Project("{35233BA8-6702-8B9F-F964-FA4DC4ED4CF5}") = "The Last Shepherd", "Assembly-CSharp.csproj", "{74A8557D-F3D2-EBF5-502F-1DCCE412DECB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,7 +14,10 @@ Global
 		{74A8557D-F3D2-EBF5-502F-1DCCE412DECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74A8557D-F3D2-EBF5-502F-1DCCE412DECB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+				GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -52,7 +55,5 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
+
 EndGlobal

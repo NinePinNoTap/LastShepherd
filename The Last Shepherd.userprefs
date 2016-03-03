@@ -1,9 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Animal\AnimalBehaviour.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Managers\InputManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Managers\ThrowManager.cs" Line="166" Column="6" />
-      <File FileName="Assets\Scripts\Animal\AnimalBehaviour.cs" Line="131" Column="10" />
+      <File FileName="Assets\Scripts\Animal\AnimalCollider.cs" Line="181" Column="6" />
+      <File FileName="Assets\Scripts\Animal\AnimalBehaviour.cs" Line="292" Column="75" />
+      <File FileName="Assets\Scripts\Managers\InputManager.cs" Line="226" Column="33" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

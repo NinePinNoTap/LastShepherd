@@ -14,8 +14,7 @@ public enum AnimalSpecies
 public class AnimalBehaviour : MonoBehaviour
 {
     [Header("Components")]
-    public StackManager
-        stackManager;
+    public StackManager stackManager;
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
     public LayerMask layerMask;
@@ -23,18 +22,15 @@ public class AnimalBehaviour : MonoBehaviour
     public Rigidbody rigidBody;
 
     [Header("Game Mechanics")]
-    public AnimalSpecies
-        animalSpecies = AnimalSpecies.NONE;
+    public AnimalSpecies animalSpecies = AnimalSpecies.NONE;
 
     [Header("Stacking and Merging")]
-    public float
-        disableMergeDuration = 0.1f;
+    public float disableMergeDuration = 0.1f;
     public float animalHeight = 1.0f;
     public Vector3 stackLocalPosition;
 
     [Header("Flags")]
-    public bool
-        isControllable;
+    public bool isControllable;
     public bool isMoving;
     public bool isGrounded;
     public bool canMerge;
@@ -42,17 +38,13 @@ public class AnimalBehaviour : MonoBehaviour
     public bool beingThrown;
 
     [Header("Movement")]
-    public float
-        disableMoveDuration = 0.5f;
+    public float disableMoveDuration = 0.5f;
     public float moveSpeed = 5.0f;
     public Vector3 currentVelocity;
     public Vector3 startPosition;
 
     [Header("Collision Detectors")]
-    public GameObject
-        frontCollider;
-    public float colliderSize = 0.1f;
-    public GameObject bottomCollider;
+    public GameObject triggerBox;
 
     protected void Awake()
     {
@@ -67,33 +59,16 @@ public class AnimalBehaviour : MonoBehaviour
         // Get the height of the animal
         animalHeight = transform.localScale.y;
 
-        // Create colliders
-        bottomCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), bottomCollider.GetComponent<Collider>());
-        bottomCollider.transform.localPosition = new Vector3(transform.position.x, transform.position.y - (animalHeight / 2), transform.position.z);
-        bottomCollider.transform.parent = gameObject.transform;
-        bottomCollider.transform.localScale = new Vector3(1, colliderSize, 1);
-        bottomCollider.GetComponent<Collider>().isTrigger = true;
-        bottomCollider.AddComponent<ColliderChecker>();
-        bottomCollider.name = "Bottom Collider";
-        bottomCollider.GetComponent<MeshRenderer>().enabled = false;
+        // Create a box
+        triggerBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        triggerBox.name = "Collider Box";
+        triggerBox.transform.SetParent(transform);
+        triggerBox.transform.localPosition = Vector3.zero;
+        triggerBox.AddComponent<AnimalCollider>();
+        triggerBox.GetComponent<MeshRenderer>().enabled = false;
 
-        frontCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), frontCollider.GetComponent<Collider>());
-        Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), bottomCollider.GetComponent<Collider>());
-        frontCollider.transform.localPosition = new Vector3(transform.position.x + (animalHeight + colliderSize) / 2, transform.position.y + 0.01f, transform.position.z);
-        frontCollider.transform.parent = gameObject.transform;
-        frontCollider.transform.localScale = new Vector3(colliderSize, 0.96f, 1); // Raise front collider off the ground
-        frontCollider.GetComponent<Collider>().isTrigger = true;
-        frontCollider.AddComponent<ColliderChecker>();
-        frontCollider.name = "Front Collider";
-        frontCollider.GetComponent<MeshRenderer>().enabled = false;
-
-        int colliderLayer = LayerMask.NameToLayer("AnimalColliders");
-
-        bottomCollider.layer = colliderLayer;
-        frontCollider.layer = colliderLayer;
-        Physics.IgnoreLayerCollision(colliderLayer, colliderLayer);
+        // Ignore our own colliders
+        Physics.IgnoreCollision(GetComponent<Collider>(), triggerBox.GetComponent<Collider>());
 
         startPosition = transform.position;
     }
@@ -111,6 +86,8 @@ public class AnimalBehaviour : MonoBehaviour
         {
             rigidBody = GetComponent<Rigidbody>();
         }
+        
+        triggerBox.GetComponent<AnimalCollider>().stackManager = stackManager;
     }
 
     protected virtual void FixedUpdate()
@@ -142,7 +119,7 @@ public class AnimalBehaviour : MonoBehaviour
                     // Handle collisions with tiles and animals
                     HandleCollisions();
                 }
-                
+
                 // Update the rigidbody velocity
                 rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
             }
@@ -162,14 +139,11 @@ public class AnimalBehaviour : MonoBehaviour
                 {
                     rigidBody.useGravity = true;
                 }
-
-                bottomCollider.SetActive(true);
             }
             else
             {
                 // Animal is above another so just force its position
                 transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
-                bottomCollider.SetActive(false);
             }
         }
     }
@@ -181,7 +155,7 @@ public class AnimalBehaviour : MonoBehaviour
 
     protected void HandleCollisions()
     {
-        bool frontHasCollided = frontCollider.GetComponent<ColliderChecker>().hasCollided;
+       /* bool frontHasCollided = frontCollider.GetComponent<ColliderChecker>().hasCollided;
 
         // Check front collisions
         if (frontHasCollided)
@@ -254,7 +228,7 @@ public class AnimalBehaviour : MonoBehaviour
                     StartCoroutine(DisableMovement());
                 }
             }
-        }
+        }*/
     }
 
     //===========================================================================
@@ -304,10 +278,6 @@ public class AnimalBehaviour : MonoBehaviour
             // Split the stack
             stackManager.SplitStack(parentStack, stackManager.animalIndex, ExecutePosition.TOP, direction);
 
-            // Reset bottom collider
-            bottomCollider.GetComponent<ColliderChecker>().hasCollided = false;
-            bottomCollider.GetComponent<ColliderChecker>().collidedObject = null;
-
             // Start a cooldown so we dont auto merge again
             if (canMerge)
             {
@@ -342,10 +312,10 @@ public class AnimalBehaviour : MonoBehaviour
             isGrounded = false;
             return;
         }
-		// Otherwise, check GroundChecker
 		else
         {
-            isGrounded = bottomCollider.GetComponent<ColliderChecker>().hasCollided;
+            // Otherwise, check GroundChecker
+            isGrounded = triggerBox.GetComponent<AnimalCollider>().isGrounded;
         }
     }
     
@@ -382,8 +352,8 @@ public class AnimalBehaviour : MonoBehaviour
         rigidBody.velocity = new Vector3(0, 0, 0);
 
         rigidBody.isKinematic = false;
-
-        bottomCollider.SetActive(true);
+        
+        triggerBox.GetComponent<AnimalCollider>().Enable();
     }
     
     public void Deactivate()
@@ -402,23 +372,23 @@ public class AnimalBehaviour : MonoBehaviour
             rigidBody.isKinematic = true;
         }
 
-        bottomCollider.SetActive(false);
+        triggerBox.GetComponent<AnimalCollider>().Disable();
     }
     
     // DisableMerge when animal is hopping off stack with animals beneath it
     // Disables collision between bottom and front colliders of controlled animal and animal previously beneath's collider, to prevent merging back
-    protected IEnumerator DisableMergeWithBeneath(GameObject animalBeneath)
+    public IEnumerator DisableMergeWithBeneath(GameObject animalBeneath)
     {
-        Physics.IgnoreCollision(bottomCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), true);
-        Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), true);
+        //Physics.IgnoreCollision(bottomCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), true);
+        //Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), true);
         
         yield return new WaitForSeconds(disableMergeDuration);
 
-        Physics.IgnoreCollision(bottomCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), false);
-        Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), false);
+        //Physics.IgnoreCollision(bottomCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), false);
+        //Physics.IgnoreCollision(frontCollider.GetComponent<Collider>(), animalBeneath.GetComponent<Collider>(), false);
     }
 
-    protected IEnumerator DisableMergeWithBeneath()
+    public IEnumerator DisableMergeWithBeneath()
     {
         canMerge = false;
 		
@@ -427,7 +397,7 @@ public class AnimalBehaviour : MonoBehaviour
         canMerge = true;
     }
 
-    protected IEnumerator DisableMovement()
+    public IEnumerator DisableMovement()
     {
         canMove = false;
 
