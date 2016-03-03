@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ButtonPlayGame : MonoBehaviour
+public class ButtonGoToScene : MonoBehaviour
 {
-	public void GoToLevel(string sceneName)
+	public void GoToScene(string sceneName)
 	{
 		Application.LoadLevel(sceneName);
 	}

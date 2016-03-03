@@ -5,6 +5,6 @@ public class ButtonLoadingScreen : MonoBehaviour
 {
 	public void LoadScene(string sceneName)
 	{
-		//LoadingScreenManager.LoadScene(sceneName);
+		LoadingScreenManager.LoadScene(sceneName);
 	}
 }
