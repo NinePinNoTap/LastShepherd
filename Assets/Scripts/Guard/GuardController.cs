@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Helper;
 
 public enum GuardType { PATROL, LOOKOUT, STAND};
 

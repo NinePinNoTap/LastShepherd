@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class AnimalCollider : MonoBehaviour
 {
     [Header("Components")]
-    public List<GameObject> objInRange;
+    public List<GameObject> objInRange =  new List<GameObject>();
     public BoxCollider boxCollider;
     public GameObject objParent;
     public AnimalBehaviour animalBehaviour;
@@ -17,15 +17,12 @@ public class AnimalCollider : MonoBehaviour
     public bool isActivated = false;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         // Set up the box collider
         boxCollider = gameObject.GetComponent<BoxCollider>();
         boxCollider.transform.localScale = new Vector3(1.5f, 1.1f ,1.5f);
         boxCollider.isTrigger = true;
-
-        // Create list of objects in range
-        objInRange = new List<GameObject>();
 
         // Get parent object
         objParent = transform.parent.gameObject;
@@ -79,7 +76,7 @@ public class AnimalCollider : MonoBehaviour
     }
 
     void OnTriggerStay(Collider col)
-       {
+    {
         if(objInRange.Contains(col.gameObject))
         {
             HandleCollision(col.gameObject);

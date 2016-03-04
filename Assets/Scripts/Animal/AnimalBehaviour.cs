@@ -203,8 +203,15 @@ public class AnimalBehaviour : MonoBehaviour
     //===========================================================================
 
     void OnCollisionEnter(Collision col)
-       {
-        if(col.gameObject.tag == "Tile" && col.transform.position.y < (gameObject.transform.position.y - gameObject.GetComponent<Collider>().bounds.extents.y))
+    {
+        // 
+        // This may cause problems if the tile is not beneath us
+        // I.e Being thrown into a tile
+        // May need a contact point check or something
+        //
+
+        // Check if we are grounded
+        if(col.gameObject.tag == "Tile")
         {
             isGrounded = true;
             beingThrown = false;
