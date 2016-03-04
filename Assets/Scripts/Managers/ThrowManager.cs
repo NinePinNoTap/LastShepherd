@@ -14,7 +14,6 @@ public class ThrowManager : MonoBehaviour
     public GameObject throwingAnimal;
     private bool fire = false;
     
-    
     // Use this for initialization
     void Start()
     {
@@ -41,26 +40,28 @@ public class ThrowManager : MonoBehaviour
         stacksManager.SplitStack(oldStack, stacksManager.animalIndex, ExecutePosition.TOP, Vector3.zero);
 
         // Calculate fire strength
-        float fireStrength = trajectories.fireStrength * throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize();
+        float fireStrength = trajectories.fireStrength;
+        if(throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize() > 1)
+            fireStrength *= 5;
 
         // Throw the animal
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
-        throwAnimal.SetActive(true);
+        throwAnimal.GetComponent<AnimalBehaviour>().Stop();
         throwAnimal.GetComponent<Rigidbody>().useGravity = true;
         throwAnimal.GetComponent<Rigidbody>().AddForce(trajectories.firingPoint.transform.up * fireStrength * Time.deltaTime, ForceMode.Impulse);
 
-        // Disable animal collisions
-        StartCoroutine(DisableAnimalCollisions());
-        //throwingAnimal.GetComponent<AnimalBehaviour>().DisableTriggerBox();
-
         // Flag we are throwing
         throwAnimal.GetComponent<AnimalBehaviour>().beingThrown = true;
+        throwAnimal.GetComponent<AnimalBehaviour>().canMove = false;
 
         // Stop merging
         stacksManager.DisableMerge();
 
         // Stop throwing mode
         DeactivateThrowingMode();
+
+        // Disable animal collisions
+        StartCoroutine(DisableAnimalCollisions());
     }
 
     // Temporarily disables collisions between colliders of animal being thrown and animal doing the throwing

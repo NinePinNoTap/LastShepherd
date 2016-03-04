@@ -91,143 +91,42 @@ public class AnimalBehaviour : MonoBehaviour
     {
         // Check if we are on the ground
         GroundCheck();
-
+        
         // Check if we are moving
         MovingCheck();
-        
-        // Check if we were in throwing state
-        if (isGrounded && beingThrown)
-        {
-            // Flag we aren't being thrown anymore
-            beingThrown = false;
-            
-            Debug.Log("Can be thrown again!");
-        }
 
-        // Check if we are controllable
-        if (isControllable)
+        if(animalIndex == 0)
         {
-            // Check if we can move
-            if (canMove && !beingThrown)
-            {
-                // Check if we are moving
-                if (isMoving)
-                {
-                    // Handle collisions with tiles and animals
-                    HandleCollisions();
-                }
+            // Enable gravity
+            rigidBody.useGravity = true;
 
-                // Update the rigidbody velocity
-                rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
-            }
-        }
-        else
-        {
-            // Check if we are at the bottom of the stack
-            if (animalIndex == 0)
+            // Check if we are being thrown
+            if(beingThrown)
             {
-                // If the animal is on the ground but has gravity enabled
-                if (isGrounded)
+                if(isGrounded)
                 {
-                    // Disable gravity
-                    rigidBody.useGravity = false;
-                }
-                else
-                {
-                    rigidBody.useGravity = true;
+                    canMove = true;
+                    beingThrown = false;
+                    Debug.Log("Can be thrown again!");
                 }
             }
             else
             {
-                rigidBody.useGravity = false;
-                rigidBody.velocity = Vector3.zero;
-                // Animal is above another so just force its position
-                transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
+                if(canMove)
+                {
+                    // Update the rigidbody velocity
+                    rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
+                }
             }
         }
-    }
-
-    
-    //===========================================================================
-    // COLLISION AND MERGING
-    //===========================================================================
-
-    protected void HandleCollisions()
-    {
-       /* bool frontHasCollided = frontCollider.GetComponent<ColliderChecker>().hasCollided;
-
-        // Check front collisions
-        if (frontHasCollided)
+        else
         {
-            GameObject collidedObject = frontCollider.GetComponent<ColliderChecker>().collidedObject;
+            rigidBody.useGravity = false;
+            rigidBody.velocity = Vector3.zero;
 
-            // Move onto animal stack
-            if ((animalIndex == 0) && collidedObject.tag.Equals("Animal") && canMerge)
-            {
-                AnimalStack colliderStack = collidedObject.GetComponent<AnimalBehaviour>().GetParentStack();
-
-                if (colliderStack != parentStack)
-                {
-                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.TOP);
-					
-                    StartCoroutine(DisableMovement());
-					
-                    Debug.Log("MERGED!");
-                }
-
-                // Reset front collider
-                frontCollider.GetComponent<ColliderChecker>().hasCollided = false;
-                frontCollider.GetComponent<ColliderChecker>().collidedObject = null;
-            }
-			// Move onto tile
-			else if ((animalIndex == 0) && collidedObject.tag.Equals("Tile") && canMove)
-            {
-                Vector3 start = collidedObject.transform.position;
-
-                RaycastHit hit;
-                // Raycast directly upwards by animal height
-                if (Physics.Raycast(start, Vector3.up, out hit, animalHeight))
-                {
-                    // If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
-                    if ((collidedObject == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Tile")))
-                    {
-                        return;
-                    }
-                }
-
-                // If possible to move onto tile, move all animals accordingly
-                for (int j=0; j<parentStack.GetSize(); j++)
-                {
-                    parentStack.Get(j).transform.position = (collidedObject.transform.position + new Vector3(0.0f, animalHeight * (j + 1), 0.0f));
-                }
-				
-                StartCoroutine(DisableMovement());
-
-                // Reset front collider
-                frontCollider.GetComponent<ColliderChecker>().hasCollided = false;
-                frontCollider.GetComponent<ColliderChecker>().collidedObject = null;
-            }
+            // Animal is above another so just force its position
+            transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
         }
-
-        bool bottomHasCollided = bottomCollider.GetComponent<ColliderChecker>().hasCollided;
-
-        if (bottomHasCollided)
-        {
-            GameObject collidedObject = bottomCollider.GetComponent<ColliderChecker>().collidedObject;
-
-            if ((animalIndex == 0) && collidedObject.tag.Equals("Animal") && canMerge)
-            {
-                Debug.Log("Merging from above!");
-                if (!parentStack.Equals(collidedObject.GetComponent<AnimalBehaviour>().GetParentStack()))
-                {
-                    AnimalStack colliderStack = collidedObject.GetComponent<AnimalBehaviour>().GetParentStack();
-					
-                    stackManager.MergeStack(colliderStack, parentStack, ExecutePosition.BOTTOM);
-
-                    StartCoroutine(DisableMovement());
-                }
-            }
-        }*/
     }
 
     //===========================================================================
@@ -236,7 +135,10 @@ public class AnimalBehaviour : MonoBehaviour
 
     public virtual void MoveAnimal(Vector3 direction)
     {
-        if (!canMove || beingThrown)
+        if (!canMove)
+            return;
+
+        if(beingThrown)
             return;
 
         if (!direction.Equals(Vector3.zero))
@@ -313,20 +215,15 @@ public class AnimalBehaviour : MonoBehaviour
         }
 		else
         {
-            // Otherwise, check GroundChecker
-            if(animalIndex == 0)
-            {
-                isGrounded = triggerBox.GetComponent<AnimalCollider>().isGrounded;
-            }
-            else
-            {
-                isGrounded = true;
-            }
+            isGrounded = triggerBox.GetComponent<AnimalCollider>().isGrounded;
         }
     }
     
     protected void MovingCheck()
     {
+        if(beingThrown)
+            return;
+
         // Return true if either x/z velocity is not 0
         if (rigidBody.velocity.x == 0 && rigidBody.velocity.z == 0)
         {

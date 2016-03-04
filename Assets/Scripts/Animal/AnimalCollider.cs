@@ -13,8 +13,9 @@ public class AnimalCollider : MonoBehaviour
 
     [Header("Gameplay")]
     public float FOV = 135.0f;
-    public float heightThreshold = 1.2f;
+    public float heightThreshold = 1.0f;
     public bool isGrounded = false;
+    public bool isActivated = false;
 
     // Use this for initialization
     void Start()
@@ -54,13 +55,13 @@ public class AnimalCollider : MonoBehaviour
     public void Enable()
     {
         objInRange.Clear();
-        boxCollider.enabled = true;
+        isActivated = true;
     }
 
     public void Disable()
     {
         objInRange.Clear();
-        boxCollider.enabled = false;
+        isActivated = false;
     }
 	
     //======================
@@ -69,6 +70,9 @@ public class AnimalCollider : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
+        if(col.name == "Collider Box")
+            return;
+
         if(!objInRange.Contains(col.gameObject))
         {
             objInRange.Add(col.gameObject);
@@ -76,14 +80,10 @@ public class AnimalCollider : MonoBehaviour
     }
 
     void OnTriggerStay(Collider col)
-    {
+       {
         if(objInRange.Contains(col.gameObject))
         {
-            // We dont want to merge if we arent at the base
-            if(animalBehaviour.animalIndex == 0)
-            {            
-                HandleCollision(col.gameObject);
-            }
+            HandleCollision(col.gameObject);
         }
     }
 
@@ -101,6 +101,12 @@ public class AnimalCollider : MonoBehaviour
 
     private void HandleCollision(GameObject obj)
     {
+        if(animalBehaviour.animalIndex > 0)
+            return;
+
+        // Reset flag for this frame
+        isGrounded = false;
+
         //===============================
         // Check if object is beneath us
         //===============================
@@ -126,11 +132,11 @@ public class AnimalCollider : MonoBehaviour
             }
             else if(obj.tag == "Tile")
             {
-                Debug.Log("We are grounded!");
+                Debug.Log(objParent.name + " - " + "grounded!");
                 isGrounded = true;
             }
         }
-        else if(RaycastToTarget(obj))
+        else if(RaycastToTarget(obj) && isActivated)
         {
             if(obj.tag == "Animal")
             {

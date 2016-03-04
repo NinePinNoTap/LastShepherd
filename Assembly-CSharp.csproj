@@ -68,8 +68,8 @@
      <Compile Include="Assets\Scripts\Misc\Trajectories.cs" />
      <Compile Include="Assets\Scripts\Misc\Utility.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonExitGame.cs" />
+     <Compile Include="Assets\Scripts\UI\Buttons\ButtonGoToScene.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonLoadingScreen.cs" />
-     <Compile Include="Assets\Scripts\UI\Buttons\ButtonPlayGame.cs" />
      <None Include="Assets\Shader\Outline.shader" />
      <None Include="Assets\Shader\Gradient.shader" />
  <Reference Include="UnityEngine.UI">

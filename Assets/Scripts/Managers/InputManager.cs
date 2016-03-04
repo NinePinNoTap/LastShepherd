@@ -114,7 +114,7 @@ public class InputManager : MonoBehaviour
             return;
         
 		// Check animal is not being thrown or in mid-air
-		if (!controlledAnimal.beingThrown && controlledAnimal.isGrounded)
+		if (!controlledAnimal.beingThrown && controlledAnimal.parentStack.Get(0).GetComponent<AnimalBehaviour>().isGrounded)
 		{
 			// Disable move velocity
 			controlledAnimal.Stop ();
