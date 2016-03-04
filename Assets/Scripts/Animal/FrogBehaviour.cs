@@ -7,10 +7,7 @@ public class FrogBehaviour : AnimalBehaviour
     public bool onWall = false;
 
     void FixedUpdate()
-    {
-		// Check if we are on the ground - DONE IN GROUNDCHECKER NOW
-        GroundCheck();
-        
+    {        
         // Check if we are moving
         MovingCheck();
 

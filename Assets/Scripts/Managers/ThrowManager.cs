@@ -41,8 +41,12 @@ public class ThrowManager : MonoBehaviour
 
         // Calculate fire strength
         float fireStrength = trajectories.fireStrength;
-        if(throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize() > 1)
-            fireStrength *= 5;
+        int stackSize = throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize();
+
+        if(stackSize > 1)
+        {
+            fireStrength *= (stackSize * stackSize) + 1;
+        }
 
         // Throw the animal
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
@@ -62,6 +66,11 @@ public class ThrowManager : MonoBehaviour
 
         // Disable animal collisions
         StartCoroutine(DisableAnimalCollisions());
+
+        //Debug.Log("== Current Throw ==");
+        //Debug.Log("   Throwing Animals - " + stackSize);
+        //Debug.Log("   Throwing Animal - " + throwingAnimal.name);
+        //Debug.Log("   Thrown Animal - " + throwAnimal.name);
     }
 
     // Temporarily disables collisions between colliders of animal being thrown and animal doing the throwing

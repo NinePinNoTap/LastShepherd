@@ -88,13 +88,16 @@ public class AnimalBehaviour : MonoBehaviour
     }
 
     protected virtual void FixedUpdate()
-    {
-        // Check if we are on the ground
-        GroundCheck();
-        
+    {        
         // Check if we are moving
         MovingCheck();
 
+        if(transform.position.y < GameManager.FALL_THRESHOLD)
+        {
+            transform.position = startPosition;
+        }
+
+        // Check if we are the base animal
         if(animalIndex == 0)
         {
             // Enable gravity
@@ -121,8 +124,8 @@ public class AnimalBehaviour : MonoBehaviour
         }
         else
         {
-            rigidBody.useGravity = false;
-            rigidBody.velocity = Vector3.zero;
+            isGrounded = false;
+            beingThrown = false;
 
             // Animal is above another so just force its position
             transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
@@ -199,23 +202,22 @@ public class AnimalBehaviour : MonoBehaviour
     // CHECKS
     //===========================================================================
 
-    protected void GroundCheck()
-    {
-        // Check for off map
-        if (transform.position.y < GameManager.FALL_THRESHOLD)
+    void OnCollisionEnter(Collision col)
+       {
+        if(col.gameObject.tag == "Tile" && col.transform.position.y < (gameObject.transform.position.y - gameObject.GetComponent<Collider>().bounds.extents.y))
         {
-            transform.position = startPosition + new Vector3(0.0f, 1.0f, 0.0f);
+            isGrounded = true;
+            beingThrown = false;
+            canMove = true;
+            rigidBody.velocity = Vector3.zero;
         }
+    }
 
-        // We will never be grounded if we are being thrown upwards
-        if (Mathf.Abs(rigidBody.velocity.y) > 0.1f && beingThrown)
+    void OnCollisionExit(Collision col)
+    {
+        if(col.gameObject.name == "Tile")
         {
             isGrounded = false;
-            return;
-        }
-		else
-        {
-            isGrounded = triggerBox.GetComponent<AnimalCollider>().isGrounded;
         }
     }
     

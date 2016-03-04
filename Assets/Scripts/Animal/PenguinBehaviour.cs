@@ -8,9 +8,6 @@ public class PenguinBehaviour : AnimalBehaviour
 
     void FixedUpdate()
     {
-		// Check if we are on the ground - DONE IN GROUNDCHECKER NOW
-		GroundCheck();
-
         // Check if we were in throwing state
         if (isGrounded && beingThrown)
         {

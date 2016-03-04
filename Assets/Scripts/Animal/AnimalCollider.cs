@@ -14,7 +14,6 @@ public class AnimalCollider : MonoBehaviour
     [Header("Gameplay")]
     public float FOV = 135.0f;
     public float heightThreshold = 1.0f;
-    public bool isGrounded = false;
     public bool isActivated = false;
 
     // Use this for initialization
@@ -104,8 +103,8 @@ public class AnimalCollider : MonoBehaviour
         if(animalBehaviour.animalIndex > 0)
             return;
 
-        // Reset flag for this frame
-        isGrounded = false;
+        if(!animalBehaviour.isControllable)
+            return;
 
         //===============================
         // Check if object is beneath us
@@ -118,9 +117,7 @@ public class AnimalCollider : MonoBehaviour
                 // We don't want to merge if we cant
                 if(!stackManager.canMerge)
                     return;
-                
-                Debug.Log("We fell on an animal!");
-                
+
                 if (!animalBehaviour.parentStack.Equals(obj.GetComponent<AnimalBehaviour>().GetParentStack()))
                 {
                     AnimalStack colliderStack = obj.GetComponent<AnimalBehaviour>().GetParentStack();
@@ -128,12 +125,9 @@ public class AnimalCollider : MonoBehaviour
                     stackManager.MergeStack(colliderStack, animalBehaviour.parentStack, ExecutePosition.BOTTOM);
                     
                     StartCoroutine(animalBehaviour.DisableMovement());
+
+                    Debug.Log("We fell on an animal!");
                 }
-            }
-            else if(obj.tag == "Tile")
-            {
-                Debug.Log(objParent.name + " - " + "grounded!");
-                isGrounded = true;
             }
         }
         else if(RaycastToTarget(obj) && isActivated)
