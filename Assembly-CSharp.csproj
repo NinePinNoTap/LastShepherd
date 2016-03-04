@@ -64,6 +64,7 @@
      <Compile Include="Assets\Scripts\Mechanics\ColouredTile.cs" />
      <Compile Include="Assets\Scripts\Mechanics\Interactable.cs" />
      <Compile Include="Assets\Scripts\Mechanics\LevelCompleteCheckpoint.cs" />
+     <Compile Include="Assets\Scripts\Misc\EscapeButton.cs" />
      <Compile Include="Assets\Scripts\Misc\ObjectHighlighter.cs" />
      <Compile Include="Assets\Scripts\Misc\Trajectories.cs" />
      <Compile Include="Assets\Scripts\Misc\Utility.cs" />

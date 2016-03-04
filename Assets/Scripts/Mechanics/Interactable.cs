@@ -1,27 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+[System.Serializable]
+public struct MoveableObject
+{
+    public string name;
+    public GameObject controlObj;
+    public Vector3 moveAmount;
+    public Vector3 currentPosition;
+    public Vector3 targetPosition;
+    public bool isFinished;
+}
 
 public class Interactable : MonoBehaviour
 {
-	[Header("Components")]
-	public GameObject controlledObject;		// Access to the object to be moved
-	public Vector3 objectChangeAmount;		// How much to alter the current position of the object by
-
-	[Header("Transforms")]
-	private Vector3 objectCurrentPosition;	// Object current position (self calculated)
-	private Vector3 objectTargetPosition;	// Object target position (self calculated)
+	[Header("Objects")]
+    public MoveableObject[] movingObjs;
 
 	[Header("Animation Properties")]
 	public float animationTime = 2.0f;		// How long we want it to take
-	public bool isActivated = false;		// Whether the box has been activated
-	private float plateFrameTime = 0.0f;	// Counter for animating plate
-	private float objectFrameTime = 0.0f;	// Counter for animating object
+    private float animationFrame = 0.0f;	// Counter for animating object
+    public bool isActivated = false;        // Whether the box has been activated
 	
 	void Start ()
 	{
-		// Store start and end positions of object
-		objectCurrentPosition = controlledObject.transform.position;
-		objectTargetPosition = objectCurrentPosition + objectChangeAmount;
+        // Set obj move data
+        for(int i = 0; i < movingObjs.Length; i++)
+        {
+            movingObjs[i].currentPosition = movingObjs[i].controlObj.transform.position;
+            movingObjs[i].targetPosition = movingObjs[i].currentPosition + movingObjs[i].moveAmount;
+            movingObjs[i].isFinished = false;
+        }
 	}
 
 	void OnTriggerEnter(Collider collider)
@@ -32,14 +42,14 @@ public class Interactable : MonoBehaviour
 		// Make sure we are activating with an animal
 		if(collider.gameObject.tag == "Animal")
 		{
-			ActivatePressurePlate();
+			Activate();
 
 			Debug.Log ("Triggered!");
 		}
 	}
 
 
-	private void ActivatePressurePlate()
+	private void Activate()
 	{
 		isActivated = true;
 		StartCoroutine(MoveObject());
@@ -47,11 +57,29 @@ public class Interactable : MonoBehaviour
 
 	private IEnumerator MoveObject()
 	{
+        int finishedObjs = 0;
+
 		while(true)
 		{
-			objectFrameTime += Time.deltaTime;
-			controlledObject.transform.position = Vector3.Lerp (objectCurrentPosition, objectTargetPosition, objectFrameTime / animationTime);
-			if(controlledObject.transform.position.Equals(objectTargetPosition))
+			animationFrame += Time.deltaTime;
+
+            // Set obj move data
+            for(int i = 0; i < movingObjs.Length; i++)
+            {
+                if(!movingObjs[i].isFinished)
+                {
+                    movingObjs[i].controlObj.transform.position = Vector3.Lerp (movingObjs[i].currentPosition, movingObjs[i].targetPosition, animationFrame / animationTime);
+                    movingObjs[i].targetPosition = movingObjs[i].currentPosition + movingObjs[i].moveAmount;
+
+                    if(movingObjs[i].currentPosition.Equals(movingObjs[i].targetPosition))
+                    {
+                        movingObjs[i].isFinished = true;
+                        finishedObjs++;
+                    }
+                }
+            }
+
+            if(movingObjs.Length.Equals(finishedObjs))
 			{
 				break;
 			}

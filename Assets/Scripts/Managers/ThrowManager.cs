@@ -3,10 +3,13 @@ using System.Collections;
 
 public class ThrowManager : MonoBehaviour
 {
+    [Header("Components")]
     public StackManager stacksManager;
     public Trajectories trajectories;
     public GameObject cannon;                           // "Cannon" to aim animals
-    
+    public GameObject invisibleWalls;
+
+    [Header("Properties")]
     public float smallAngle = 20;
     public float bigAngle = 35;
     public float throwRadius = 12;
@@ -45,7 +48,7 @@ public class ThrowManager : MonoBehaviour
 
         if(stackSize > 1)
         {
-            fireStrength *= (stackSize * stackSize) + 1;
+            fireStrength *= stackSize;//(stackSize * stackSize) + 1;
         }
 
         // Throw the animal
@@ -90,12 +93,20 @@ public class ThrowManager : MonoBehaviour
         cannon.transform.rotation = controlledAnimal.transform.rotation;
         trajectories.SimulatePath();
         cannon.transform.parent.gameObject.SetActive(true);
+        invisibleWalls.SetActive(false);
     }
     
     public void DeactivateThrowingMode()
     {
         cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
         cannon.transform.parent.gameObject.SetActive(false);
+        StartCoroutine(DeactiveInvisibleWalls());
+    }
+
+    private IEnumerator DeactiveInvisibleWalls()
+    {
+        yield return new WaitForSeconds(2.0f);
+        invisibleWalls.SetActive(true);
     }
     
     public void RotateRight()

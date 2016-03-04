@@ -30,6 +30,21 @@ ModelImporter:
     100044: transform7
     100046: transform8
     100048: transform9
+    100050: frog_googles
+    100052: frog_tongue
+    100054: polySurface1
+    100056: polySurface10
+    100058: polySurface11
+    100060: polySurface2
+    100062: polySurface6
+    100064: polySurface9
+    100066: transform12
+    100068: transform13
+    100070: transform14
+    100072: transform15
+    100074: transform16
+    100076: transform17
+    100078: transform18
     400000: eye_left
     400002: eye_right
     400004: //RootNode
@@ -55,9 +70,48 @@ ModelImporter:
     400044: transform7
     400046: transform8
     400048: transform9
+    400050: frog_googles
+    400052: frog_tongue
+    400054: polySurface1
+    400056: polySurface10
+    400058: polySurface11
+    400060: polySurface2
+    400062: polySurface6
+    400064: polySurface9
+    400066: transform12
+    400068: transform13
+    400070: transform14
+    400072: transform15
+    400074: transform16
+    400076: transform17
+    400078: transform18
     2300000: frog1
+    2300002: eye_left
+    2300004: eye_right
+    2300006: frog_body
+    2300008: frog_googles
+    2300010: frog_leg_left
+    2300012: frog_leg_right
+    2300014: frog_mouth
+    2300016: frog_tongue
     3300000: frog1
+    3300002: eye_left
+    3300004: eye_right
+    3300006: frog_body
+    3300008: frog_googles
+    3300010: frog_leg_left
+    3300012: frog_leg_right
+    3300014: frog_mouth
+    3300016: frog_tongue
     4300000: frog1
+    4300002: frog_body
+    4300004: frog_tongue
+    4300006: frog_mouth
+    4300008: eye_right
+    4300010: eye_left
+    4300012: frog_googles
+    4300014: frog_leg_right
+    4300016: frog_leg_left
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -82,7 +136,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 10
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1

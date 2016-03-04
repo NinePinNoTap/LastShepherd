@@ -1,8 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="\\vmwfil04\students$\1100484\Desktop\LastShepherd-prototypev6\Assets\Scripts\Managers\ThrowManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Managers\ThrowManager.cs">
     <Files>
-      <File FileName="\\vmwfil04\students$\1100484\Desktop\LastShepherd-prototypev6\Assets\Scripts\Managers\ThrowManager.cs" Line="34" Column="6" />
+      <File FileName="Assets\Scripts\Managers\ThrowManager.cs" Line="103" Column="50" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
