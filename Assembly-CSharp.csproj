@@ -66,6 +66,7 @@
      <Compile Include="Assets\Scripts\Mechanics\Interactable.cs" />
      <Compile Include="Assets\Scripts\Mechanics\LevelCompleteCheckpoint.cs" />
      <Compile Include="Assets\Scripts\Misc\EscapeButton.cs" />
+     <Compile Include="Assets\Scripts\Misc\GameSaveData.cs" />
      <Compile Include="Assets\Scripts\Misc\ObjectHighlighter.cs" />
      <Compile Include="Assets\Scripts\Misc\Singleton.cs" />
      <Compile Include="Assets\Scripts\Misc\Trajectories.cs" />

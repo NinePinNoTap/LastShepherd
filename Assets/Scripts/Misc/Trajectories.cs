@@ -21,19 +21,26 @@ public class Trajectories : MonoBehaviour
     
     // closest GameObject hit by trajectory curve
     private Collider _hitObject;
-    public Collider hitObject { get { return _hitObject; } }
-    
+
+    public Collider hitObject
+    {
+        get
+        {
+            return _hitObject;
+        }
+    }
+
     public LayerMask layerMask;
     
     // Light to shine upon targeted surface
     public Light spotlight;
-    
+
     void Awake()
     {
         // Determine length of segments in trajectory curve
-        segmentLength = (float) pathLength / segmentCount;
+        segmentLength = (float)pathLength / segmentCount;
     }
-    
+
     void FixedUpdate()
     {
         SimulatePath();
@@ -76,7 +83,7 @@ public class Trajectories : MonoBehaviour
                 // Highlight hit object with spotlight
                 spotlight.enabled = true;
                 
-                int spotlightIndex = (int) Mathf.Round((float)i/6 * 5);
+                int spotlightIndex = (int)Mathf.Round((float)i / 6 * 5);
                 spotlight.range = Vector3.Magnitude(segments[spotlightIndex] - segments[i]) + 0.5f;
                 
                 spotlight.transform.position = segments[spotlightIndex];

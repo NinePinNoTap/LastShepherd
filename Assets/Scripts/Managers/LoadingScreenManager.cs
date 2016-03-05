@@ -72,8 +72,6 @@ public class LoadingScreenManager : MonoBehaviour
 		float currentTime = Time.time;
 		float maxTime = Time.time + additionalLoadTime;
 
-		Debug.Log("Loading Scene");
-
 		yield return null; 
 
 		// Fade in
