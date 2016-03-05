@@ -8,8 +8,7 @@ public enum AnimalSpecies
     MONKEY,
     PENGUIN,
     TURTLE
-}
-;
+};
 
 public class AnimalBehaviour : MonoBehaviour
 {

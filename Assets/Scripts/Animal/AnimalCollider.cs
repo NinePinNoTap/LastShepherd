@@ -127,7 +127,7 @@ public class AnimalCollider : MonoBehaviour
                 }
             }
         }
-        else if(RaycastToTarget(obj) && isActivated)
+        if(RaycastToTarget(obj) && isActivated)
         {
             if(obj.tag == "Animal")
             {
@@ -167,25 +167,46 @@ public class AnimalCollider : MonoBehaviour
         // Can't progress if we cant move anyway
         if(!animalBehaviour.canMove)
             return;
-
-        Vector3 start = obj.transform.position;
         
-        RaycastHit hit;
+        // Calculate a direction vector between the guard and the animal
+        Vector3 direction = obj.transform.position - objParent.transform.position;
+        direction.y = 0.0f;
 
-        // Raycast directly upwards by animal height
-        if (Physics.Raycast(start, Vector3.up, out hit, animalBehaviour.animalHeight))
+        // Calculate the angle between the guard and animal
+        float angle = Vector3.Angle(direction, objParent.transform.forward) - 90;
+
+        // Check if we are within the field of view
+        if(angle < FOV * 0.5f)
         {
-            // If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
-            if ((obj == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Tile")))
+            RaycastHit hit;
+
+            int layerMask = LayerMask.NameToLayer("Tile");
+
+            // Create a ray between the guard position and animal position
+            if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, 1 << layerMask))
             {
-                return;
+                // Check if we hit the player
+                if(hit.collider.gameObject.tag == "Tile")
+                {
+                    // Raycast directly upwards by animal height
+                    if (Physics.Raycast(hit.point + direction, Vector3.up, out hit, animalBehaviour.animalHeight))
+                    {
+                        // If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
+                        if ((obj == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Tile")))
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            // If possible to move onto tile, move all animals accordingly
+                            for (int j=0; j<animalBehaviour.parentStack.GetSize(); j++)
+                            {
+                                animalBehaviour.parentStack.Get(j).transform.position = (obj.transform.position + new Vector3(0.0f, animalBehaviour.animalHeight * (j + 1), 0.0f));
+                            }
+                        }
+                    }
+                }
             }
-        }
-        
-        // If possible to move onto tile, move all animals accordingly
-        for (int j=0; j<animalBehaviour.parentStack.GetSize(); j++)
-        {
-            animalBehaviour.parentStack.Get(j).transform.position = (obj.transform.position + new Vector3(0.0f, animalBehaviour.animalHeight * (j + 1), 0.0f));
         }
         
         StartCoroutine(animalBehaviour.DisableMovement());
