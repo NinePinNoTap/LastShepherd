@@ -116,8 +116,16 @@ public class AnimalBehaviour : MonoBehaviour
             {
                 if(canMove)
                 {
+                    currentVelocity.y = rigidBody.velocity.y;
+
+                    if(currentVelocity.y < -0.01f)
+                    {
+                        // Fall
+                        currentVelocity = new Vector3(0, currentVelocity.y, 0);
+                    }
+
                     // Update the rigidbody velocity
-                    rigidBody.velocity = new Vector3(currentVelocity.x, rigidBody.velocity.y, currentVelocity.z);
+                    rigidBody.velocity = currentVelocity;
                 }
             }
         }
