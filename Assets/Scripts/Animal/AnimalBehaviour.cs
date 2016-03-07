@@ -77,10 +77,12 @@ public class AnimalBehaviour : MonoBehaviour
 		frontCollider.GetComponent<MeshRenderer> ().enabled = false;
 
 		int colliderLayer = LayerMask.NameToLayer ("AnimalColliders");
+		int tileBarrierLayer = LayerMask.NameToLayer ("TileBarrier");
 
 		bottomCollider.layer = colliderLayer;
 		frontCollider.layer = colliderLayer;
 		Physics.IgnoreLayerCollision (colliderLayer, colliderLayer);
+		Physics.IgnoreLayerCollision (tileBarrierLayer, colliderLayer);
 
     }
 
@@ -112,6 +114,12 @@ public class AnimalBehaviour : MonoBehaviour
         {
             // Flag we aren't being thrown anymore
             beingThrown = false;
+
+			// Reactivate all tile barriers upon thrown animals landing
+			GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
+			for (int i=0; i<tileBarriers.Length; i++) {
+				tileBarriers[i].GetComponent<BoxCollider>().enabled = true;
+			}
 
             Debug.Log("Can be thrown again!");
         }
@@ -199,8 +207,8 @@ public class AnimalBehaviour : MonoBehaviour
 				frontCollider.GetComponent<ColliderChecker>().hasCollided = false;
 				frontCollider.GetComponent<ColliderChecker>().collidedObject = null;
 			}
-			// Move onto tile
-			else if ((animalIndex == 0) && collidedObject.tag.Equals("Tile") && canMove)
+			// Move onto tile (Changed from "Tile" to "Block")
+			else if ((animalIndex == 0) && collidedObject.tag.Equals("Block") && canMove)
 			{
 				Vector3 start = collidedObject.transform.position;
 
@@ -209,7 +217,7 @@ public class AnimalBehaviour : MonoBehaviour
 				if (Physics.Raycast(start, Vector3.up, out hit, animalHeight))
 				{
 					// If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
-					if ((collidedObject == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Tile")))
+					if ((collidedObject == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Block")))
 					{
 						return;
 					}
@@ -328,7 +336,19 @@ public class AnimalBehaviour : MonoBehaviour
 		}
 		// Otherwise, check GroundChecker
 		else {
-			isGrounded = bottomCollider.GetComponent<ColliderChecker>().hasCollided;
+			if(bottomCollider.GetComponent<ColliderChecker>().collidedObject==null){
+				isGrounded = false;
+			}
+			else{
+				/*string tag = bottomCollider.GetComponent<ColliderChecker>().collidedObject.tag;
+				if(tag == "Wall" || tag == "Animal" || tag == "Untagged" || tag== "Tile"){
+					isGrounded = true;
+				}
+				else{
+					isGrounded = false;
+				}*/
+				isGrounded = bottomCollider.GetComponent<ColliderChecker>().hasCollided;
+			}
 		}
     }
     

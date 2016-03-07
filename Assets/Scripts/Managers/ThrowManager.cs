@@ -15,7 +15,6 @@ public class ThrowManager : MonoBehaviour {
 	
 	private bool fire = false;
 	
-	
 	// Use this for initialization
 	void Start () {
 
@@ -29,6 +28,12 @@ public class ThrowManager : MonoBehaviour {
 	}
 	
 	public void TossAnimal(){
+		// Deactivate all tile barriers for animals to be thrown through them
+		GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
+		for (int i=0; i<tileBarriers.Length; i++) {
+			tileBarriers[i].GetComponent<BoxCollider>().enabled = false;
+		}
+
 		AnimalStack oldStack = throwAnimal.GetComponent<AnimalBehaviour> ().parentStack;
 		AnimalStack newStack = new AnimalStack();
 		
@@ -36,6 +41,7 @@ public class ThrowManager : MonoBehaviour {
 		{
 			newStack.Add(oldStack.Get(i));
 			oldStack.Get(i).GetComponent<AnimalBehaviour>().SetParentStack(newStack, (i-(stacksManager.animalIndex+1)));
+			oldStack.Get(i).layer = LayerMask.NameToLayer("Animal");
 		}
 		
 		oldStack.GetList ().RemoveRange(stacksManager.animalIndex+1, oldStack.GetSize()-(stacksManager.animalIndex+1));
@@ -51,26 +57,6 @@ public class ThrowManager : MonoBehaviour {
 		StartCoroutine (DisableAnimalCollisions ());
 		
 		throwAnimal.GetComponent<AnimalBehaviour> ().beingThrown = true;
-		
-		/* THIS WORKS
-		// Firing point is the same as in simulation
-		// Initial Velocity is the same as well
-
-		Vector3 initialVel = trajectories.firingPoint.transform.up * trajectories.fireStrength * Time.deltaTime;
-
-		throwAnimal = GameObject.Instantiate (throwAnimal);
-		throwAnimal.transform.position = trajectories.firingPoint.transform.position;
-		throwAnimal.SetActive (true);
-		throwAnimal.GetComponent<Rigidbody>().useGravity = true;
-		throwAnimal.GetComponent<Rigidbody>().AddForce(initialVel,ForceMode.Impulse);
-		//throwAnimal.GetComponent<Rigidbody> ().velocity = initialVel;
-
-		Physics.IgnoreCollision (throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>());
-
-		Debug.Log ("INITIAL VELOCITY: " + initialVel);
-		Debug.Log("Should be same: " + throwAnimal.GetComponent<Rigidbody>().velocity);
-
-*/
 		DeactivateThrowingMode ();
 	}
 
@@ -88,6 +74,10 @@ public class ThrowManager : MonoBehaviour {
 		// Place cannon at animal and orient it properly
 		cannon.transform.position = controlledAnimal.transform.position;
 		cannon.transform.rotation = controlledAnimal.transform.rotation;
+		this.throwingAnimal = controlledAnimal.gameObject;
+		this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+		trajectories.animalBeingThrown = throwAnimal.GetComponent<AnimalBehaviour> ();
+		trajectories.speciesBeingThrown = trajectories.animalBeingThrown.animalSpecies;
 		trajectories.SimulatePath ();
 		cannon.transform.parent.gameObject.SetActive (true);
 	}
@@ -95,6 +85,7 @@ public class ThrowManager : MonoBehaviour {
 	public void DeactivateThrowingMode(){
 		cannon.transform.rotation = Quaternion.Euler (Vector3.zero);
 		cannon.transform.parent.gameObject.SetActive (false);
+		trajectories.speciesBeingThrown = AnimalSpecies.NONE;
 	}
 	
 	public void RotateRight(){
@@ -114,15 +105,23 @@ public class ThrowManager : MonoBehaviour {
 	}
 	
 	public bool CallThrow(GameObject throwingAnimal, bool usingController){
+		// First check if can throw onto tile aimed at (if any)
+		if(!trajectories.isThrowAllowed){
+			DeactivateThrowingMode();
+			return false;
+		}
+
+		// Next check aiming
 		if (usingController) {
 			float x = Input.GetAxis ("XBOX_THUMBSTICK_RX");
 			float y = Input.GetAxis ("XBOX_THUMBSTICK_RY");
-			
+
 			// Check not aiming straight up - if so, throw
 			if (x != 0.0f || y != 0.0f) {
 				fire = true;
-				this.throwingAnimal = throwingAnimal;
-				this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+				// MOVED INTO ACTIVATE
+				//this.throwingAnimal = throwingAnimal;
+				//this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
 				return true;
 			}
 			else{
@@ -131,8 +130,9 @@ public class ThrowManager : MonoBehaviour {
 			}
 		} else {
 			fire = true;
-			this.throwingAnimal = throwingAnimal;
-			this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+			// MOVED INTO ACTIVATE
+			//this.throwingAnimal = throwingAnimal;
+			//this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
 			return true;
 		}
 	}
