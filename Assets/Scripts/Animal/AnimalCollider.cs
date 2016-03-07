@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class AnimalCollider : MonoBehaviour
 {
     [Header("Components")]
-    public List<GameObject> objInRange =  new List<GameObject>();
     public BoxCollider boxCollider;
     public GameObject objParent;
     public AnimalBehaviour animalBehaviour;
@@ -50,13 +49,11 @@ public class AnimalCollider : MonoBehaviour
 
     public void Enable()
     {
-        objInRange.Clear();
         isActivated = true;
     }
 
     public void Disable()
     {
-        objInRange.Clear();
         isActivated = false;
     }
 	
@@ -69,26 +66,7 @@ public class AnimalCollider : MonoBehaviour
         if(col.name == "Collider Box")
             return;
 
-        if(!objInRange.Contains(col.gameObject))
-        {
-            objInRange.Add(col.gameObject);
-        }
-    }
-
-    void OnTriggerStay(Collider col)
-    {
-        if(objInRange.Contains(col.gameObject))
-        {
-            HandleCollision(col.gameObject);
-        }
-    }
-
-    void OnTriggerExit(Collider col)
-    {
-        if(objInRange.Contains(col.gameObject))
-        {
-            objInRange.Remove(col.gameObject);
-        }
+        HandleCollision(col.gameObject);
     }
 
     //==========
@@ -127,16 +105,15 @@ public class AnimalCollider : MonoBehaviour
                 }
             }
         }
-        if(RaycastToTarget(obj) && isActivated)
+        else if(RaycastToTarget(obj) && isActivated)
         {
+            Debug.Log(obj.name + " is in front");
             if(obj.tag == "Animal")
             {
-                Debug.Log("Animal is front");
                 HandleStacking(obj);
             }
-            else if(obj.tag == "Tile")
+            else if(obj.tag == "Step")
             {
-                Debug.Log("Tile is front");
                 HandleSteppingUp(obj);
             }
         }
@@ -180,35 +157,56 @@ public class AnimalCollider : MonoBehaviour
         {
             RaycastHit hit;
 
-            int layerMask = LayerMask.NameToLayer("Tile");
+            Debug.Log(obj.name + " within view");
+
+            int layerMask = LayerMask.NameToLayer("Step");
 
             // Create a ray between the guard position and animal position
             if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, 1 << layerMask))
             {
                 // Check if we hit the player
-                if(hit.collider.gameObject.tag == "Tile")
+                if(hit.collider.gameObject.tag == "Step")
                 {
                     // Raycast directly upwards by animal height
-                    if (Physics.Raycast(hit.point + direction, Vector3.up, out hit, animalBehaviour.animalHeight))
+                    if (Physics.Raycast(obj.transform.position, Vector3.up, out hit, animalBehaviour.animalHeight))
                     {
                         // If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
-                        if ((obj == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Tile")))
+                        if ((obj == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Step")))
                         {
+                            Debug.Log("Found something above");
                             return;
                         }
-                        else
+                    }
+                    else
+                    {
+                        Debug.Log("Step Up : The Sequel");
+
+                        Vector3 basePos = obj.transform.position;
+                        basePos.y += obj.GetComponent<Collider>().bounds.extents.y / 2;
+                        basePos.y += 0.1f;
+
+                        // If possible to move onto tile, move all animals accordingly
+                        for (int j=0; j<animalBehaviour.parentStack.GetSize(); j++)
                         {
-                            // If possible to move onto tile, move all animals accordingly
-                            for (int j=0; j<animalBehaviour.parentStack.GetSize(); j++)
-                            {
-                                animalBehaviour.parentStack.Get(j).transform.position = (obj.transform.position + new Vector3(0.0f, animalBehaviour.animalHeight * (j + 1), 0.0f));
-                            }
+                            animalBehaviour.parentStack.Get(j).transform.position = basePos + new Vector3(0.0f, animalBehaviour.animalHeight * j, 0.0f);
                         }
+                        return;
                     }
                 }
+                else
+                {
+                    Debug.Log("Found : " + hit.transform.name);
+                    return;
+                }
+            }
+            else
+            {
+                Debug.Log("No collision found ");
             }
         }
-        
+
+        Debug.Log("Wrong - Outside View");
+
         StartCoroutine(animalBehaviour.DisableMovement());
     }    
     
@@ -218,10 +216,7 @@ public class AnimalCollider : MonoBehaviour
     
     private bool CheckBelow(GameObject obj)
     {
-        float bottomAnimal = objParent.transform.position.y - (animalBehaviour.animalHeight / 2);
-        float minHeight = bottomAnimal - heightThreshold;
-
-        if(obj.transform.position.y >= minHeight && obj.transform.position.y <= bottomAnimal)
+        if(obj.transform.position.y < objParent.transform.position.y - animalBehaviour.animalHeight)
         {
             return true;
         }
@@ -245,16 +240,18 @@ public class AnimalCollider : MonoBehaviour
         {
             RaycastHit hit;
 
-            int layerMask = LayerMask.NameToLayer("Animal");
+            int layerMask = 1 << LayerMask.NameToLayer("Animal");
+            layerMask |= 1 << LayerMask.NameToLayer("Step");
 
             // Create a ray between the guard position and animal position
-            if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, 1 << layerMask))
+            if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, layerMask))
             {
+                return true;
                 // Check if we hit the player
-                if(hit.collider.gameObject.tag == "Animal")
-                {
-                    return true;
-                }
+                //if(hit.collider.gameObject.tag == "Animal")
+                //{
+                    //return true;
+                //}
             }
         }
         
