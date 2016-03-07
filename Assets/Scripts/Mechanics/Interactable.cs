@@ -12,7 +12,7 @@ public struct MoveableObject
     public Vector3 targetPosition;
     public bool isFinished;
 }
-
+// TODO: Unparent animal from moving blocks if animals fall off
 public class Interactable : MonoBehaviour
 {
 	[Header("Objects")]
@@ -22,6 +22,9 @@ public class Interactable : MonoBehaviour
 	public float animationTime = 2.0f;		// How long we want it to take
     private float animationFrame = 0.0f;	// Counter for animating object
     public bool isActivated = false;        // Whether the box has been activated
+
+    public List<GameObject> animalsOnBlocks;    // Animals stood on moving blocks when button is pressed
+    public List<GameObject> animalControlObject; // Which controlObj each animal is on
 	
 	void Start ()
 	{
@@ -52,6 +55,29 @@ public class Interactable : MonoBehaviour
 	private void Activate()
 	{
 		isActivated = true;
+
+        // FINDS ANIMALS WHICH ARE ON MOVING BLOCKS
+        animalsOnBlocks = new List<GameObject>();
+        animalControlObject = new List<GameObject>();
+
+        GameObject[] animals = GameObject.FindGameObjectsWithTag("Animal");
+        for (int i=0; i<animals.Length; i++)
+        {
+            for(int j=0;j<movingObjs.Length; j++){
+                Collider[] childrenColliders = movingObjs[j].controlObj.GetComponentsInChildren<Collider>();
+                for(int k=0; k<childrenColliders.Length; k++){
+                    GameObject controlObjChild = childrenColliders[k].gameObject;
+                    if(animals[i].GetComponentInChildren<AnimalCollider>().objInRange.Contains(controlObjChild)){
+                        animalsOnBlocks.Add(animals[i]);
+                        animalControlObject.Add(movingObjs[j].controlObj);
+                        //Debug.Log(animalsOnBlocks[animalsOnBlocks.Count-1].name + " is on " + movingObjs[j].controlObj.name);
+                        // Parent animal to moving block they are stood on, so they move along with it
+                        animals[i].transform.parent = movingObjs[j].controlObj.transform;
+                    }
+                }
+            }
+        }
+
 		StartCoroutine(MoveObject());
 	}
 
@@ -69,12 +95,20 @@ public class Interactable : MonoBehaviour
                 if(!movingObjs[i].isFinished)
                 {
                     movingObjs[i].controlObj.transform.position = Vector3.Lerp (movingObjs[i].currentPosition, movingObjs[i].targetPosition, animationFrame / animationTime);
-                    movingObjs[i].targetPosition = movingObjs[i].currentPosition + movingObjs[i].moveAmount;
+                    movingObjs[i].currentPosition = movingObjs[i].controlObj.transform.position;
 
                     if(movingObjs[i].currentPosition.Equals(movingObjs[i].targetPosition))
                     {
                         movingObjs[i].isFinished = true;
                         finishedObjs++;
+                        // Unparent animals which were on moving block and remove them from future consideration
+                        for(int j=0; j<animalControlObject.Count; j++){
+                            if(animalControlObject[j].Equals(movingObjs[i].controlObj)){
+                                animalsOnBlocks[j].transform.parent = GameObject.Find("Characters").transform;
+                                animalsOnBlocks.RemoveAt(j);
+                                animalControlObject.RemoveAt(j);
+                            }
+                        }
                     }
                 }
             }
