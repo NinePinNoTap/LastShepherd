@@ -37,6 +37,7 @@ public class InputManager : MonoBehaviour
     public KeyCode animalPS4Key4 = KeyCode.Joystick1Button3;
     public KeyCode animalPreviousPS4Key = KeyCode.Joystick1Button4;
     public KeyCode animalNextPS4Key = KeyCode.Joystick1Button5;
+    public KeyCode animalPS4StartKey = KeyCode.Joystick1Button9;
     public bool throwingMode = false;
 
     void Start()
@@ -191,6 +192,11 @@ public class InputManager : MonoBehaviour
 
     private void HandlePS4Input()
     {
+        if(Input.GetKeyDown(animalPS4StartKey)){
+            // Reload level
+            Application.LoadLevel(Application.loadedLevel);
+        }
+
         // Setting Animals
         HandleAnimalSwitching(animalPS4Key1, 0); // X
         HandleAnimalSwitching(animalPS4Key2, 1); // Circle

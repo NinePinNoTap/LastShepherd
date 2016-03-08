@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class AnimalCollider : MonoBehaviour
 {
     [Header("Components")]
+    public List<GameObject> objInRange =  new List<GameObject>(); // Added this functionality back for animals interacting with moving platforms for demo purposes
     public BoxCollider boxCollider;
     public GameObject objParent;
     public AnimalBehaviour animalBehaviour;
@@ -49,11 +50,13 @@ public class AnimalCollider : MonoBehaviour
 
     public void Enable()
     {
+        objInRange.Clear();
         isActivated = true;
     }
 
     public void Disable()
     {
+        objInRange.Clear();
         isActivated = false;
     }
 	
@@ -66,7 +69,20 @@ public class AnimalCollider : MonoBehaviour
         if(col.name == "Collider Box")
             return;
 
+        if(!objInRange.Contains(col.gameObject))
+        {
+            objInRange.Add(col.gameObject);
+        }
+
         HandleCollision(col.gameObject);
+    }
+
+    void OnTriggerExit(Collider col)
+    {
+        if(objInRange.Contains(col.gameObject))
+        {
+            objInRange.Remove(col.gameObject);
+        }
     }
 
     //==========
