@@ -119,9 +119,6 @@ public class ThrowManager : MonoBehaviour {
 			// Check not aiming straight up - if so, throw
 			if (x != 0.0f || y != 0.0f) {
 				fire = true;
-				// MOVED INTO ACTIVATE
-				//this.throwingAnimal = throwingAnimal;
-				//this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
 				return true;
 			}
 			else{
@@ -130,9 +127,6 @@ public class ThrowManager : MonoBehaviour {
 			}
 		} else {
 			fire = true;
-			// MOVED INTO ACTIVATE
-			//this.throwingAnimal = throwingAnimal;
-			//this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
 			return true;
 		}
 	}
