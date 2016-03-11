@@ -105,6 +105,8 @@ public class AnimalCollider : MonoBehaviour
         {            
             if(obj.tag == "Animal")
             {
+                Debug.Log(objParent.name + " hit " + obj.name + " below!");
+
                 // We don't want to merge if we cant
                 if(!stackManager.canMerge)
                     return;
@@ -117,7 +119,7 @@ public class AnimalCollider : MonoBehaviour
                     
                     StartCoroutine(animalBehaviour.DisableMovement());
 
-                    Debug.Log("We fell on an animal!");
+                    Debug.Log(objParent.name + " fell onto " + obj.name);
                 }
             }
         }
@@ -161,11 +163,11 @@ public class AnimalCollider : MonoBehaviour
         if(!animalBehaviour.canMove)
             return;
         
-        // Calculate a direction vector between the guard and the animal
+        // Calculate a direction vector between the animl (objParent) and the step (obj)
         Vector3 direction = obj.transform.position - objParent.transform.position;
         direction.y = 0.0f;
 
-        // Calculate the angle between the guard and animal
+        // Calculate the angle between the step and the animal
         float angle = Vector3.Angle(direction, objParent.transform.forward) - 90;
 
         // Check if we are within the field of view
@@ -177,10 +179,10 @@ public class AnimalCollider : MonoBehaviour
 
             int layerMask = LayerMask.NameToLayer("Step");
 
-            // Create a ray between the guard position and animal position
+            // Create a ray between the step and animal position
             if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, 1 << layerMask))
             {
-                // Check if we hit the player
+                // Check if we hit the step
                 if(hit.collider.gameObject.tag == "Step")
                 {
                     // Raycast directly upwards by animal height
@@ -199,7 +201,7 @@ public class AnimalCollider : MonoBehaviour
 
                         Vector3 basePos = obj.transform.position;
                         basePos.y += obj.GetComponent<Collider>().bounds.extents.y / 2;
-                        basePos.y += 0.1f;
+                        basePos.y += 0.1f; // Why do we need to add 0.1 as well?
 
                         // If possible to move onto tile, move all animals accordingly
                         for (int j=0; j<animalBehaviour.parentStack.GetSize(); j++)
@@ -209,6 +211,7 @@ public class AnimalCollider : MonoBehaviour
                         return;
                     }
                 }
+                // Hit something other than a step
                 else
                 {
                     Debug.Log("Found : " + hit.transform.name);
@@ -223,7 +226,7 @@ public class AnimalCollider : MonoBehaviour
 
         Debug.Log("Wrong - Outside View");
 
-        StartCoroutine(animalBehaviour.DisableMovement());
+        StartCoroutine(animalBehaviour.DisableMovement()); // Do we need to disable movement?
     }    
     
     //===============
@@ -232,6 +235,7 @@ public class AnimalCollider : MonoBehaviour
     
     private bool CheckBelow(GameObject obj)
     {
+        // Should animalHeight not be halved here?
         if(obj.transform.position.y < objParent.transform.position.y - animalBehaviour.animalHeight)
         {
             return true;
@@ -242,14 +246,22 @@ public class AnimalCollider : MonoBehaviour
         }
     }
 
+    // Checks if object collided with is in front of animal
     private bool RaycastToTarget(GameObject obj)
     {
-        // Calculate a direction vector between the guard and the animal
+        // Calculate a direction vector between the animal and object
         Vector3 direction = obj.transform.position - objParent.transform.position;
         direction.y = 0.0f;
         
-        // Calculate the angle between the guard and animal
-        float angle = Vector3.Angle(direction, objParent.transform.forward) - 90;
+        // Calculate the angle between the animal and object
+        // OLD - Returns 0 when animals are facing away from each other - think this is due to Vector3.Angle producing acute angle
+        //float angle = Vector3.Angle(direction, objParent.transform.forward) - 90;
+
+        // New calculation of angle between animal and object
+        float angle = Quaternion.FromToRotation(direction, objParent.transform.forward).eulerAngles.y;
+        angle -= 45;
+
+        //Debug.Log("angle between " + objParent.name + " and " + obj.name + " is: " + angle);
 
         // Check if we are within the field of view
         if(angle < FOV * 0.5f)
@@ -259,7 +271,7 @@ public class AnimalCollider : MonoBehaviour
             int layerMask = 1 << LayerMask.NameToLayer("Animal");
             layerMask |= 1 << LayerMask.NameToLayer("Step");
 
-            // Create a ray between the guard position and animal position
+            // Create a ray between the animal position and the object position
             if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, layerMask))
             {
                 return true;

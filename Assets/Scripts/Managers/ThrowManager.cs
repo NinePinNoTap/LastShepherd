@@ -34,11 +34,11 @@ public class ThrowManager : MonoBehaviour
     
     public void TossAnimal()
     {
-        AnimalStack oldStack = throwAnimal.GetComponent<AnimalBehaviour>().parentStack;
+        AnimalStack oldStack = throwingAnimal.GetComponent<AnimalBehaviour>().parentStack;
                 
-        // Update the current animal to the throwing one
+        // Update the current animal to the one being thrown
         stacksManager.UpdateSelectedAnimal(throwAnimal);
-        
+
         // Split the stack
         stacksManager.SplitStack(oldStack, stacksManager.animalIndex, ExecutePosition.TOP, Vector3.zero);
 
@@ -50,7 +50,7 @@ public class ThrowManager : MonoBehaviour
         {
             fireStrength *= stackSize;//(stackSize * stackSize) + 1;
         }
-
+       
         // Throw the animal
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
         throwAnimal.GetComponent<AnimalBehaviour>().Stop();
@@ -80,10 +80,12 @@ public class ThrowManager : MonoBehaviour
     protected IEnumerator DisableAnimalCollisions()
     {
         Physics.IgnoreCollision(throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>(), true);
+        Physics.IgnoreCollision(throwAnimal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider, throwingAnimal.GetComponent<Collider>(), true);
         
         yield return new WaitForSeconds(0.1f);
         
         Physics.IgnoreCollision(throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>(), false);
+        Physics.IgnoreCollision(throwAnimal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider, throwingAnimal.GetComponent<Collider>(), false);
     }
     
     public void ActivateThrowingMode(AnimalBehaviour controlledAnimal)

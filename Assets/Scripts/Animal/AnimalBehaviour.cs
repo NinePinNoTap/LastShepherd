@@ -16,6 +16,7 @@ public class AnimalBehaviour : MonoBehaviour
     public StackManager stackManager;
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
+    public int stackIndex;  // Index of animal's stack in levelStacks
     public LayerMask layerMask;
     public ObjectHighlighter objHighlighter;
     public Rigidbody rigidBody;
@@ -87,7 +88,9 @@ public class AnimalBehaviour : MonoBehaviour
     }
 
     protected virtual void FixedUpdate()
-    {        
+    { 
+        stackIndex = stackManager.levelStacks.IndexOf(parentStack);
+
         // Check if we are moving
         MovingCheck();
 
@@ -105,11 +108,22 @@ public class AnimalBehaviour : MonoBehaviour
             // Check if we are being thrown
             if(beingThrown)
             {
+                // isGrounded will never be true if animals are not considered for "grounding" - results in thrown animals freezing when being thrown onto other animals
                 if(isGrounded)
                 {
                     canMove = true;
                     beingThrown = false;
-                    Debug.Log("Can be thrown again!");
+                    Debug.Log("Grounded after throwing!");
+
+                    // Reposition/update all animals above thrown animal once it's grounded
+                    if(parentStack.GetSize()>1){
+                        for(int i=1; i<parentStack.GetSize(); i++){
+                            parentStack.Get(i).transform.position = parentStack.Get(0).gameObject.transform.position + parentStack.Get(i).GetComponent<AnimalBehaviour>().stackLocalPosition;
+                            parentStack.Get(i).GetComponent<AnimalBehaviour>().canMove = false;
+                            parentStack.Get(i).GetComponent<AnimalBehaviour>().isMoving = false;
+                            parentStack.Get(i).GetComponent<AnimalBehaviour>().rigidBody.isKinematic = true;
+                        }
+                    }
                 }
             }
             else
@@ -120,6 +134,8 @@ public class AnimalBehaviour : MonoBehaviour
 
                     if(currentVelocity.y < -0.01f)
                     {
+                        // Limit x and z velocity to currentVelocity.x and currentVelocity.z to move away from stack
+                        // But disable player being able to control movement - set canMove to false until animal is grounded
                         // Fall
                         currentVelocity = new Vector3(0, currentVelocity.y, 0);
                     }
@@ -133,6 +149,7 @@ public class AnimalBehaviour : MonoBehaviour
         {
             isGrounded = false;
             beingThrown = false;
+            rigidBody.isKinematic = true;
 
             // Animal is above another so just force its position
             transform.position = parentStack.Get(0).gameObject.transform.position + stackLocalPosition;
@@ -221,8 +238,6 @@ public class AnimalBehaviour : MonoBehaviour
         if(col.gameObject.tag == "Tile")
         {
             isGrounded = true;
-            beingThrown = false;
-            canMove = true;
             rigidBody.velocity = Vector3.zero;
         }
     }
