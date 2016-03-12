@@ -16,7 +16,6 @@ public class AnimalBehaviour : MonoBehaviour
     public StackManager stackManager;
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
-    public int stackIndex;  // Index of animal's stack in levelStacks
     public LayerMask layerMask;
     public ObjectHighlighter objHighlighter;
     public Rigidbody rigidBody;
@@ -89,8 +88,6 @@ public class AnimalBehaviour : MonoBehaviour
 
     protected virtual void FixedUpdate()
     { 
-        stackIndex = stackManager.levelStacks.IndexOf(parentStack);
-
         // Check if we are moving
         MovingCheck();
 
@@ -122,8 +119,13 @@ public class AnimalBehaviour : MonoBehaviour
                             parentStack.Get(i).GetComponent<AnimalBehaviour>().canMove = false;
                             parentStack.Get(i).GetComponent<AnimalBehaviour>().isMoving = false;
                             parentStack.Get(i).GetComponent<AnimalBehaviour>().rigidBody.isKinematic = true;
+							// Enable collisions between bottom animal again
+							Physics.IgnoreCollision(parentStack.Get (0).GetComponent<Collider>(), parentStack.Get (i).GetComponent<Collider>(),false);
                         }
                     }
+
+					// Activate invisible walls once thrown animal has landed
+					GameObject.FindGameObjectWithTag("Controller").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
                 }
             }
             else
@@ -132,10 +134,8 @@ public class AnimalBehaviour : MonoBehaviour
                 {
                     currentVelocity.y = rigidBody.velocity.y;
 
-                    if(currentVelocity.y < -0.01f)
+                    if(currentVelocity.y < -0.5f)
                     {
-                        // Limit x and z velocity to currentVelocity.x and currentVelocity.z to move away from stack
-                        // But disable player being able to control movement - set canMove to false until animal is grounded
                         // Fall
                         currentVelocity = new Vector3(0, currentVelocity.y, 0);
                     }
@@ -226,21 +226,52 @@ public class AnimalBehaviour : MonoBehaviour
     // CHECKS
     //===========================================================================
 
-    void OnCollisionEnter(Collision col)
+	// POSSIBLE SOLUTION TO ANIMALS STICKING ON TILES
+	// Animals may slide down a "tile" object onto the ground of the same one
+	// i.e. if being thrown against the final step in PrototypeLevel3 - would require that tile objects be split into cubes to avoid such "steps"
+    /*void OnCollisionEnter(Collision col)
     {
-        // 
-        // This may cause problems if the tile is not beneath us
-        // I.e Being thrown into a tile
-        // May need a contact point check or something
-        //
-
-        // Check if we are grounded
+        // Check if we collided with a tile
         if(col.gameObject.tag == "Tile")
         {
-            isGrounded = true;
-            rigidBody.velocity = Vector3.zero;
+			// Tile Beneath
+			if(ContactPointsBeneathAnimal(col)){
+            	isGrounded = true;
+            	rigidBody.velocity = Vector3.zero;
+			}
+			// Tile in front
+			else{
+				// Set velocity to zero except in y direction
+				Vector3 newVelocity = rigidBody.velocity;
+				newVelocity.x = 0;
+				newVelocity.z = 0;
+				rigidBody.velocity = newVelocity;
+			}
         }
-    }
+    }*/
+
+	void OnCollisionEnter(Collision col)
+	{
+		// Check if we collided with a tile
+		if (col.gameObject.tag == "Tile") {
+			isGrounded = true;
+			rigidBody.velocity = Vector3.zero;
+		}
+
+	}
+
+	bool ContactPointsBeneathAnimal(Collision col){
+		ContactPoint[] contacts = col.contacts;
+		for(int i=0; i<contacts.Length; i++){
+			// 0.1 used as a small buffer
+			if(contacts[i].point.y > transform.position.y - (animalHeight/2-0.1)){
+				Debug.Log(col.gameObject.name + " is NOT beneath " + gameObject.name);
+				return false;
+			}
+		}
+		Debug.Log(col.gameObject.name + " is beneath " + gameObject.name);
+		return true;
+	}
 
     void OnCollisionExit(Collision col)
     {

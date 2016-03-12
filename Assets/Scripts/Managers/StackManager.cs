@@ -14,7 +14,6 @@ public class StackManager : MonoBehaviour
 
     [Header("Current Animal")]
 	public int stackIndex;						// Current stack we are working with
-    public int stackNumber;
     public int animalIndex;						// Current animal in the current stack we are working with
 	public AnimalStack currentStack;			// Access to the current stack
 	public GameObject currentAnimal;			// Access to the current animal
@@ -40,10 +39,6 @@ public class StackManager : MonoBehaviour
         // Initialise flags
         canMerge = true;
 	}
-
-    void Update(){
-        stackNumber = levelStacks.Count;
-    }
 
 	//
 	// Create a list of stacks with each animal in its own stack
@@ -138,7 +133,7 @@ public class StackManager : MonoBehaviour
             // Enable base animal
             newStack.Get(0).GetComponent<Rigidbody>().useGravity = true;
 
-            // Add new stack to levelStacks
+            // Add new stack to levelStacks before updating the selection so it can be considered
             levelStacks.Add(newStack);
 
             // Refresh selection
@@ -180,9 +175,6 @@ public class StackManager : MonoBehaviour
 
         // Stop merging for a period
         DisableMerge();
-
-		// Add new stack to the list
-		//levelStacks.Add(newStack);
 	}
 
 	//

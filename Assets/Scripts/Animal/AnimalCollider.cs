@@ -163,7 +163,7 @@ public class AnimalCollider : MonoBehaviour
         if(!animalBehaviour.canMove)
             return;
         
-        // Calculate a direction vector between the animl (objParent) and the step (obj)
+        // Calculate a direction vector between the animal (objParent) and the step (obj)
         Vector3 direction = obj.transform.position - objParent.transform.position;
         direction.y = 0.0f;
 
@@ -201,7 +201,7 @@ public class AnimalCollider : MonoBehaviour
 
                         Vector3 basePos = obj.transform.position;
                         basePos.y += obj.GetComponent<Collider>().bounds.extents.y / 2;
-                        basePos.y += 0.1f; // Why do we need to add 0.1 as well?
+                        basePos.y += 0.1f;
 
                         // If possible to move onto tile, move all animals accordingly
                         for (int j=0; j<animalBehaviour.parentStack.GetSize(); j++)
@@ -226,7 +226,7 @@ public class AnimalCollider : MonoBehaviour
 
         Debug.Log("Wrong - Outside View");
 
-        StartCoroutine(animalBehaviour.DisableMovement()); // Do we need to disable movement?
+        StartCoroutine(animalBehaviour.DisableMovement());
     }    
     
     //===============
@@ -235,7 +235,6 @@ public class AnimalCollider : MonoBehaviour
     
     private bool CheckBelow(GameObject obj)
     {
-        // Should animalHeight not be halved here?
         if(obj.transform.position.y < objParent.transform.position.y - animalBehaviour.animalHeight)
         {
             return true;
@@ -252,16 +251,10 @@ public class AnimalCollider : MonoBehaviour
         // Calculate a direction vector between the animal and object
         Vector3 direction = obj.transform.position - objParent.transform.position;
         direction.y = 0.0f;
-        
-        // Calculate the angle between the animal and object
-        // OLD - Returns 0 when animals are facing away from each other - think this is due to Vector3.Angle producing acute angle
-        //float angle = Vector3.Angle(direction, objParent.transform.forward) - 90;
 
-        // New calculation of angle between animal and object
+        // Calculate the angle between animal and object
         float angle = Quaternion.FromToRotation(direction, objParent.transform.forward).eulerAngles.y;
         angle -= 45;
-
-        //Debug.Log("angle between " + objParent.name + " and " + obj.name + " is: " + angle);
 
         // Check if we are within the field of view
         if(angle < FOV * 0.5f)
@@ -275,11 +268,6 @@ public class AnimalCollider : MonoBehaviour
             if(Physics.Raycast(objParent.transform.position, direction.normalized, out hit, 1.5f, layerMask))
             {
                 return true;
-                // Check if we hit the player
-                //if(hit.collider.gameObject.tag == "Animal")
-                //{
-                    //return true;
-                //}
             }
         }
         

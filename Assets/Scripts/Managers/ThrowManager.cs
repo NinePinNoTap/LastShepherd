@@ -42,15 +42,19 @@ public class ThrowManager : MonoBehaviour
         // Split the stack
         stacksManager.SplitStack(oldStack, stacksManager.animalIndex, ExecutePosition.TOP, Vector3.zero);
 
-        // Calculate fire strength
+        // Calculate fire strength - NO LONGER HAVE TO SCALE as collisions with animals above is ignored
         float fireStrength = trajectories.fireStrength;
         int stackSize = throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize();
 
-        if(stackSize > 1)
-        {
-            fireStrength *= stackSize;//(stackSize * stackSize) + 1;
-        }
-       
+		AnimalStack currentStack = stacksManager.currentStack;
+
+		if(currentStack.GetSize()>1){
+		// Ignore collisions with animals above
+			for(int i=1; i<currentStack.GetSize(); i++){
+				Physics.IgnoreCollision(currentStack.Get (0).GetComponent<Collider>(), currentStack.Get (i).GetComponent<Collider>(),true);
+			}
+		}
+
         // Throw the animal
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
         throwAnimal.GetComponent<AnimalBehaviour>().Stop();
@@ -64,8 +68,10 @@ public class ThrowManager : MonoBehaviour
         // Stop merging
         stacksManager.DisableMerge();
 
-        // Stop throwing mode
-        DeactivateThrowingMode();
+        // Reset throwing mode
+		cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
+		cannon.transform.parent.gameObject.SetActive(false);
+		// Note: Cannot call DeactivateThrowingMode() as invisible walls must stay inactive as long as thrown animal is in flight
 
         // Disable animal collisions
         StartCoroutine(DisableAnimalCollisions());
@@ -102,13 +108,7 @@ public class ThrowManager : MonoBehaviour
     {
         cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
         cannon.transform.parent.gameObject.SetActive(false);
-        StartCoroutine(DeactiveInvisibleWalls());
-    }
-
-    private IEnumerator DeactiveInvisibleWalls()
-    {
-        yield return new WaitForSeconds(2.0f);
-        invisibleWalls.SetActive(true);
+		invisibleWalls.SetActive(true);
     }
     
     public void RotateRight()
