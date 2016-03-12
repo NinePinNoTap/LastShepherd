@@ -23,7 +23,8 @@ public class ColouredTile : MonoBehaviour
 		{
 			if(animal.GetComponent<AnimalBehaviour>().animalSpecies.Equals(allowedSpecies))
 			{
-				Physics.IgnoreCollision(boxCollider, animal.GetComponent<CapsuleCollider>());
+				Physics.IgnoreCollision(boxCollider, animal.GetComponent<Collider>());
+				Physics.IgnoreCollision(boxCollider, animal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider);
 			}
 		}
 	}

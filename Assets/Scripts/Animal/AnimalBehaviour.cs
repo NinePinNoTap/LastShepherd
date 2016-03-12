@@ -126,6 +126,12 @@ public class AnimalBehaviour : MonoBehaviour
 
 					// Activate invisible walls once thrown animal has landed
 					GameObject.FindGameObjectWithTag("Controller").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
+
+					// Reactivate all tile barriers upon thrown animals landing
+					GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
+					for (int i=0; i<tileBarriers.Length; i++) {
+						tileBarriers[i].GetComponent<BoxCollider>().enabled = true;
+					}
                 }
             }
             else

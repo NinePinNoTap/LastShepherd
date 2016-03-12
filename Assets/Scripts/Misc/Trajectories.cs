@@ -6,7 +6,7 @@ public class Trajectories : MonoBehaviour
     public LineRenderer trajectoryPath;
     
     public float fireStrength = 25;
-    public Color nextColor = Color.red;
+	public Color lineColour = Color.cyan;
     
     // Number of segments in the trajectory curve
     public int segmentCount = 20;
@@ -31,14 +31,30 @@ public class Trajectories : MonoBehaviour
     }
 
     public LayerMask layerMask;
+
+	public AnimalBehaviour animalBeingThrown;
+	public AnimalSpecies speciesBeingThrown;
+	public bool isThrowAllowed;
     
     // Light to shine upon targeted surface
     public Light spotlight;
 
     void Awake()
     {
+
         // Determine length of segments in trajectory curve
         segmentLength = (float)pathLength / segmentCount;
+
+		// Ensure line collides with all animals that are not in same stack as thrower
+		GameObject[] allAnimals = GameObject.FindGameObjectsWithTag ("Animal");
+		for(int i=0; i<allAnimals.Length; i++){
+			allAnimals[i].layer = LayerMask.NameToLayer("Animal");
+		}
+
+		// Ignore all animals above thrower
+		for(int i=animalBeingThrown.animalIndex; i<animalBeingThrown.parentStack.GetSize(); i++){
+			animalBeingThrown.parentStack.Get(i).layer = LayerMask.NameToLayer("IgnoreAnimals");
+		}
     }
 
     void FixedUpdate()
@@ -89,6 +105,28 @@ public class Trajectories : MonoBehaviour
                 spotlight.transform.position = segments[spotlightIndex];
                 
                 spotlight.transform.LookAt(segments[i]);
+
+				if(speciesBeingThrown!=null){
+					if(speciesBeingThrown==AnimalSpecies.NONE){
+						isThrowAllowed = true;
+					}
+					else if(hit.transform.tag=="Tile"){
+						if(hit.transform.gameObject.GetComponentInChildren<ColouredTile>()!=null){
+							if(hit.transform.gameObject.GetComponentInChildren<ColouredTile>().allowedSpecies!=speciesBeingThrown){
+								isThrowAllowed = false;
+							}
+							else{
+								isThrowAllowed = true;
+							}
+						}
+						else{
+							isThrowAllowed = true;
+						}
+					}
+					else {
+						isThrowAllowed = true;
+					}
+				}
             }
             // If our raycast hit no objects, then set the next position to the last one plus v*t
             else
@@ -99,8 +137,15 @@ public class Trajectories : MonoBehaviour
         
         // At the end, apply our simulations to the LineRenderer
         
-        // Set the colour of our path to the colour of the next ball
-        Color startColor = nextColor;
+		if (isThrowAllowed) {
+			lineColour = Color.cyan;
+		} else {
+			lineColour = Color.red;
+		}
+
+		spotlight.color = lineColour;
+
+		Color startColor = lineColour;
         Color endColor = startColor;
         startColor.a = 1;
         endColor.a = 0;

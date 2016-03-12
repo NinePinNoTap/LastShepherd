@@ -34,7 +34,18 @@ public class ThrowManager : MonoBehaviour
     
     public void TossAnimal()
     {
+		// Deactivate all tile barriers for animals to be thrown through them
+		GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
+		for (int i=0; i<tileBarriers.Length; i++) {
+			tileBarriers[i].GetComponent<BoxCollider>().enabled = false;
+		}
+
+
         AnimalStack oldStack = throwingAnimal.GetComponent<AnimalBehaviour>().parentStack;
+
+		for (int i=0; i<oldStack.GetSize(); i++) {
+			oldStack.Get(i).layer = LayerMask.NameToLayer("Animal");
+		}
                 
         // Update the current animal to the one being thrown
         stacksManager.UpdateSelectedAnimal(throwAnimal);
@@ -96,11 +107,19 @@ public class ThrowManager : MonoBehaviour
     
     public void ActivateThrowingMode(AnimalBehaviour controlledAnimal)
     {
-        // Place cannon at animal and orient it properly
+		// Place cannon at animal and orient it properly
         cannon.transform.position = controlledAnimal.transform.position;
         cannon.transform.rotation = controlledAnimal.transform.rotation;
-        trajectories.SimulatePath();
+        
+		this.throwingAnimal = controlledAnimal.gameObject;
+		this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+
+		trajectories.animalBeingThrown = throwAnimal.GetComponent<AnimalBehaviour> ();
+		trajectories.speciesBeingThrown = trajectories.animalBeingThrown.animalSpecies;
+
+		trajectories.SimulatePath();
         cannon.transform.parent.gameObject.SetActive(true);
+
         invisibleWalls.SetActive(false);
     }
     
@@ -109,6 +128,7 @@ public class ThrowManager : MonoBehaviour
         cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
         cannon.transform.parent.gameObject.SetActive(false);
 		invisibleWalls.SetActive(true);
+		trajectories.speciesBeingThrown = AnimalSpecies.NONE;
     }
     
     public void RotateRight()
@@ -133,6 +153,12 @@ public class ThrowManager : MonoBehaviour
     
     public bool CallThrow(GameObject throwingAnimal, bool usingController)
     {
+		// First check if can throw onto tile aimed at (if any)
+		if(!trajectories.isThrowAllowed){
+			DeactivateThrowingMode();
+			return false;
+		}
+
         if (usingController)
         {
             float x = Input.GetAxis("XBOX_THUMBSTICK_RX");
@@ -142,8 +168,9 @@ public class ThrowManager : MonoBehaviour
             if (x != 0.0f || y != 0.0f)
             {
                 fire = true;
-                this.throwingAnimal = throwingAnimal;
-                this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+                // Moved into Activate()
+				//this.throwingAnimal = throwingAnimal;
+                //this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
                 return true;
             }
             else
@@ -155,8 +182,9 @@ public class ThrowManager : MonoBehaviour
         else
         {
             fire = true;
-            this.throwingAnimal = throwingAnimal;
-            this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+			// Moved into Activate()
+			//this.throwingAnimal = throwingAnimal;
+            //this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
             return true;
         }
     }
