@@ -44,23 +44,27 @@ public class Trajectories : MonoBehaviour
 
         // Determine length of segments in trajectory curve
         segmentLength = (float)pathLength / segmentCount;
-
-		// Ensure line collides with all animals that are not in same stack as thrower
-		GameObject[] allAnimals = GameObject.FindGameObjectsWithTag ("Animal");
-		for(int i=0; i<allAnimals.Length; i++){
-			allAnimals[i].layer = LayerMask.NameToLayer("Animal");
-		}
-
-		// Ignore all animals above thrower
-		for(int i=animalBeingThrown.animalIndex; i<animalBeingThrown.parentStack.GetSize(); i++){
-			animalBeingThrown.parentStack.Get(i).layer = LayerMask.NameToLayer("IgnoreAnimals");
-		}
     }
 
     void FixedUpdate()
     {
         SimulatePath();
     }
+
+	public void IgnoreAnimals()
+	{
+		// Ensure line collides with all animals that are not in same stack as thrower
+		GameObject[] allAnimals = GameObject.FindGameObjectsWithTag ("Animal");
+		for(int i=0; i<allAnimals.Length; i++){
+			allAnimals[i].layer = LayerMask.NameToLayer("Animal");
+		}
+		
+		// Ignore all animals above thrower
+		for(int i=animalBeingThrown.animalIndex; i<animalBeingThrown.parentStack.GetSize(); i++){
+			animalBeingThrown.parentStack.Get(i).layer = LayerMask.NameToLayer("IgnoreAnimals");
+			animalBeingThrown.parentStack.Get(i).GetComponent<AnimalBehaviour>().triggerBox.layer = LayerMask.NameToLayer("IgnoreAnimals");
+		}
+	}
     
     // Simulate the trajectory of a thrown animal
     public void SimulatePath()
@@ -88,6 +92,8 @@ public class Trajectories : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(segments[i - 1], segVelocity, out hit, segmentLength, layerMask))
             {
+				isThrowAllowed = true;
+
                 // remember who we hit
                 _hitObject = hit.collider;
                 
@@ -107,24 +113,12 @@ public class Trajectories : MonoBehaviour
                 spotlight.transform.LookAt(segments[i]);
 
 				if(speciesBeingThrown!=null){
-					if(speciesBeingThrown==AnimalSpecies.NONE){
-						isThrowAllowed = true;
-					}
-					else if(hit.transform.tag=="Tile"){
+					if(hit.transform.tag=="Tile"){
 						if(hit.transform.gameObject.GetComponentInChildren<ColouredTile>()!=null){
 							if(hit.transform.gameObject.GetComponentInChildren<ColouredTile>().allowedSpecies!=speciesBeingThrown){
 								isThrowAllowed = false;
 							}
-							else{
-								isThrowAllowed = true;
-							}
 						}
-						else{
-							isThrowAllowed = true;
-						}
-					}
-					else {
-						isThrowAllowed = true;
 					}
 				}
             }

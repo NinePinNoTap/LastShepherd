@@ -43,8 +43,11 @@ public class ThrowManager : MonoBehaviour
 
         AnimalStack oldStack = throwingAnimal.GetComponent<AnimalBehaviour>().parentStack;
 
+		// Set all animals in throwing stack back to Animal layer
 		for (int i=0; i<oldStack.GetSize(); i++) {
 			oldStack.Get(i).layer = LayerMask.NameToLayer("Animal");
+			// Update their collider box layer as well
+			oldStack.Get(i).GetComponent<AnimalBehaviour>().triggerBox.layer = LayerMask.NameToLayer("Default");
 		}
                 
         // Update the current animal to the one being thrown
@@ -113,9 +116,10 @@ public class ThrowManager : MonoBehaviour
         
 		this.throwingAnimal = controlledAnimal.gameObject;
 		this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
-
+		
 		trajectories.animalBeingThrown = throwAnimal.GetComponent<AnimalBehaviour> ();
 		trajectories.speciesBeingThrown = trajectories.animalBeingThrown.animalSpecies;
+		trajectories.IgnoreAnimals ();
 
 		trajectories.SimulatePath();
         cannon.transform.parent.gameObject.SetActive(true);
@@ -168,9 +172,6 @@ public class ThrowManager : MonoBehaviour
             if (x != 0.0f || y != 0.0f)
             {
                 fire = true;
-                // Moved into Activate()
-				//this.throwingAnimal = throwingAnimal;
-                //this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
                 return true;
             }
             else
@@ -182,9 +183,6 @@ public class ThrowManager : MonoBehaviour
         else
         {
             fire = true;
-			// Moved into Activate()
-			//this.throwingAnimal = throwingAnimal;
-            //this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
             return true;
         }
     }
