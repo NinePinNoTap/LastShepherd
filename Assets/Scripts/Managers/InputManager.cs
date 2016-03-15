@@ -243,6 +243,8 @@ public class InputManager : MonoBehaviour
 		if (throwManager.CallThrow (controlledAnimal.gameObject, true)) {
 			// If throw was successful - change controlled animal
 			controlledAnimal = controlledAnimal.GetAnimalAbove ().GetComponent<AnimalBehaviour> ();
+			animalIndex = stackManager.gameAnimals.IndexOf(controlledAnimal.gameObject);
+		
 		}
 	}
 
