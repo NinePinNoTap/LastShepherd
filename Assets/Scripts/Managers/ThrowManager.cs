@@ -80,7 +80,7 @@ public class ThrowManager : MonoBehaviour
         throwAnimal.GetComponent<AnimalBehaviour>().canMove = false;
 
         // Stop merging
-        stacksManager.DisableMerge();
+        //dwstacksManager.DisableMerge();
 
         // Reset throwing mode
 		cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
@@ -102,7 +102,7 @@ public class ThrowManager : MonoBehaviour
         Physics.IgnoreCollision(throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>(), true);
         Physics.IgnoreCollision(throwAnimal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider, throwingAnimal.GetComponent<Collider>(), true);
         
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
         
         Physics.IgnoreCollision(throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>(), false);
         Physics.IgnoreCollision(throwAnimal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider, throwingAnimal.GetComponent<Collider>(), false);

@@ -114,12 +114,39 @@ public class AnimalCollider : MonoBehaviour
                 if (!animalBehaviour.parentStack.Equals(obj.GetComponent<AnimalBehaviour>().GetParentStack()))
                 {
                     AnimalStack colliderStack = obj.GetComponent<AnimalBehaviour>().GetParentStack();
+
+					animalBehaviour.canMove = true;
+					animalBehaviour.beingThrown = false;
+					Debug.Log("Grounded after throwing!");
+					
+					// Reposition/update all animals above thrown animal once it's grounded
+					if(animalBehaviour.parentStack.GetSize()>1){
+						for(int i=1; i<animalBehaviour.parentStack.GetSize(); i++){
+							animalBehaviour.parentStack.Get(i).transform.position = animalBehaviour.parentStack.Get(0).gameObject.transform.position + animalBehaviour.parentStack.Get(i).GetComponent<AnimalBehaviour>().stackLocalPosition;
+							animalBehaviour.parentStack.Get(i).GetComponent<AnimalBehaviour>().canMove = false;
+							animalBehaviour.parentStack.Get(i).GetComponent<AnimalBehaviour>().isMoving = false;
+							animalBehaviour.parentStack.Get(i).GetComponent<AnimalBehaviour>().rigidBody.isKinematic = true;
+							// Enable collisions between bottom animal again
+							Physics.IgnoreCollision(animalBehaviour.parentStack.Get (0).GetComponent<Collider>(), animalBehaviour.parentStack.Get (i).GetComponent<Collider>(),false);
+						}
+					}
+					
+					// Activate invisible walls once thrown animal has landed
+					GameObject.FindGameObjectWithTag("Controller").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
+					
+					// Reactivate all tile barriers upon thrown animals landing
+					GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
+					for (int i=0; i<tileBarriers.Length; i++) {
+						tileBarriers[i].GetComponent<BoxCollider>().enabled = true;
+					}
                     
                     stackManager.MergeStack(colliderStack, animalBehaviour.parentStack, ExecutePosition.BOTTOM);
                     
                     StartCoroutine(animalBehaviour.DisableMovement());
 
                     Debug.Log(objParent.name + " fell onto " + obj.name);
+
+				
                 }
             }
         }
@@ -235,7 +262,7 @@ public class AnimalCollider : MonoBehaviour
     
     private bool CheckBelow(GameObject obj)
     {
-        if(obj.transform.position.y < objParent.transform.position.y - animalBehaviour.animalHeight)
+        if(obj.transform.position.y <= objParent.transform.position.y - (animalBehaviour.animalHeight-0.05f))
         {
             return true;
         }
