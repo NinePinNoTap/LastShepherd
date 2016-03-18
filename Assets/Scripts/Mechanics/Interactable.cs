@@ -28,13 +28,6 @@ public class Interactable : MonoBehaviour
     
     void Start ()
     {
-        // Set obj move data
-        for(int i = 0; i < movingObjs.Length; i++)
-        {
-            movingObjs[i].currentPosition = movingObjs[i].controlObj.transform.position;
-            movingObjs[i].targetPosition = movingObjs[i].currentPosition + movingObjs[i].moveAmount;
-            movingObjs[i].isFinished = false;
-        }
     }
     
     void OnTriggerEnter(Collider collider)
@@ -54,6 +47,14 @@ public class Interactable : MonoBehaviour
     
     private void Activate()
     {
+		// Set obj move data
+		for(int i = 0; i < movingObjs.Length; i++)
+		{
+			movingObjs[i].currentPosition = movingObjs[i].controlObj.transform.position;
+			movingObjs[i].targetPosition = movingObjs[i].currentPosition + movingObjs[i].moveAmount;
+			movingObjs[i].isFinished = false;
+		}
+
         isActivated = true;
         
         // FINDS ANIMALS WHICH ARE ON MOVING BLOCKS
@@ -97,7 +98,7 @@ public class Interactable : MonoBehaviour
                     movingObjs[i].controlObj.transform.position = Vector3.Lerp (movingObjs[i].currentPosition, movingObjs[i].targetPosition, animationFrame / animationTime);
                     movingObjs[i].currentPosition = movingObjs[i].controlObj.transform.position;
                     
-                    if(movingObjs[i].currentPosition.Equals(movingObjs[i].targetPosition))
+                    if(Vector3.Distance(movingObjs[i].currentPosition,movingObjs[i].targetPosition)<0.01f)
                     {
                         movingObjs[i].isFinished = true;
                         finishedObjs++;

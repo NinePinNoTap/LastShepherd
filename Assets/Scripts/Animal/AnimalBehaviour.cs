@@ -17,7 +17,7 @@ public class AnimalBehaviour : MonoBehaviour
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
     public LayerMask layerMask;
-    public ObjectHighlighter objHighlighter;
+    //public ObjectHighlighter objHighlighter;
     public Rigidbody rigidBody;
 
     [Header("Game Mechanics")]
@@ -43,6 +43,9 @@ public class AnimalBehaviour : MonoBehaviour
     [Header("Collision Detectors")]
     public GameObject triggerBox;
 
+	[Header("Particle Systems")]
+	public GameObject orbitParticleHandler;
+
     protected void Awake()
     {
         // Default flags
@@ -51,7 +54,7 @@ public class AnimalBehaviour : MonoBehaviour
         isGrounded = false;
         canMove = true;
         beingThrown = false;
-		
+
         // Get the height of the animal
         animalHeight = transform.localScale.y;
 
@@ -62,6 +65,11 @@ public class AnimalBehaviour : MonoBehaviour
         triggerBox.transform.localPosition = Vector3.zero;
         triggerBox.AddComponent<AnimalCollider>();
         triggerBox.GetComponent<MeshRenderer>().enabled = false;
+
+		// Assign particle orbiter
+		if (orbitParticleHandler == null) {
+			orbitParticleHandler = GetComponentInChildren<OrbitScript>().transform.parent.gameObject;
+		}
 
         // Ignore our own colliders
         Physics.IgnoreCollision(GetComponent<Collider>(), triggerBox.GetComponent<Collider>());
@@ -84,6 +92,9 @@ public class AnimalBehaviour : MonoBehaviour
         }
         
         triggerBox.GetComponent<AnimalCollider>().stackManager = stackManager;
+
+		// Initially set orbiting particles to off
+		orbitParticleHandler.SetActive (false);
     }
 
     protected virtual void FixedUpdate()
@@ -316,8 +327,8 @@ public class AnimalBehaviour : MonoBehaviour
         canMove = true;
         isMoving = false;
 
-        // Highlight
-        objHighlighter.Toggle(true);
+        // Enable particles
+		orbitParticleHandler.SetActive (true);
 
         // Reset movement velocity
         rigidBody.velocity = new Vector3(0, 0, 0);
@@ -334,8 +345,8 @@ public class AnimalBehaviour : MonoBehaviour
         canMove = false;
         isMoving = false;
 
-        // Unhighlight
-        objHighlighter.Toggle(false);
+        // Disable particles
+		orbitParticleHandler.SetActive (false);
 
         // Reset velocity
         rigidBody.velocity = new Vector3(0, 0, 0);

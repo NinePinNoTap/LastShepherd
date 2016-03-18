@@ -92,6 +92,8 @@ public class Trajectories : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(segments[i - 1], segVelocity, out hit, segmentLength, layerMask))
             {
+				Debug.Log(hit.collider.gameObject);
+
 				isThrowAllowed = true;
 
                 // remember who we hit
