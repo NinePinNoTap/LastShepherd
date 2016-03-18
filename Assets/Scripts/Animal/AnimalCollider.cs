@@ -111,6 +111,7 @@ public class AnimalCollider : MonoBehaviour
                 if(!stackManager.canMerge)
                     return;
 
+				//if you hit another animal after falling down or throwing onto it, it has to execute the same functions as if it had been grounded
                 if (!animalBehaviour.parentStack.Equals(obj.GetComponent<AnimalBehaviour>().GetParentStack()))
                 {
                     AnimalStack colliderStack = obj.GetComponent<AnimalBehaviour>().GetParentStack();

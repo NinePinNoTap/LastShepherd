@@ -21,7 +21,7 @@ public class StackManager : MonoBehaviour
 
     [Header("Merging")]
     public bool canMerge;
-    public float disableMergeDuration = 0.5f;
+    public float disableMergeDuration = 0.2f;
 
 	void Awake ()
 	{

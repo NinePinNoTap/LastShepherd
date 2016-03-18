@@ -80,7 +80,7 @@ public class ThrowManager : MonoBehaviour
         throwAnimal.GetComponent<AnimalBehaviour>().canMove = false;
 
         // Stop merging
-        //dwstacksManager.DisableMerge();
+        //stacksManager.DisableMerge();
 
         // Reset throwing mode
 		cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
