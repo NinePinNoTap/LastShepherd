@@ -67,7 +67,8 @@ public class AnimalBehaviour : MonoBehaviour
         triggerBox.GetComponent<MeshRenderer>().enabled = false;
 
 		// Assign particle orbiter
-		if (orbitParticleHandler == null) {
+		if (!orbitParticleHandler)
+        {
 			orbitParticleHandler = GetComponentInChildren<OrbitScript>().transform.parent.gameObject;
 		}
 

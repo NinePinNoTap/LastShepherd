@@ -4,13 +4,18 @@ using System.Collections;
 public class InputManager : MonoBehaviour
 {
     [Header("Components")]
-    public StackManager stackManager;                   // Access to stacks and animals
-    public ThrowManager throwManager;                   // Access to throwing
+    public StackManager stackManager;
+    // Access to stacks and animals
+    public ThrowManager throwManager;
+    // Access to throwing
 
     [Header("Properties")]
-    public bool usePS4Controller = false;               // Flag for whether to use PS4 Controller input
-    private AnimalBehaviour controlledAnimal = null;    // Access to the current controlled animal
-    private int animalIndex;                            // Tracker for current animal index
+    public bool usePS4Controller = false;
+    // Flag for whether to use PS4 Controller input
+    private AnimalBehaviour controlledAnimal = null;
+    // Access to the current controlled animal
+    private int animalIndex;
+    // Tracker for current animal index
 
     [Header("Windows Keys")]
     public KeyCode forwardWinKey = KeyCode.W;
@@ -107,39 +112,39 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void HandleAnimalSwitching(KeyCode key, int value)
+    private void HandleAnimalSwitching( KeyCode key, int value )
     {
         // Check to make sure we do want to switch
         if (!Input.GetKeyDown(key))
             return;
         
-		// Check animal is not being thrown or in mid-air
-		if (!controlledAnimal.beingThrown && controlledAnimal.parentStack.Get(0).GetComponent<AnimalBehaviour>().isGrounded)
-		{
-			// Disable move velocity
-			controlledAnimal.Stop ();
+        // Check animal is not being thrown or in mid-air
+        if (!controlledAnimal.beingThrown && controlledAnimal.parentStack.Get(0).GetComponent<AnimalBehaviour>().isGrounded)
+        {
+            // Disable move velocity
+            controlledAnimal.Stop();
         
-			// Change index
-			animalIndex = value;
+            // Change index
+            animalIndex = value;
         
-			// Keep within the range
-			Utility.Wrap (ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
+            // Keep within the range
+            Utility.Wrap(ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
         
-			// Tell the stack manager to update to the correct animal
-			stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
+            // Tell the stack manager to update to the correct animal
+            stackManager.UpdateSelectedAnimal(stackManager.gameAnimals[animalIndex]);
         
-			// Update controlled animal
-			controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+            // Update controlled animal
+            controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
         
-			// Revert to movement mode upon animal change
-			if (throwingMode)
-			{
-				throwingMode = false;
-				throwManager.DeactivateThrowingMode ();
-			}
-		}
+            // Revert to movement mode upon animal change
+            if (throwingMode)
+            {
+                throwingMode = false;
+                throwManager.DeactivateThrowingMode();
+            }
+        }
     }
-    
+
     private void HandleAnimalKeyboardMovement()
     {
         // Reset movement velocity
@@ -161,29 +166,33 @@ public class InputManager : MonoBehaviour
     public void HandleAnimalKeyboardThrowing()
     {
         if (Input.GetKey(KeyCode.RightArrow))
-		{
-			throwManager.RotateRight();
+        {
+            throwManager.RotateRight();
         }
         if (Input.GetKey(KeyCode.LeftArrow))
-		{
-			throwManager.RotateLeft();
+        {
+            throwManager.RotateLeft();
         }
         if (Input.GetKey(KeyCode.UpArrow))
-		{
-			throwManager.RotateDown();
+        {
+            throwManager.RotateDown();
         }
         if (Input.GetKey(KeyCode.DownArrow))
-		{
-			throwManager.RotateUp();
+        {
+            throwManager.RotateUp();
         }
         
         if (Input.GetKeyDown(throwWinKey))
         {
-			if(throwManager.trajectories.isThrowAllowed){
-	            throwManager.CallThrow(controlledAnimal.gameObject, false);
-	            throwingMode = false;
-	            controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
-			}
+            if (throwManager.trajectories.isThrowAllowed)
+            {
+                if (throwManager.CallThrow(controlledAnimal.gameObject, false))
+                {
+                    // If throw was successful - change controlled animal
+                    controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
+                }
+                throwingMode = false;
+            }
         }
     }
 
@@ -194,7 +203,8 @@ public class InputManager : MonoBehaviour
 
     private void HandlePS4Input()
     {
-        if(Input.GetKeyDown(animalPS4StartKey)){
+        if (Input.GetKeyDown(animalPS4StartKey))
+        {
             // Reload level
             Application.LoadLevel(Application.loadedLevel);
         }
@@ -221,7 +231,7 @@ public class InputManager : MonoBehaviour
     private void HandleAnimalPS4Movement()
     {
         // Default move velocity
-        Vector3 moveVelocity = new Vector3(0,0,0);
+        Vector3 moveVelocity = new Vector3(0, 0, 0);
 
         // Check if its a single movemement we want or not
         bool Override = controlledAnimal.animalIndex > 0;
@@ -238,13 +248,14 @@ public class InputManager : MonoBehaviour
     // Throwing Input
     //==============================================================================
 
-	private void ControllerThrowCall ()
-	{
-		if (throwManager.CallThrow (controlledAnimal.gameObject, true)) {
-			// If throw was successful - change controlled animal
-			controlledAnimal = controlledAnimal.GetAnimalAbove ().GetComponent<AnimalBehaviour> ();
-		}
-	}
+    private void ControllerThrowCall()
+    {
+        if (throwManager.CallThrow(controlledAnimal.gameObject, true))
+        {
+            // If throw was successful - change controlled animal
+            controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
+        }
+    }
 
     private void HandleModes()
     {
@@ -295,45 +306,45 @@ public class InputManager : MonoBehaviour
             }
         }
     }
-    
-    public void HandleInputDirection(KeyCode key, ref Vector3 vector, Vector3 value, bool Override)
+
+    public void HandleInputDirection( KeyCode key, ref Vector3 vector, Vector3 value, bool Override )
     {
-        if(!Input.GetKey(key))
+        if (!Input.GetKey(key))
         {
             return;
         }
         
         // Check if we want to override
-        if(Override)
+        if (Override)
         {
             // Reset 
-            vector = new Vector3(0,0,0);
+            vector = new Vector3(0, 0, 0);
         }
         
         // Increase vector values
         vector += value;
     }
-    
-    public void HandleInputDirection(string key, ref Vector3 vector, Vector3 value, bool Override)
+
+    public void HandleInputDirection( string key, ref Vector3 vector, Vector3 value, bool Override )
     {
-        if(Input.GetAxis(key) == 0)
+        if (Input.GetAxis(key) == 0)
         {
             return;
         }
         
         // Check if we want to override
-        if(Override)
+        if (Override)
         {
             // Reset 
-            vector = new Vector3(0,0,0);
+            vector = new Vector3(0, 0, 0);
         }
 
-        if(Input.GetAxis(key) > 0)
+        if (Input.GetAxis(key) > 0)
         {
             // Increase vector values
             vector += value;
         }
-        else if(Input.GetAxis(key) < 0)
+        else if (Input.GetAxis(key) < 0)
         {
             // Increase vector values
             vector -= value;

@@ -6,7 +6,8 @@ public class ThrowManager : MonoBehaviour
     [Header("Components")]
     public StackManager stacksManager;
     public Trajectories trajectories;
-    public GameObject cannon;                           // "Cannon" to aim animals
+    public GameObject cannon;
+    // "Cannon" to aim animals
     public GameObject invisibleWalls;
 
     [Header("Properties")]
@@ -22,7 +23,7 @@ public class ThrowManager : MonoBehaviour
     {
 
     }
-    
+
     void FixedUpdate()
     {
         if (fire)
@@ -31,24 +32,25 @@ public class ThrowManager : MonoBehaviour
             fire = false;
         }
     }
-    
+
     public void TossAnimal()
     {
-		// Deactivate all tile barriers for animals to be thrown through them
-		GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
-		for (int i=0; i<tileBarriers.Length; i++) {
-			tileBarriers[i].GetComponent<BoxCollider>().enabled = false;
-		}
-
+        // Deactivate all tile barriers for animals to be thrown through them
+        GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag("TileBarrier");
+        for (int i = 0; i < tileBarriers.Length; i++)
+        {
+            tileBarriers[i].GetComponent<BoxCollider>().enabled = false;
+        }
 
         AnimalStack oldStack = throwingAnimal.GetComponent<AnimalBehaviour>().parentStack;
 
-		// Set all animals in throwing stack back to Animal layer
-		for (int i=0; i<oldStack.GetSize(); i++) {
-			oldStack.Get(i).layer = LayerMask.NameToLayer("Animal");
-			// Update their collider box layer as well
-			oldStack.Get(i).GetComponent<AnimalBehaviour>().triggerBox.layer = LayerMask.NameToLayer("Default");
-		}
+        // Set all animals in throwing stack back to Animal layer
+        for (int i = 0; i < oldStack.GetSize(); i++)
+        {
+            oldStack.Get(i).layer = LayerMask.NameToLayer("Animal");
+            // Update their collider box layer as well
+            oldStack.Get(i).GetComponent<AnimalBehaviour>().triggerBox.layer = LayerMask.NameToLayer("Default");
+        }
                 
         // Update the current animal to the one being thrown
         stacksManager.UpdateSelectedAnimal(throwAnimal);
@@ -60,14 +62,16 @@ public class ThrowManager : MonoBehaviour
         float fireStrength = trajectories.fireStrength;
         int stackSize = throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize();
 
-		AnimalStack currentStack = stacksManager.currentStack;
+        AnimalStack currentStack = stacksManager.currentStack;
 
-		if(currentStack.GetSize()>1){
-		// Ignore collisions with animals above
-			for(int i=1; i<currentStack.GetSize(); i++){
-				Physics.IgnoreCollision(currentStack.Get (0).GetComponent<Collider>(), currentStack.Get (i).GetComponent<Collider>(),true);
-			}
-		}
+        if (currentStack.GetSize() > 1)
+        {
+            // Ignore collisions with animals above
+            for (int i = 1; i < currentStack.GetSize(); i++)
+            {
+                Physics.IgnoreCollision(currentStack.Get(0).GetComponent<Collider>(), currentStack.Get(i).GetComponent<Collider>(), true);
+            }
+        }
 
         // Throw the animal
         throwAnimal.transform.position = trajectories.firingPoint.transform.position;
@@ -83,17 +87,12 @@ public class ThrowManager : MonoBehaviour
         stacksManager.DisableMerge();
 
         // Reset throwing mode
-		cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
-		cannon.transform.parent.gameObject.SetActive(false);
-		// Note: Cannot call DeactivateThrowingMode() as invisible walls must stay inactive as long as thrown animal is in flight
+        cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
+        cannon.transform.parent.gameObject.SetActive(false);
+        // Note: Cannot call DeactivateThrowingMode() as invisible walls must stay inactive as long as thrown animal is in flight
 
         // Disable animal collisions
         StartCoroutine(DisableAnimalCollisions());
-
-        //Debug.Log("== Current Throw ==");
-        //Debug.Log("   Throwing Animals - " + stackSize);
-        //Debug.Log("   Throwing Animal - " + throwingAnimal.name);
-        //Debug.Log("   Thrown Animal - " + throwAnimal.name);
     }
 
     // Temporarily disables collisions between colliders of animal being thrown and animal doing the throwing
@@ -107,61 +106,62 @@ public class ThrowManager : MonoBehaviour
         Physics.IgnoreCollision(throwAnimal.GetComponent<Collider>(), throwingAnimal.GetComponent<Collider>(), false);
         Physics.IgnoreCollision(throwAnimal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider, throwingAnimal.GetComponent<Collider>(), false);
     }
-    
-    public void ActivateThrowingMode(AnimalBehaviour controlledAnimal)
+
+    public void ActivateThrowingMode( AnimalBehaviour controlledAnimal )
     {
-		// Place cannon at animal and orient it properly
+        // Place cannon at animal and orient it properly
         cannon.transform.position = controlledAnimal.transform.position;
         cannon.transform.rotation = controlledAnimal.transform.rotation;
         
-		this.throwingAnimal = controlledAnimal.gameObject;
-		this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
+        this.throwingAnimal = controlledAnimal.gameObject;
+        this.throwAnimal = throwingAnimal.GetComponent<AnimalBehaviour>().GetAnimalAbove();
 		
-		trajectories.animalBeingThrown = throwAnimal.GetComponent<AnimalBehaviour> ();
-		trajectories.speciesBeingThrown = trajectories.animalBeingThrown.animalSpecies;
-		trajectories.IgnoreAnimals ();
+        trajectories.animalBeingThrown = throwAnimal.GetComponent<AnimalBehaviour>();
+        trajectories.speciesBeingThrown = trajectories.animalBeingThrown.animalSpecies;
+        trajectories.IgnoreAnimals();
 
-		trajectories.SimulatePath();
+        trajectories.SimulatePath();
         cannon.transform.parent.gameObject.SetActive(true);
 
         invisibleWalls.SetActive(false);
     }
-    
+
     public void DeactivateThrowingMode()
     {
         cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
         cannon.transform.parent.gameObject.SetActive(false);
-		invisibleWalls.SetActive(true);
-		trajectories.speciesBeingThrown = AnimalSpecies.NONE;
+        invisibleWalls.SetActive(true);
+        trajectories.speciesBeingThrown = AnimalSpecies.NONE;
     }
-    
+
     public void RotateRight()
     {
         cannon.transform.Rotate(new Vector3(0, 1, 0), Space.World);
     }
-    
+
     public void RotateLeft()
     {
         cannon.transform.Rotate(new Vector3(0, -1, 0), Space.World);
     }
-    
+
     public void RotateUp()
     {
         cannon.transform.Rotate(new Vector3(-1, 0, 0), Space.Self);
     }
-    
+
     public void RotateDown()
     {
         cannon.transform.Rotate(new Vector3(1, 0, 0), Space.Self);
     }
-    
-    public bool CallThrow(GameObject throwingAnimal, bool usingController)
+
+    public bool CallThrow( GameObject throwingAnimal, bool usingController )
     {
-		// First check if can throw onto tile aimed at (if any)
-		if(!trajectories.isThrowAllowed){
-			DeactivateThrowingMode();
-			return false;
-		}
+        // First check if can throw onto tile aimed at (if any)
+        if (!trajectories.isThrowAllowed)
+        {
+            DeactivateThrowingMode();
+            return false;
+        }
 
         if (usingController)
         {
@@ -186,7 +186,7 @@ public class ThrowManager : MonoBehaviour
             return true;
         }
     }
-    
+
     public void HandleCannonRotation()
     {
         float x = Input.GetAxis("XBOX_THUMBSTICK_RX");
@@ -215,15 +215,15 @@ public class ThrowManager : MonoBehaviour
             cannon.transform.rotation = Quaternion.Euler(0, cannon.transform.rotation.eulerAngles.y, cannon.transform.rotation.eulerAngles.z);
         }   
     }
-    
-    void SmoothRotation(float thumbstickDistance, float yAngle)
+
+    void SmoothRotation( float thumbstickDistance, float yAngle )
     {
         float xRotation = thumbstickDistance * throwRadius;
         
         cannon.transform.rotation = Quaternion.Euler(xRotation, yAngle, cannon.transform.rotation.eulerAngles.z);
     }
-    
-    void SnappyRotation(float thumbstickDistance, float yAngle)
+
+    void SnappyRotation( float thumbstickDistance, float yAngle )
     {
         if (thumbstickDistance > 0.3f)
         {

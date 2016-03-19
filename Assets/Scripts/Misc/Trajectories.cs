@@ -6,7 +6,7 @@ public class Trajectories : MonoBehaviour
     public LineRenderer trajectoryPath;
     
     public float fireStrength = 25;
-	public Color lineColour = Color.cyan;
+    public Color lineColour = Color.cyan;
     
     // Number of segments in the trajectory curve
     public int segmentCount = 20;
@@ -32,9 +32,9 @@ public class Trajectories : MonoBehaviour
 
     public LayerMask layerMask;
 
-	public AnimalBehaviour animalBeingThrown;
-	public AnimalSpecies speciesBeingThrown;
-	public bool isThrowAllowed;
+    public AnimalBehaviour animalBeingThrown;
+    public AnimalSpecies speciesBeingThrown;
+    public bool isThrowAllowed;
     
     // Light to shine upon targeted surface
     public Light spotlight;
@@ -51,20 +51,22 @@ public class Trajectories : MonoBehaviour
         SimulatePath();
     }
 
-	public void IgnoreAnimals()
-	{
-		// Ensure line collides with all animals that are not in same stack as thrower
-		GameObject[] allAnimals = GameObject.FindGameObjectsWithTag ("Animal");
-		for(int i=0; i<allAnimals.Length; i++){
-			allAnimals[i].layer = LayerMask.NameToLayer("Animal");
-		}
+    public void IgnoreAnimals()
+    {
+        // Ensure line collides with all animals that are not in same stack as thrower
+        GameObject[] allAnimals = GameObject.FindGameObjectsWithTag("Animal");
+        for (int i = 0; i < allAnimals.Length; i++)
+        {
+            allAnimals[i].layer = LayerMask.NameToLayer("Animal");
+        }
 		
-		// Ignore all animals above thrower
-		for(int i=animalBeingThrown.animalIndex; i<animalBeingThrown.parentStack.GetSize(); i++){
-			animalBeingThrown.parentStack.Get(i).layer = LayerMask.NameToLayer("IgnoreAnimals");
-			animalBeingThrown.parentStack.Get(i).GetComponent<AnimalBehaviour>().triggerBox.layer = LayerMask.NameToLayer("IgnoreAnimals");
-		}
-	}
+        // Ignore all animals above thrower
+        for (int i = animalBeingThrown.animalIndex; i < animalBeingThrown.parentStack.GetSize(); i++)
+        {
+            animalBeingThrown.parentStack.Get(i).layer = LayerMask.NameToLayer("IgnoreAnimals");
+            animalBeingThrown.parentStack.Get(i).GetComponent<AnimalBehaviour>().triggerBox.layer = LayerMask.NameToLayer("IgnoreAnimals");
+        }
+    }
     
     // Simulate the trajectory of a thrown animal
     public void SimulatePath()
@@ -92,9 +94,9 @@ public class Trajectories : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(segments[i - 1], segVelocity, out hit, segmentLength, layerMask))
             {
-				Debug.Log(hit.collider.gameObject);
+                Debug.Log(hit.collider.gameObject);
 
-				isThrowAllowed = true;
+                isThrowAllowed = true;
 
                 // remember who we hit
                 _hitObject = hit.collider;
@@ -114,15 +116,19 @@ public class Trajectories : MonoBehaviour
                 
                 spotlight.transform.LookAt(segments[i]);
 
-				if(speciesBeingThrown!=null){
-					if(hit.transform.tag=="Tile"){
-						if(hit.transform.gameObject.GetComponentInChildren<ColouredTile>()!=null){
-							if(hit.transform.gameObject.GetComponentInChildren<ColouredTile>().allowedSpecies!=speciesBeingThrown){
-								isThrowAllowed = false;
-							}
-						}
-					}
-				}
+                if (speciesBeingThrown != null)
+                {
+                    if (hit.transform.tag == "Tile")
+                    {
+                        if (hit.transform.gameObject.GetComponentInChildren<ColouredTile>() != null)
+                        {
+                            if (hit.transform.gameObject.GetComponentInChildren<ColouredTile>().allowedSpecies != speciesBeingThrown)
+                            {
+                                isThrowAllowed = false;
+                            }
+                        }
+                    }
+                }
             }
             // If our raycast hit no objects, then set the next position to the last one plus v*t
             else
@@ -133,15 +139,18 @@ public class Trajectories : MonoBehaviour
         
         // At the end, apply our simulations to the LineRenderer
         
-		if (isThrowAllowed) {
-			lineColour = Color.cyan;
-		} else {
-			lineColour = Color.red;
-		}
+        if (isThrowAllowed)
+        {
+            lineColour = Color.cyan;
+        }
+        else
+        {
+            lineColour = Color.red;
+        }
 
-		spotlight.color = lineColour;
+        spotlight.color = lineColour;
 
-		Color startColor = lineColour;
+        Color startColor = lineColour;
         Color endColor = startColor;
         startColor.a = 1;
         endColor.a = 0;
