@@ -142,6 +142,56 @@ public class InputManager : MonoBehaviour
                 throwingMode = false;
                 throwManager.DeactivateThrowingMode();
             }
+            return;
+        }
+
+        //look for the stack the controlled animals stack is currently on top of and remerge with it, before controlledanimal is changed 
+        for (int i =0; i<stackManager.levelStacks.Count; i++) 
+        {
+            Debug.Log(i);
+            if(controlledAnimal.parentStack.Equals(stackManager.levelStacks[i]))
+            {
+                //Debug.Log("Index of Parentstack:"+i);
+                continue;
+
+            }
+
+            //Debug.Log(controlledAnimal.rigidBody.velocity.y);
+            //Debug.Log(Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks[i].Get(0).transform.position.x));
+            //Debug.Log(Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks[i].Get(0).transform.position.z));
+
+            //check if animal is not being thrown, falling and overlapping with another stack on the x- and z-plane
+            if (!controlledAnimal.beingThrown && (controlledAnimal.rigidBody.velocity.y >=(-0.001f)) && (Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks[i].Get(0).transform.position.x) <= (controlledAnimal.animalHeight+0.2f)) &&(Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks[i].Get(0).transform.position.z) <= (controlledAnimal.animalHeight+0.2f)) )
+            {
+                //Debug.Log("Here");
+
+                if (throwingMode)
+                {
+                    throwingMode = false;
+                    throwManager.DeactivateThrowingMode ();
+                }
+
+                controlledAnimal.Stop ();
+
+
+                stackManager.MergeStack(stackManager.levelStacks[i],controlledAnimal.parentStack,ExecutePosition.BOTTOM);
+
+                StartCoroutine(controlledAnimal.DisableMovement());
+                controlledAnimal.Stop ();
+
+                animalIndex = value;
+
+                // Keep within the range
+                Utility.Wrap (ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
+
+                // Tell the stack manager to update to the correct animal
+                stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
+
+                // Update controlled animal
+                controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+
+                return;
+            }
         }
     }
 
@@ -254,6 +304,7 @@ public class InputManager : MonoBehaviour
         {
             // If throw was successful - change controlled animal
             controlledAnimal = controlledAnimal.GetAnimalAbove().GetComponent<AnimalBehaviour>();
+            animalIndex = stackManager.gameAnimals.IndexOf(controlledAnimal.gameObject);
         }
     }
 
@@ -271,6 +322,32 @@ public class InputManager : MonoBehaviour
                 // Setup throwing mode
                 if (throwingMode == false)
                 {
+                    //if throwing mode is activated while the controlled animal has been moved a little on top of another stack without stepping off completely, remerge before activating throwing mode
+                    for (int i =0; i<stackManager.levelStacks.Count; i++) 
+                    {
+                        if(controlledAnimal.parentStack.Equals(stackManager.levelStacks[i]))
+                            continue;
+
+                        if (!controlledAnimal.beingThrown && (controlledAnimal.rigidBody.velocity.y >=(-0.001f)) && (Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks[i].Get(0).transform.position.x) <= (controlledAnimal.animalHeight+0.2f)) &&(Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks[i].Get(0).transform.position.z) <= (controlledAnimal.animalHeight+0.2f)) )
+                        {
+
+                            controlledAnimal.Stop ();
+
+                            stackManager.MergeStack(stackManager.levelStacks[i],controlledAnimal.parentStack,ExecutePosition.BOTTOM);
+
+                            StartCoroutine(controlledAnimal.DisableMovement());
+                            controlledAnimal.Stop ();
+
+                            // Tell the stack manager to update to the correct animal
+                            stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
+
+                            // Update controlled animal
+                            controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+
+
+                        }
+                    }
+
                     //Stop animal if moving
                     controlledAnimal.currentVelocity = Vector3.zero;
                     throwManager.ActivateThrowingMode(controlledAnimal);

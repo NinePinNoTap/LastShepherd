@@ -4,7 +4,7 @@ using System.Collections;
 public class ThrowManager : MonoBehaviour
 {
     [Header("Components")]
-    public StackManager stacksManager;
+    public StackManager stackManager;
     public Trajectories trajectories;
     public GameObject cannon;
     // "Cannon" to aim animals
@@ -53,16 +53,16 @@ public class ThrowManager : MonoBehaviour
         }
                 
         // Update the current animal to the one being thrown
-        stacksManager.UpdateSelectedAnimal(throwAnimal);
+        stackManager.UpdateSelectedAnimal(throwAnimal);
 
         // Split the stack
-        stacksManager.SplitStack(oldStack, stacksManager.animalIndex, ExecutePosition.TOP, Vector3.zero);
+        stackManager.SplitStack(oldStack, stackManager.animalIndex, ExecutePosition.TOP, Vector3.zero);
 
         // Calculate fire strength - NO LONGER HAVE TO SCALE as collisions with animals above is ignored
         float fireStrength = trajectories.fireStrength;
         int stackSize = throwAnimal.GetComponent<AnimalBehaviour>().parentStack.GetSize();
 
-        AnimalStack currentStack = stacksManager.currentStack;
+        AnimalStack currentStack = stackManager.currentStack;
 
         if (currentStack.GetSize() > 1)
         {
@@ -84,7 +84,7 @@ public class ThrowManager : MonoBehaviour
         throwAnimal.GetComponent<AnimalBehaviour>().canMove = false;
 
         // Stop merging
-        stacksManager.DisableMerge();
+        stackManager.DisableMerge();
 
         // Reset throwing mode
         cannon.transform.rotation = Quaternion.Euler(Vector3.zero);
