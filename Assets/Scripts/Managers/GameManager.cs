@@ -18,13 +18,17 @@ public class GameManager : MonoBehaviour
 	public void DoGameComplete()
 	{
 		Debug.Log ("GAME COMPLETE");
+
+        PlayerPrefs.SetInt("gameWinState", 1);
+        Application.LoadLevel("MissionEnd");
 	}
 
 	public void DoGameOver()
 	{
 		Debug.Log ("GAME OVER");
-		// Reload level
-		Application.LoadLevel(Application.loadedLevel);
+
+        PlayerPrefs.SetInt("gameWinState", 0);
+        Application.LoadLevel("MissionEnd");
 	}
 
 	public void DoNextLevel(string sceneName)

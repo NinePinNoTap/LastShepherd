@@ -1,9 +1,9 @@
 fileFormatVersion: 2
 guid: fdeb4189d5875dc4987c5cbc3f50290c
-timeCreated: 1456485203
+timeCreated: 1458431230
 licenseType: Free
 ModelImporter:
-  serializedVersion: 18
+  serializedVersion: 19
   fileIDToRecycleName:
     100000: beek_bottom
     100002: beek_top
@@ -14,15 +14,12 @@ ModelImporter:
     100012: foot_ski_right
     100014: hair1
     100016: hair2
-    100018: knot
-    100020: knot_tail1
-    100022: knot_tail2
-    100024: mask
-    100026: //RootNode
-    100028: tail
-    100030: transform22
-    100032: Wing_left
-    100034: Wing_right
+    100018: mask
+    100020: //RootNode
+    100022: tail
+    100024: transform22
+    100026: Wing_left
+    100028: Wing_right
     400000: beek_bottom
     400002: beek_top
     400004: body
@@ -32,15 +29,12 @@ ModelImporter:
     400012: foot_ski_right
     400014: hair1
     400016: hair2
-    400018: knot
-    400020: knot_tail1
-    400022: knot_tail2
-    400024: mask
-    400026: //RootNode
-    400028: tail
-    400030: transform22
-    400032: Wing_left
-    400034: Wing_right
+    400018: mask
+    400020: //RootNode
+    400022: tail
+    400024: transform22
+    400026: Wing_left
+    400028: Wing_right
     2300000: beek_bottom
     2300002: beek_top
     2300004: body
@@ -50,13 +44,10 @@ ModelImporter:
     2300012: foot_ski_right
     2300014: hair1
     2300016: hair2
-    2300018: knot
-    2300020: knot_tail1
-    2300022: knot_tail2
-    2300024: mask
-    2300026: tail
-    2300028: Wing_left
-    2300030: Wing_right
+    2300018: mask
+    2300020: tail
+    2300022: Wing_left
+    2300024: Wing_right
     3300000: beek_bottom
     3300002: beek_top
     3300004: body
@@ -66,38 +57,33 @@ ModelImporter:
     3300012: foot_ski_right
     3300014: hair1
     3300016: hair2
-    3300018: knot
-    3300020: knot_tail1
-    3300022: knot_tail2
-    3300024: mask
-    3300026: tail
-    3300028: Wing_left
-    3300030: Wing_right
-    4300000: body
-    4300002: beek_top
-    4300004: beek_bottom
-    4300006: Wing_right
-    4300008: Wing_left
-    4300010: foot_ski_right
-    4300012: hair1
-    4300014: tail
-    4300016: eye_right
-    4300018: mask
+    3300018: mask
+    3300020: tail
+    3300022: Wing_left
+    3300024: Wing_right
+    4300000: mask
+    4300002: body
+    4300004: beek_top
+    4300006: beek_bottom
+    4300008: Wing_right
+    4300010: Wing_left
+    4300012: foot_ski_right
+    4300014: hair1
+    4300016: tail
+    4300018: eye_right
     4300020: foot_ski_left
     4300022: eye_left
     4300024: hair2
-    4300026: knot
-    4300028: knot_tail1
-    4300030: knot_tail2
     7400000: idle
     9500000: //RootNode
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
-    materialSearch: 1
+    materialSearch: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    resampleRotations: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -105,9 +91,9 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 1
-    animationRotationError: .5
-    animationPositionError: .5
-    animationScaleError: .5
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     clipAnimations:
@@ -115,12 +101,13 @@ ModelImporter:
       name: idle
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 30
+      lastFrame: 24
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
+      hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
@@ -155,12 +142,6 @@ ModelImporter:
         weight: 1
       - path: hair2
         weight: 1
-      - path: knot
-        weight: 1
-      - path: knot_tail1
-        weight: 1
-      - path: knot_tail2
-        weight: 1
       - path: mask
         weight: 1
       - path: tail
@@ -173,6 +154,7 @@ ModelImporter:
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0.8000001
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -193,24 +175,25 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
     normalImportMode: 0
-    tangentImportMode: 1
+    tangentImportMode: 3
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
     human: []
     skeleton: []
-    armTwist: .5
-    foreArmTwist: .5
-    upperLegTwist: .5
-    legTwist: .5
-    armStretch: .0500000007
-    legStretch: .0500000007
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

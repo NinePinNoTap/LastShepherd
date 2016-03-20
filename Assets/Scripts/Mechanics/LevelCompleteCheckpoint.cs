@@ -7,7 +7,6 @@ public class LevelCompleteCheckpoint : MonoBehaviour
 	public GameManager gameManager;
 
 	[Header("Properties")]
-	public string sceneToLoad = "MainMenu";
 	public bool isActivated = false;
 
 	void Awake()
@@ -27,7 +26,6 @@ public class LevelCompleteCheckpoint : MonoBehaviour
 		// Flag its activated so we cant activate multiple times
 		isActivated = true;
 
-		// Go to next level (-- TEMP SET TO MAIN MENU)
-		gameManager.DoNextLevel(sceneToLoad);
+        gameManager.DoGameComplete();
 	}
 }

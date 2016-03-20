@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\Animal\AnimalBehaviour.cs" />
      <Compile Include="Assets\Scripts\Animal\AnimalCollider.cs" />
      <Compile Include="Assets\Scripts\Animal\AnimalStack.cs" />
+     <Compile Include="Assets\Scripts\Animal\AnimationMovementTest.cs" />
      <Compile Include="Assets\Scripts\Animal\FrogBehaviour.cs" />
      <Compile Include="Assets\Scripts\Animal\MonkeyBehaviour.cs" />
      <Compile Include="Assets\Scripts\Animal\PenguinBehaviour.cs" />
@@ -57,6 +58,7 @@
      <Compile Include="Assets\Scripts\Guard\ConeOfSight.cs" />
      <Compile Include="Assets\Scripts\Guard\GuardController.cs" />
      <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\GameOverManager.cs" />
      <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
      <Compile Include="Assets\Scripts\Managers\LoadingScreenManager.cs" />
      <Compile Include="Assets\Scripts\Managers\StackManager.cs" />
