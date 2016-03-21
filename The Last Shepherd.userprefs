@@ -1,25 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Managers\ThrowManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Managers\InputManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Animal\AnimalBehaviour.cs" Line="103" Column="29" />
-      <File FileName="Assets\Scripts\Animal\AnimalCollider.cs" Line="93" Column="6" />
-      <File FileName="Assets\Scripts\Managers\StackManager.cs" Line="26" Column="5" />
-      <File FileName="Assets\Scripts\Managers\InputManager.cs" Line="129" Column="79" />
-      <File FileName="Assets\Scripts\Managers\ThrowManager.cs" Line="33" Column="6" />
+      <File FileName="Assets\Scripts\Managers\InputManager.cs" Line="254" Column="49" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalBehaviour.cs" line="137" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalBehaviour.cs" line="138" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalBehaviour.cs" line="111" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalCollider.cs" line="204" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalCollider.cs" line="229" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalCollider.cs" line="238" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalCollider.cs" line="258" />
-      <Breakpoint file="M:\The Last Shepherd\Assets\Scripts\Animal\AnimalCollider.cs" line="257" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
