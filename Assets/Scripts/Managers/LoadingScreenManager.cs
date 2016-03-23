@@ -51,12 +51,6 @@ public class LoadingScreenManager : MonoBehaviour
 		DontDestroyOnLoad(this);
 	}
 
-	void Update()
-	{
-		// Just for fun
-		progressBar.transform.Rotate( new Vector3(0,0, -10 * Time.deltaTime));
-	}
-
 	private void InitialiseAudio()
 	{
 		// Set up audio

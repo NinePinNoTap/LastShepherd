@@ -3,7 +3,10 @@ using System;
 
 public static class Utility
 {
+	//==================================
 	// Ensure a value is within a range
+	//==================================
+
 	public static bool CheckBounds(int value, int min, int max)
 	{
 		if( value < min )
@@ -13,8 +16,20 @@ public static class Utility
 		
 		return true;
 	}
-	
+	public static bool CheckBounds(float value, float min, float max)
+	{
+		if( value < min )
+			return false;
+		else if(value > max)
+			return false;
+		
+		return true;
+	}
+
+	//=============================
 	// Loop a value within a range
+	//=============================
+	
 	public static void Wrap(ref int value, int min, int max)
 	{
 		if(value < min)
@@ -22,8 +37,18 @@ public static class Utility
 		if(value > max)
 			value = min;
 	}
+	public static void Wrap(ref float value, float min, float max)
+	{
+		if(value < min)
+			value = max;
+		if(value > max)
+			value = min;
+	}
 
+	//=============================
 	// Lock a value within a range
+	//=============================
+	
 	public static void Clamp(ref int value, int min, int max)
 	{
 		if(value < min)
@@ -31,11 +56,22 @@ public static class Utility
 		if(value > max)
 			value = max;
 	}
+	public static void Clamp(ref float value, float min, float max)
+	{
+		if(value < min)
+			value = min;
+		if(value > max)
+			value = max;
+	}
 
-    // Tries to add component to the gameobject
+	//====================
+	// Component Handling
+	//====================
+
     public static T HandleComponent<T>(GameObject obj) where T : Component
     {
         T component;
+
         // Try and get the component
         component = (T)obj.GetComponent(typeof(T));
 
