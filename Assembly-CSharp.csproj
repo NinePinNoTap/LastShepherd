@@ -80,6 +80,7 @@
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonGoToScene.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonLoadingScreen.cs" />
      <Compile Include="Assets\Scripts\UI\LoadingScreenAnimation.cs" />
+     <Compile Include="Assets\Scripts\UI\TeamnameBlinker.cs" />
      <None Include="Assets\Shader\Outline.shader" />
      <None Include="Assets\Shader\Gradient.shader" />
  <Reference Include="UnityEngine.UI">
