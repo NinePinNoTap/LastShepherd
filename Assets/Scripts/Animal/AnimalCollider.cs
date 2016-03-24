@@ -77,6 +77,19 @@ public class AnimalCollider : MonoBehaviour
         HandleCollision(col.gameObject);
     }
 
+	void OnTriggerStay(Collider col)
+	{
+		if(col.name == "Collider Box")
+			return;
+
+		// Make sure we are moving
+		if(!animalBehaviour.isMoving)
+			return;
+
+		// Handle collision again
+		HandleCollision(col.gameObject);
+	}
+
     void OnTriggerExit(Collider col)
     {
         if(objInRange.Contains(col.gameObject))
@@ -188,6 +201,8 @@ public class AnimalCollider : MonoBehaviour
         // Can't progress if we cant move anyway
         if(!animalBehaviour.canMove)
             return;
+
+		Debug.Log ("Call");
         
         // Calculate a direction vector between the animal (objParent) and the step (obj)
         Vector3 direction = obj.transform.position - objParent.transform.position;
@@ -234,6 +249,10 @@ public class AnimalCollider : MonoBehaviour
                         {
                             animalBehaviour.parentStack.Get(j).transform.position = basePos + new Vector3(0.0f, animalBehaviour.animalHeight * j, 0.0f);
                         }
+
+						// Disable stepping up
+						StartCoroutine(animalBehaviour.DisableMovement());
+
                         return;
                     }
                 }

@@ -244,30 +244,6 @@ public class AnimalBehaviour : MonoBehaviour
     // CHECKS
     //===========================================================================
 
-	// POSSIBLE SOLUTION TO ANIMALS STICKING ON TILES
-	// Animals may slide down a "tile" object onto the ground of the same one
-	// i.e. if being thrown against the final step in PrototypeLevel3 - would require that tile objects be split into cubes to avoid such "steps"
-    /*void OnCollisionEnter(Collision col)
-    {
-        // Check if we collided with a tile
-        if(col.gameObject.tag == "Tile")
-        {
-			// Tile Beneath
-			if(ContactPointsBeneathAnimal(col)){
-            	isGrounded = true;
-            	rigidBody.velocity = Vector3.zero;
-			}
-			// Tile in front
-			else{
-				// Set velocity to zero except in y direction
-				Vector3 newVelocity = rigidBody.velocity;
-				newVelocity.x = 0;
-				newVelocity.z = 0;
-				rigidBody.velocity = newVelocity;
-			}
-        }
-    }*/
-
 	void OnCollisionEnter(Collision col)
 	{
 		// Check if we collided with a tile
@@ -360,11 +336,16 @@ public class AnimalBehaviour : MonoBehaviour
 
     public IEnumerator DisableMovement()
     {
+		// Disable movement
         canMove = false;
+		currentVelocity = Vector3.zero;
+		rigidBody.velocity = Vector3.zero;
+		isMoving = false;
 
         yield return new WaitForSeconds(disableMoveDuration);
 
-        canMove = true;
+		// Re-enable movement
+		canMove = true;
     }
 
     //===========================================================================
