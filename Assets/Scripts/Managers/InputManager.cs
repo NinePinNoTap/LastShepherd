@@ -63,7 +63,7 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            usePS4Controller = true;
+            usePS4Controller = false;
             Debug.Log("Using Keyboard Input");
         }
 
