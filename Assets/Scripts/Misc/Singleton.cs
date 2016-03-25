@@ -34,11 +34,11 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                     {
                         GameObject singleton = new GameObject();
                         _instance = singleton.AddComponent<T>();
-                        singleton.name = "(singleton) " + typeof(T).ToString();
+                        singleton.name = "[Singleton] " + typeof(T).ToString();
  
                         DontDestroyOnLoad(singleton);
  
-                        Debug.Log("[Singleton] An instance of " + typeof(T) + " is needed in the scene, so '" + singleton + "' was created with DontDestroyOnLoad.");
+                        Debug.Log("[Singleton] An instance of " + typeof(T) + " is needed in the scene. " + singleton + " was created with DontDestroyOnLoad.");
                     }
                     else
                     {

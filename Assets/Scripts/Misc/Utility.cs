@@ -84,4 +84,69 @@ public static class Utility
 
         return component;
     }
+
+    //========
+    // Assert
+    //========
+
+    public static void Assert<T>(T component, GameObject owner) where T : Component
+    {
+        if(component)
+        {
+            return;
+        }
+        else
+        {
+            Debug.Log("WARNING! " + owner.name + " is missing component " + typeof(T).ToString());
+        }
+    }
+
+    public static void Assert(GameObject obj, GameObject owner)
+    {
+        if(obj)
+        {
+            return;
+        }
+        else
+        {
+            Debug.Log("WARNING! " + owner.name + " is missing gameobject reference.");
+        }
+    }
+
+    public static void Assert<T>(GameObject obj) where T : Component
+    {
+        T component;
+
+        // Try and get the component
+        component = (T)obj.GetComponent(typeof(T));
+
+        if(component)
+        {
+            return;
+        }
+        else
+        {
+            Debug.Log("WARNING! " + obj.name + " is missing component " + typeof(T).ToString());
+        }
+    }
+
+    public static T GetComponentFromTag<T>(string tag) where T : Component
+    {
+        T component;
+        GameObject obj;
+
+        // Find the gameobject
+        obj = GameObject.FindGameObjectWithTag(tag);
+
+        // Check if we found an object
+        if(!obj)
+        {
+            return null;
+        }
+
+        // Get the component of the object
+        component = (T)obj.GetComponent(typeof(T));
+
+        return component;
+    }
 }

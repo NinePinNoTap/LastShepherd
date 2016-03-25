@@ -19,6 +19,9 @@ public class AnimalCollider : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        // Make sure we have stack manager
+        stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
+
         // Set up the box collider
         boxCollider = gameObject.GetComponent<BoxCollider>();
         boxCollider.transform.localScale = new Vector3(1.5f, 1.1f ,1.5f);
@@ -66,6 +69,7 @@ public class AnimalCollider : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
+        // Don't process collider boxes
         if(col.name == "Collider Box")
             return;
 
@@ -80,7 +84,11 @@ public class AnimalCollider : MonoBehaviour
 	void OnTriggerStay(Collider col)
 	{
 		if(col.name == "Collider Box")
-			return;
+            return;
+
+        // We only really want to process the special objects
+        if(col.gameObject.tag == "Tile")
+            return;
 
 		// Make sure we are moving
 		if(!animalBehaviour.isMoving)

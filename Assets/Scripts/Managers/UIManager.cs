@@ -14,7 +14,6 @@ public struct PortaitData
 public class UIManager : MonoBehaviour
 {
 	[Header("Component")]
-	public GameManager gameManager;
 	public StackManager stackManager;			// Access to the stack manager
 
 	[Header("Game Time Properties")]
@@ -31,11 +30,11 @@ public class UIManager : MonoBehaviour
 
 	void Start ()
 	{
-		// Access the game manager
-		if(!gameManager)
-		{
-			GetComponent<GameManager>();
-		}
+        // Make sure we have stack manager
+        if(!stackManager)
+        {
+            stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
+        }
 
 		// Initialise data
 		for(int i = 0; i < animalData.Length; i++)
@@ -131,8 +130,8 @@ public class UIManager : MonoBehaviour
 			yield return null;
 		}
 
-		// Reset level?
-		gameManager.DoGameOver();
+        // Show game over screen
+        GameManager.Instance.DoGameOver();
 		
 		yield return new WaitForEndOfFrame();
 	}

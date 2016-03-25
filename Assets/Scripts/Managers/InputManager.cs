@@ -5,9 +5,7 @@ public class InputManager : MonoBehaviour
 {
     [Header("Components")]
     public StackManager stackManager;
-    // Access to stacks and animals
     public ThrowManager throwManager;
-    // Access to throwing
 
     [Header("Properties")]
     public bool usePS4Controller = false;
@@ -32,10 +30,8 @@ public class InputManager : MonoBehaviour
     public KeyCode throwWinKey = KeyCode.Space;
 
     [Header("PS4 Keys")]
-    public string animalMoveX = "XBOX_THUMBSTICK_LX";
-    public string animalMoveY = "XBOX_THUMBSTICK_LY";
-    public string animalPS4MoveX = "PS4_THUMBSTICK_LX";
-    public string animalPS4MoveY = "PS4_THUMBSTICK_LY";
+    public string animalPS4MoveX = "XBOX_THUMBSTICK_LX";
+    public string animalPS4MoveY = "XBOX_THUMBSTICK_LY";
     public KeyCode animalPS4Key1 = KeyCode.Joystick1Button0;
     public KeyCode animalPS4Key2 = KeyCode.Joystick1Button1;
     public KeyCode animalPS4Key3 = KeyCode.Joystick1Button2;
@@ -47,15 +43,28 @@ public class InputManager : MonoBehaviour
 
     void Start()
     {
-        // Manually find the stack manager if we didnt set it
-        if (stackManager == null)
+        // Make sure we have stack manager
+        if (!stackManager)
         {
-            stackManager = GetComponent<StackManager>();
+            stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
         }
 
-        if (throwManager == null)
+        // Make sure we have throw manager
+        if (!throwManager)
         {
-            throwManager = GetComponent<ThrowManager>();
+            throwManager = Utility.GetComponentFromTag<ThrowManager>("ThrowManager");
+        }
+
+        // Only use PS4 controller settings if we have an active controller
+        if(Input.GetJoystickNames().Length > 0)
+        {
+            usePS4Controller = true;
+            Debug.Log("Using PS4 Controller");
+        }
+        else
+        {
+            usePS4Controller = true;
+            Debug.Log("Using Keyboard Input");
         }
 
         // Initialise to first animal
@@ -287,8 +296,8 @@ public class InputManager : MonoBehaviour
         bool Override = controlledAnimal.animalIndex > 0;
 
         // Check input
-        HandleInputDirection(animalMoveX, ref moveVelocity, Vector3.right, Override);
-        HandleInputDirection(animalMoveY, ref moveVelocity, Vector3.forward, Override);
+        HandleInputDirection(animalPS4MoveX, ref moveVelocity, Vector3.right, Override);
+        HandleInputDirection(animalPS4MoveY, ref moveVelocity, Vector3.forward, Override);
 
         // Process movement
         controlledAnimal.MoveAnimal(moveVelocity);

@@ -130,6 +130,11 @@ public class LoadingScreenManager : MonoBehaviour
 		// Check to see if we have finished
 		while(backgroundOverlay.color.a != targetAlpha)
 		{
+            if(!backgroundOverlay)
+            {
+                break;
+            }
+            
 			frame += Time.deltaTime;
 
 			// Adjust alpha

@@ -12,8 +12,10 @@ public class ColouredTile : MonoBehaviour
 
     void Start()
     {
-        // Access stack manager
-        stackManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<StackManager>();
+        if(!stackManager)
+        {
+            stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
+        }
 
         // Access box collider
         boxCollider = GetComponent<BoxCollider>();
@@ -27,10 +29,5 @@ public class ColouredTile : MonoBehaviour
                 Physics.IgnoreCollision(boxCollider, animal.GetComponent<AnimalBehaviour>().triggerBox.GetComponent<AnimalCollider>().boxCollider);
             }
         }
-    }
-
-    void Update()
-    {
-	
     }
 }

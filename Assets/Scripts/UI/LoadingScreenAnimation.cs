@@ -32,6 +32,9 @@ public class LoadingScreenAnimation : MonoBehaviour
 	{
 		while(true)
 		{
+            if(!animationImage)
+                break;
+            
 			// Get current alpha value
 			float curAlpha = animationImage.color.a;
 
@@ -66,6 +69,9 @@ public class LoadingScreenAnimation : MonoBehaviour
 
 	private void UpdateAnimation()
 	{
+        if(!animationImage)
+            return;
+
 		// Switch the state flade
 		fadeState = (fadeState == FadeState.IN) ? FadeState.OUT : FadeState.IN;
 
@@ -81,4 +87,9 @@ public class LoadingScreenAnimation : MonoBehaviour
 		// Start the animation again
 		StartCoroutine(FadeImage());
 	}
+
+    void OnDestroy()
+    {
+        StopCoroutine(FadeImage());
+    }
 }

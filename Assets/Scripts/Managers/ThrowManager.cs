@@ -7,6 +7,7 @@ public class ThrowManager : MonoBehaviour
     public StackManager stackManager;
     public Trajectories trajectories;
     public GameObject cannon;
+
     // "Cannon" to aim animals
     public GameObject invisibleWalls;
 
@@ -21,7 +22,10 @@ public class ThrowManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        if(!stackManager)
+        {
+            stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
+        }
     }
 
     void FixedUpdate()

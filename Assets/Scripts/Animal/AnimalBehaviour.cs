@@ -17,7 +17,6 @@ public class AnimalBehaviour : MonoBehaviour
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
     public LayerMask layerMask;
-    //public ObjectHighlighter objHighlighter;
     public Rigidbody rigidBody;
 
     [Header("Game Mechanics")]
@@ -46,8 +45,16 @@ public class AnimalBehaviour : MonoBehaviour
 	[Header("Particle Systems")]
 	public GameObject orbitParticleHandler;
 
+    [Header("Audio")]
+    public AudioClip walkAudio;
+
     protected void Awake()
     {
+        if(!stackManager)
+        {
+            stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
+        }
+
         // Default flags
         isControllable = false;
         isMoving = false;
@@ -103,7 +110,7 @@ public class AnimalBehaviour : MonoBehaviour
         // Check if we are moving
         MovingCheck();
 
-        if(transform.position.y < GameManager.FALL_THRESHOLD)
+        if(transform.position.y < GameManager.Instance.FALL_THRESHOLD)
         {
             transform.position = startPosition;
         }
