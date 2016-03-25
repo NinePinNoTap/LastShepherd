@@ -5,7 +5,7 @@ public class SplashScreenManager : MonoBehaviour
 {
     public float pauseDuration = 2.0f;
     public string sceneToLoad = "MainMenu";
-	public string skipKey = "XBOX_BUTTON_A";
+	public string skipKey = "PS4_BUTTON_CROSS";
 
 	void Start ()
     {
@@ -14,7 +14,7 @@ public class SplashScreenManager : MonoBehaviour
 
 	void Update()
 	{
-		if(Input.GetButtonDown("XBOX_BUTTON_A"))
+		if(Input.GetButtonDown(skipKey))
 		{
 			// Stop splash screen
 			StopCoroutine(RunSplashScreen());

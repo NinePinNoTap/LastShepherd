@@ -91,11 +91,11 @@ public class AnimalCollider : MonoBehaviour
             return;
 
 		// Make sure we are moving
-		if(!animalBehaviour.isMoving)
-			return;
-
-		// Handle collision again
-		HandleCollision(col.gameObject);
+		if((animalBehaviour.isMoving && animalBehaviour.isGrounded) || animalBehaviour.beingThrown)
+		{
+			// Handle collision again
+			HandleCollision(col.gameObject);
+		}
 	}
 
     void OnTriggerExit(Collider col)
@@ -154,7 +154,7 @@ public class AnimalCollider : MonoBehaviour
                     }
 
                     // Activate invisible walls once thrown animal has landed
-                    GameObject.FindGameObjectWithTag("Controller").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
+                    GameObject.FindGameObjectWithTag("ThrowManager").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
 
                     // Reactivate all tile barriers upon thrown animals landing
                     GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
@@ -240,7 +240,7 @@ public class AnimalCollider : MonoBehaviour
                         // If the raycast hits another tile above the tile, or the tile is taller than "animalHeight", not possible for animals to step up
                         if ((obj == hit.transform.gameObject) || (hit.transform.gameObject.tag.Equals("Step")))
                         {
-                            Debug.Log("Found something above");
+                            Debug.Log("Found " + hit.transform.gameObject.name + " above");
                             return;
                         }
                     }

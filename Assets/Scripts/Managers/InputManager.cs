@@ -34,10 +34,10 @@ public class InputManager : MonoBehaviour
     public string
         animalPS4MoveX = "PS4_THUMBSTICK_LX";
     public string animalPS4MoveY = "PS4_THUMBSTICK_LY";
-    public KeyCode animalPS4Key1 = KeyCode.Joystick1Button0;
-    public KeyCode animalPS4Key2 = KeyCode.Joystick1Button1;
-    public KeyCode animalPS4Key3 = KeyCode.Joystick1Button2;
-    public KeyCode animalPS4Key4 = KeyCode.Joystick1Button3;
+    public KeyCode animalPS4Square = KeyCode.Joystick1Button0;
+    public KeyCode animalPS4X = KeyCode.Joystick1Button1;
+    public KeyCode animalPS4Circle = KeyCode.Joystick1Button2;
+    public KeyCode animalPS4Triangle = KeyCode.Joystick1Button3;
     public KeyCode animalPreviousPS4Key = KeyCode.Joystick1Button4;
     public KeyCode animalNextPS4Key = KeyCode.Joystick1Button5;
     public KeyCode animalPS4StartKey = KeyCode.Joystick1Button9;
@@ -163,7 +163,6 @@ public class InputManager : MonoBehaviour
         //look for the stack the controlled animals stack is currently on top of and remerge with it, before controlledanimal is changed 
         for (int i =0; i<stackManager.levelStacks.Count; i++)
         {
-            Debug.Log(i);
             if (controlledAnimal.parentStack.Equals(stackManager.levelStacks [i]))
             {
                 //Debug.Log("Index of Parentstack:"+i);
@@ -275,10 +274,10 @@ public class InputManager : MonoBehaviour
         }
 
         // Setting Animals
-        HandleAnimalSwitching(animalPS4Key1, 0); // X
-        HandleAnimalSwitching(animalPS4Key2, 1); // Circle
-        HandleAnimalSwitching(animalPS4Key3, 2); // Square
-        HandleAnimalSwitching(animalPS4Key4, 3); // Triangle
+        HandleAnimalSwitching(animalPS4Square, 0); // Frog
+        HandleAnimalSwitching(animalPS4X, 2); // Penguin
+        HandleAnimalSwitching(animalPS4Circle, 1); // Monkey
+        HandleAnimalSwitching(animalPS4Triangle, 3); // Turtle
         
         // Switching between stacks
         HandleAnimalSwitching(animalPreviousPS4Key, animalIndex - 1); // LB
