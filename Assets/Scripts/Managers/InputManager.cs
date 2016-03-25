@@ -4,11 +4,12 @@ using System.Collections;
 public class InputManager : MonoBehaviour
 {
     [Header("Components")]
-    public StackManager stackManager;
+    public StackManager
+        stackManager;
     public ThrowManager throwManager;
-
     [Header("Properties")]
-    public bool usePS4Controller = false;
+    public bool
+        usePS4Controller = false;
     // Flag for whether to use PS4 Controller input
     private AnimalBehaviour controlledAnimal = null;
     // Access to the current controlled animal
@@ -16,7 +17,8 @@ public class InputManager : MonoBehaviour
     // Tracker for current animal index
 
     [Header("Windows Keys")]
-    public KeyCode forwardWinKey = KeyCode.W;
+    public KeyCode
+        forwardWinKey = KeyCode.W;
     public KeyCode backWinKey = KeyCode.S;
     public KeyCode leftWinKey = KeyCode.A;
     public KeyCode rightWinKey = KeyCode.D;
@@ -28,9 +30,9 @@ public class InputManager : MonoBehaviour
     public KeyCode animalNextWinKey = KeyCode.P;
     public KeyCode throwingWinKey = KeyCode.E;
     public KeyCode throwWinKey = KeyCode.Space;
-
     [Header("PS4 Keys")]
-    public string animalPS4MoveX = "PS4_THUMBSTICK_LX";
+    public string
+        animalPS4MoveX = "PS4_THUMBSTICK_LX";
     public string animalPS4MoveY = "PS4_THUMBSTICK_LY";
     public KeyCode animalPS4Key1 = KeyCode.Joystick1Button0;
     public KeyCode animalPS4Key2 = KeyCode.Joystick1Button1;
@@ -56,7 +58,7 @@ public class InputManager : MonoBehaviour
         }
 
         // Only use PS4 controller settings if we have an active controller
-        if(Input.GetJoystickNames().Length > 0)
+        if (Input.GetJoystickNames().Length > 0)
         {
             usePS4Controller = true;
             Debug.Log("Using PS4 Controller");
@@ -73,9 +75,9 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-		// Dont process if we are frozen
-		if(Time.timeScale == 0)
-			return;
+        // Dont process if we are frozen
+        if (Time.timeScale == 0)
+            return;
 
         if (controlledAnimal == null)
         {
@@ -125,7 +127,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void HandleAnimalSwitching( KeyCode key, int value )
+    private void HandleAnimalSwitching(KeyCode key, int value)
     {
         // Check to make sure we do want to switch
         if (!Input.GetKeyDown(key))
@@ -144,7 +146,7 @@ public class InputManager : MonoBehaviour
             Utility.Wrap(ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
         
             // Tell the stack manager to update to the correct animal
-            stackManager.UpdateSelectedAnimal(stackManager.gameAnimals[animalIndex]);
+            stackManager.UpdateSelectedAnimal(stackManager.gameAnimals [animalIndex]);
         
             // Update controlled animal
             controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
@@ -159,10 +161,10 @@ public class InputManager : MonoBehaviour
         }
 
         //look for the stack the controlled animals stack is currently on top of and remerge with it, before controlledanimal is changed 
-        for (int i =0; i<stackManager.levelStacks.Count; i++) 
+        for (int i =0; i<stackManager.levelStacks.Count; i++)
         {
             Debug.Log(i);
-            if(controlledAnimal.parentStack.Equals(stackManager.levelStacks[i]))
+            if (controlledAnimal.parentStack.Equals(stackManager.levelStacks [i]))
             {
                 //Debug.Log("Index of Parentstack:"+i);
                 continue;
@@ -174,34 +176,34 @@ public class InputManager : MonoBehaviour
             //Debug.Log(Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks[i].Get(0).transform.position.z));
 
             //check if animal is not being thrown, falling and overlapping with another stack on the x- and z-plane
-            if (!controlledAnimal.beingThrown && (controlledAnimal.rigidBody.velocity.y >=(-0.001f)) && (Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks[i].Get(0).transform.position.x) <= (controlledAnimal.animalHeight+0.2f)) &&(Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks[i].Get(0).transform.position.z) <= (controlledAnimal.animalHeight+0.2f)) )
+            if (!controlledAnimal.beingThrown && (controlledAnimal.rigidBody.velocity.y >= (-0.001f)) && (Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks [i].Get(0).transform.position.x) <= (controlledAnimal.animalHeight + 0.2f)) && (Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks [i].Get(0).transform.position.z) <= (controlledAnimal.animalHeight + 0.2f)))
             {
                 //Debug.Log("Here");
 
                 if (throwingMode)
                 {
                     throwingMode = false;
-                    throwManager.DeactivateThrowingMode ();
+                    throwManager.DeactivateThrowingMode();
                 }
 
-                controlledAnimal.Stop ();
+                controlledAnimal.Stop();
 
 
-                stackManager.MergeStack(stackManager.levelStacks[i],controlledAnimal.parentStack,ExecutePosition.BOTTOM);
+                stackManager.MergeStack(stackManager.levelStacks [i], controlledAnimal.parentStack, ExecutePosition.BOTTOM);
 
                 StartCoroutine(controlledAnimal.DisableMovement());
-                controlledAnimal.Stop ();
+                controlledAnimal.Stop();
 
                 animalIndex = value;
 
                 // Keep within the range
-                Utility.Wrap (ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
+                Utility.Wrap(ref animalIndex, 0, stackManager.gameAnimals.Count - 1);
 
                 // Tell the stack manager to update to the correct animal
-                stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
+                stackManager.UpdateSelectedAnimal(stackManager.gameAnimals [animalIndex]);
 
                 // Update controlled animal
-                controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+                controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
 
                 return;
             }
@@ -336,26 +338,25 @@ public class InputManager : MonoBehaviour
                 if (throwingMode == false)
                 {
                     //if throwing mode is activated while the controlled animal has been moved a little on top of another stack without stepping off completely, remerge before activating throwing mode
-                    for (int i =0; i<stackManager.levelStacks.Count; i++) 
+                    for (int i =0; i<stackManager.levelStacks.Count; i++)
                     {
-                        if(controlledAnimal.parentStack.Equals(stackManager.levelStacks[i]))
+                        if (controlledAnimal.parentStack.Equals(stackManager.levelStacks [i]))
                             continue;
 
-                        if (!controlledAnimal.beingThrown && (controlledAnimal.rigidBody.velocity.y >=(-0.001f)) && (Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks[i].Get(0).transform.position.x) <= (controlledAnimal.animalHeight+0.2f)) &&(Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks[i].Get(0).transform.position.z) <= (controlledAnimal.animalHeight+0.2f)) )
+                        if (!controlledAnimal.beingThrown && (controlledAnimal.rigidBody.velocity.y >= (-0.001f)) && (Mathf.Abs(controlledAnimal.transform.position.x - stackManager.levelStacks [i].Get(0).transform.position.x) <= (controlledAnimal.animalHeight + 0.2f)) && (Mathf.Abs(controlledAnimal.transform.position.z - stackManager.levelStacks [i].Get(0).transform.position.z) <= (controlledAnimal.animalHeight + 0.2f)))
                         {
+                            controlledAnimal.Stop();
 
-                            controlledAnimal.Stop ();
-
-                            stackManager.MergeStack(stackManager.levelStacks[i],controlledAnimal.parentStack,ExecutePosition.BOTTOM);
+                            stackManager.MergeStack(stackManager.levelStacks [i], controlledAnimal.parentStack, ExecutePosition.BOTTOM);
 
                             StartCoroutine(controlledAnimal.DisableMovement());
-                            controlledAnimal.Stop ();
+                            controlledAnimal.Stop();
 
                             // Tell the stack manager to update to the correct animal
-                            stackManager.UpdateSelectedAnimal (stackManager.gameAnimals [animalIndex]);
+                            stackManager.UpdateSelectedAnimal(stackManager.gameAnimals [animalIndex]);
 
                             // Update controlled animal
-                            controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour> ();
+                            controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
 
 
                         }
@@ -397,7 +398,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public void HandleInputDirection( KeyCode key, ref Vector3 vector, Vector3 value, bool Override )
+    public void HandleInputDirection(KeyCode key, ref Vector3 vector, Vector3 value, bool Override)
     {
         if (!Input.GetKey(key))
         {
@@ -415,7 +416,7 @@ public class InputManager : MonoBehaviour
         vector += value;
     }
 
-    public void HandleInputDirection( string key, ref Vector3 vector, Vector3 value, bool Override )
+    public void HandleInputDirection(string key, ref Vector3 vector, Vector3 value, bool Override)
     {
         if (Input.GetAxis(key) == 0)
         {

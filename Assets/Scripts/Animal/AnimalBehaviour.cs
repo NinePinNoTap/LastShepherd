@@ -8,58 +8,60 @@ public enum AnimalSpecies
     MONKEY,
     PENGUIN,
     TURTLE
-};
+}
+;
 
 public class AnimalBehaviour : MonoBehaviour
 {
     [Header("Components")]
-    public StackManager stackManager;
+    public StackManager
+        stackManager;
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
     public LayerMask layerMask;
     public Rigidbody rigidBody;
-
     [Header("Game Mechanics")]
-    public AnimalSpecies animalSpecies = AnimalSpecies.NONE;
-
+    public AnimalSpecies
+        animalSpecies = AnimalSpecies.NONE;
     [Header("Stacking and Merging")]
-    public float animalHeight = 1.0f;
+    public float
+        animalHeight = 1.0f;
     public Vector3 stackLocalPosition;
-
     [Header("Flags")]
-    public bool isControllable;
+    public bool
+        isControllable;
     public bool isMoving;
     public bool isGrounded;
     public bool canMove;
     public bool beingThrown;
-
     [Header("Movement")]
-    public float moveSpeed = 5.0f;
+    public float
+        moveSpeed = 5.0f;
     public float disableMoveDuration = 0.5f;
     public Vector3 currentVelocity;
     public Vector3 startPosition;
-
     [Header("Collision Detectors")]
-    public GameObject triggerBox;
-
-	[Header("Particle Systems")]
-	public GameObject orbitParticleHandler;
-
+    public GameObject
+        triggerBox;
+    [Header("Particle Systems")]
+    public GameObject
+        orbitParticleHandler;
     [Header("Audio")]
-    public AudioClip walkAudio;
-	private AudioSource audioSource;
+    public AudioClip
+        walkAudio;
+    private AudioSource audioSource;
 
     protected void Awake()
     {
-		// Access stack manager
-        if(!stackManager)
+        // Access stack manager
+        if (!stackManager)
         {
             stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
         }
 
-		// Access audio source
-		audioSource = Utility.HandleComponent<AudioSource>(gameObject);
-		audioSource.clip = walkAudio;
+        // Access audio source
+        audioSource = Utility.HandleComponent<AudioSource>(gameObject);
+        audioSource.clip = walkAudio;
 
         // Default flags
         isControllable = false;
@@ -79,16 +81,16 @@ public class AnimalBehaviour : MonoBehaviour
         triggerBox.AddComponent<AnimalCollider>();
         triggerBox.GetComponent<MeshRenderer>().enabled = false;
 
-		// Assign particle orbiter
-		if (!orbitParticleHandler)
+        // Assign particle orbiter
+        if (!orbitParticleHandler)
         {
-			orbitParticleHandler = GetComponentInChildren<OrbitScript>().transform.parent.gameObject;
-		}
+            orbitParticleHandler = GetComponentInChildren<OrbitScript>().transform.parent.gameObject;
+        }
 
         // Ignore our own colliders
         Physics.IgnoreCollision(GetComponent<Collider>(), triggerBox.GetComponent<Collider>());
 
-		// Set respawn position
+        // Set respawn position
         startPosition = transform.position;
     }
 
@@ -97,7 +99,7 @@ public class AnimalBehaviour : MonoBehaviour
         // Ensure we have access to the stack manager
         if (!stackManager)
         {
-            stackManager = GameObject.FindGameObjectWithTag("Controller").GetComponent<StackManager>();
+            stackManager = GameObject.FindGameObjectWithTag("StackManager").GetComponent<StackManager>();
         }
 
         // Ensure we have access to the rigidbody
@@ -108,8 +110,8 @@ public class AnimalBehaviour : MonoBehaviour
         
         triggerBox.GetComponent<AnimalCollider>().stackManager = stackManager;
 
-		// Initially set orbiting particles to off
-		orbitParticleHandler.SetActive (false);
+        // Initially set orbiting particles to off
+        orbitParticleHandler.SetActive(false);
     }
 
     protected virtual void FixedUpdate()
@@ -117,56 +119,59 @@ public class AnimalBehaviour : MonoBehaviour
         // Check if we are moving
         MovingCheck();
 
-        if(transform.position.y < GameManager.Instance.FALL_THRESHOLD)
+        if (transform.position.y < GameManager.Instance.FALL_THRESHOLD)
         {
             transform.position = startPosition;
         }
 
         // Check if we are the base animal
-        if(animalIndex == 0)
+        if (animalIndex == 0)
         {
             // Enable gravity
             rigidBody.useGravity = true;
 
             // Check if we are being thrown
-            if(beingThrown)
+            if (beingThrown)
             {
                 // isGrounded will never be true if animals are not considered for "grounding" - results in thrown animals freezing when being thrown onto other animals
-                if(isGrounded)
+                if (isGrounded)
                 {
                     canMove = true;
                     beingThrown = false;
                     Debug.Log("Grounded after throwing!");
 
                     // Reposition/update all animals above thrown animal once it's grounded
-                    if(parentStack.GetSize()>1){
-                        for(int i=1; i<parentStack.GetSize(); i++){
+                    if (parentStack.GetSize() > 1)
+                    {
+                        for (int i=1; i<parentStack.GetSize(); i++)
+                        {
                             parentStack.Get(i).transform.position = parentStack.Get(0).gameObject.transform.position + parentStack.Get(i).GetComponent<AnimalBehaviour>().stackLocalPosition;
                             parentStack.Get(i).GetComponent<AnimalBehaviour>().canMove = false;
                             parentStack.Get(i).GetComponent<AnimalBehaviour>().isMoving = false;
                             parentStack.Get(i).GetComponent<AnimalBehaviour>().rigidBody.isKinematic = true;
-							// Enable collisions between bottom animal again
-							Physics.IgnoreCollision(parentStack.Get (0).GetComponent<Collider>(), parentStack.Get (i).GetComponent<Collider>(),false);
+                            // Enable collisions between bottom animal again
+                            Physics.IgnoreCollision(parentStack.Get(0).GetComponent<Collider>(), parentStack.Get(i).GetComponent<Collider>(), false);
                         }
                     }
 
-					// Activate invisible walls once thrown animal has landed
-					GameObject.FindGameObjectWithTag("Controller").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
+                    // Activate invisible walls once thrown animal has landed
+                    GameObject.FindGameObjectWithTag("ThrowManager").GetComponent<ThrowManager>().invisibleWalls.SetActive(true);
 
-					// Reactivate all tile barriers upon thrown animals landing
-					GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag ("TileBarrier");
-					for (int i=0; i<tileBarriers.Length; i++) {
-						tileBarriers[i].GetComponent<BoxCollider>().enabled = true;
-					}
+                    // Reactivate all tile barriers upon thrown animals landing
+                    GameObject[] tileBarriers = GameObject.FindGameObjectsWithTag("TileBarrier");
+                    for (int i=0; i<tileBarriers.Length; i++)
+                    {
+                        tileBarriers [i].GetComponent<BoxCollider>().enabled = true;
+                    }
                 }
             }
             else
             {
-                if(canMove)
+                if (canMove)
                 {
                     currentVelocity.y = rigidBody.velocity.y;
 
-                    if(currentVelocity.y < -0.5f)
+                    if (currentVelocity.y < -0.5f)
                     {
                         // Fall
                         currentVelocity = new Vector3(0, currentVelocity.y, 0);
@@ -197,7 +202,7 @@ public class AnimalBehaviour : MonoBehaviour
         if (!canMove)
             return;
 
-        if(beingThrown)
+        if (beingThrown)
             return;
 
         if (!direction.Equals(Vector3.zero))
@@ -258,32 +263,36 @@ public class AnimalBehaviour : MonoBehaviour
     // CHECKS
     //===========================================================================
 
-	void OnCollisionEnter(Collision col)
-	{
-		// Check if we collided with a tile
-		if (col.gameObject.tag == "Tile") {
-			isGrounded = true;
-			rigidBody.velocity = Vector3.zero;
-		}
+    void OnCollisionEnter(Collision col)
+    {
+        // Check if we collided with a tile
+        if (col.gameObject.tag == "Tile")
+        {
+            isGrounded = true;
+            rigidBody.velocity = Vector3.zero;
+        }
 
-	}
+    }
 
-	bool ContactPointsBeneathAnimal(Collision col){
-		ContactPoint[] contacts = col.contacts;
-		for(int i=0; i<contacts.Length; i++){
-			// 0.1 used as a small buffer
-			if(contacts[i].point.y > transform.position.y - (animalHeight/2-0.1)){
-				Debug.Log(col.gameObject.name + " is NOT beneath " + gameObject.name);
-				return false;
-			}
-		}
-		Debug.Log(col.gameObject.name + " is beneath " + gameObject.name);
-		return true;
-	}
+    bool ContactPointsBeneathAnimal(Collision col)
+    {
+        ContactPoint[] contacts = col.contacts;
+        for (int i=0; i<contacts.Length; i++)
+        {
+            // 0.1 used as a small buffer
+            if (contacts [i].point.y > transform.position.y - (animalHeight / 2 - 0.1))
+            {
+                Debug.Log(col.gameObject.name + " is NOT beneath " + gameObject.name);
+                return false;
+            }
+        }
+        Debug.Log(col.gameObject.name + " is beneath " + gameObject.name);
+        return true;
+    }
 
     void OnCollisionExit(Collision col)
     {
-        if(col.gameObject.name == "Tile")
+        if (col.gameObject.name == "Tile")
         {
             isGrounded = false;
         }
@@ -291,7 +300,7 @@ public class AnimalBehaviour : MonoBehaviour
     
     protected void MovingCheck()
     {
-        if(beingThrown)
+        if (beingThrown)
             return;
 
         // Return true if either x/z velocity is not 0
@@ -300,16 +309,16 @@ public class AnimalBehaviour : MonoBehaviour
             // We are stationary
             isMoving = false;
 
-			if(audioSource.isPlaying)
-				audioSource.Stop();
+            if (audioSource.isPlaying)
+                audioSource.Stop();
         }
         else
         {
             // We are moving
             isMoving = true;
-			
-			if(!audioSource.isPlaying)
-				audioSource.Play();
+            
+            if (!audioSource.isPlaying)
+                audioSource.Play();
         }
     }
 
@@ -325,7 +334,7 @@ public class AnimalBehaviour : MonoBehaviour
         isMoving = false;
 
         // Enable particles
-		orbitParticleHandler.SetActive (true);
+        orbitParticleHandler.SetActive(true);
 
         // Reset movement velocity
         rigidBody.velocity = new Vector3(0, 0, 0);
@@ -343,7 +352,7 @@ public class AnimalBehaviour : MonoBehaviour
         isMoving = false;
 
         // Disable particles
-		orbitParticleHandler.SetActive (false);
+        orbitParticleHandler.SetActive(false);
 
         // Reset velocity
         rigidBody.velocity = new Vector3(0, 0, 0);
@@ -356,16 +365,16 @@ public class AnimalBehaviour : MonoBehaviour
 
     public IEnumerator DisableMovement()
     {
-		// Disable movement
+        // Disable movement
         canMove = false;
-		currentVelocity = Vector3.zero;
-		rigidBody.velocity = Vector3.zero;
-		isMoving = false;
+        currentVelocity = Vector3.zero;
+        rigidBody.velocity = Vector3.zero;
+        isMoving = false;
 
         yield return new WaitForSeconds(disableMoveDuration);
 
-		// Re-enable movement
-		canMove = true;
+        // Re-enable movement
+        canMove = true;
     }
 
     //===========================================================================

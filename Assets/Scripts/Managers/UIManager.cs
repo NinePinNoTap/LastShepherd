@@ -3,66 +3,62 @@ using System.Collections;
 using UnityEngine.UI;
 
 [System.Serializable]
-public struct PortaitData
+public struct PortraitData
 {
-	public Outline backgroundOutline;
-	public Animator animatorControl;
-	public Light portaitLight;
+	public Image sprite;
 	public bool isSelected;
 }
 
 public class UIManager : MonoBehaviour
 {
 	[Header("Component")]
+	public GameManager gameManager;
 	public StackManager stackManager;			// Access to the stack manager
-
+	
 	[Header("Game Time Properties")]
 	public RectTransform timerBar;				// Access to the timer bar
 	public float currentTime = 0.0f;			// How long we have played for
-	public float roundLength = 100.0f;			// How long a round is
+	public float GameManager.Instant.clockTime = 100.0f;			// How long a round is
 	private Vector2 barSize;					// How big the bar was on start
 	private float barMultiplier = 7.0f;			// How much to scale the bar
-
+	
 	[Header("Portaits UI Properties")]
-	public PortaitData[] animalData;
-	public Color normalColor = Color.black;		// Outline normal colour
-	public Color highlightColor = Color.white;	// Outline highlighted colour
-
+	public PortraitData[] animalData;
+	
 	void Start ()
 	{
-        // Make sure we have stack manager
-        if(!stackManager)
-        {
-            stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
-        }
+		// Make sure we have stack manager
+		if(!gameManager)
+		{
+			gameManager = Utility.GetComponentFromTag<GameManager>("GameManager");
+		}
 
+		// Make sure we have stack manager
+		if(!stackManager)
+		{
+			stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
+		}
+		
 		// Initialise data
 		for(int i = 0; i < animalData.Length; i++)
 		{
-			if(animalData[i].animatorControl)
-			{
-				animalData[i].animatorControl.speed = 0.0f;
-			}
-
-			animalData[i].backgroundOutline.effectColor = normalColor;
-			animalData[i].portaitLight.enabled = false;
 			animalData[i].isSelected = false;
 		}
-
+		
 		// Create and start the timer
 		InitialiseTimer();
 	}
-
+	
 	void Update ()
 	{
-		HandleAnimalPortaits();
+		HandleAnimalPortraits();
 	}
-
+	
 	//========================================================================================
 	// PORTAITS
 	//========================================================================================
 	
-	private void HandleAnimalPortaits()
+	private void HandleAnimalPortraits()
 	{
 		for(int i = 0; i < animalData.Length; i++)
 		{
@@ -70,14 +66,7 @@ public class UIManager : MonoBehaviour
 			{
 				if(!animalData[i].isSelected)
 				{
-					if(animalData[i].animatorControl)
-					{
-						animalData[i].animatorControl.Play("idle", 0, 0.0f);
-						animalData[i].animatorControl.speed = 1.0f;
-					}
-
-					animalData[i].backgroundOutline.effectColor = highlightColor;
-					animalData[i].portaitLight.enabled = true;
+					animalData[i].sprite.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(170,170);
 					animalData[i].isSelected = true;
 				}
 			}
@@ -85,20 +74,13 @@ public class UIManager : MonoBehaviour
 			{
 				if(animalData[i].isSelected)
 				{
-					if(animalData[i].animatorControl)
-					{
-						animalData[i].animatorControl.Play("idle", 0, 0.0f);
-						animalData[i].animatorControl.speed = 0.0f;
-					}
-
-					animalData[i].backgroundOutline.effectColor = normalColor;
-					animalData[i].portaitLight.enabled = false;
+					animalData[i].sprite.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(100,100);
 					animalData[i].isSelected = false;
 				}
 			}
 		}
 	}
-
+	
 	//========================================================================================
 	// GAME TIMER
 	//========================================================================================
@@ -108,7 +90,7 @@ public class UIManager : MonoBehaviour
 		barSize = timerBar.sizeDelta;
 		
 		// Calculate how much to rescale
-		barMultiplier = barSize.x / roundLength;
+		barMultiplier = barSize.x / GameManager.Instance.levelClock;
 		
 		// Start Timer
 		StartCoroutine(Timer ());
@@ -117,7 +99,7 @@ public class UIManager : MonoBehaviour
 	private IEnumerator Timer()
 	{
 		// Keep looping
-		while(roundLength > currentTime)
+		while(GameManager.Instance.levelClock > currentTime)
 		{
 			// Reduce length
 			currentTime += Time.deltaTime;
@@ -129,9 +111,9 @@ public class UIManager : MonoBehaviour
 			// Come back because we not finished
 			yield return null;
 		}
-
-        // Show game over screen
-        GameManager.Instance.DoGameOver();
+		
+		// Reset level?
+		gameManager.DoGameOver();
 		
 		yield return new WaitForEndOfFrame();
 	}

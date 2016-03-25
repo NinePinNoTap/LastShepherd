@@ -48,7 +48,6 @@ public class GameManager : Singleton<GameManager>
 		{
 			canvasOverlay.SetActive(true);
 			Time.timeScale = 0.0f;
-			Debug.Log ("Show");
 		}
 		else if(Input.GetButtonUp(keyCode))
 		{
