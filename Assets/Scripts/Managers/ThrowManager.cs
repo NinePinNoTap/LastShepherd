@@ -169,8 +169,8 @@ public class ThrowManager : MonoBehaviour
 
         if (usingController)
         {
-            float x = Input.GetAxis("XBOX_THUMBSTICK_RX");
-            float y = Input.GetAxis("XBOX_THUMBSTICK_RY");
+            float x = Input.GetAxis("PS4_THUMBSTICK_RX");
+            float y = Input.GetAxis("PS4_THUMBSTICK_RY");
             
             // Check not aiming straight up - if so, throw
             if (x != 0.0f || y != 0.0f)
@@ -193,8 +193,8 @@ public class ThrowManager : MonoBehaviour
 
     public void HandleCannonRotation()
     {
-        float x = Input.GetAxis("XBOX_THUMBSTICK_RX");
-        float y = Input.GetAxis("XBOX_THUMBSTICK_RY");
+        float x = Input.GetAxis("PS4_THUMBSTICK_RX");
+        float y = Input.GetAxis("PS4_THUMBSTICK_RY");
         
         if (x != 0.0f || y != 0.0f)
         {

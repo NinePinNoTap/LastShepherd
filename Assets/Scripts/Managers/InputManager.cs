@@ -30,8 +30,8 @@ public class InputManager : MonoBehaviour
     public KeyCode throwWinKey = KeyCode.Space;
 
     [Header("PS4 Keys")]
-    public string animalPS4MoveX = "XBOX_THUMBSTICK_LX";
-    public string animalPS4MoveY = "XBOX_THUMBSTICK_LY";
+    public string animalPS4MoveX = "PS4_THUMBSTICK_LX";
+    public string animalPS4MoveY = "PS4_THUMBSTICK_LY";
     public KeyCode animalPS4Key1 = KeyCode.Joystick1Button0;
     public KeyCode animalPS4Key2 = KeyCode.Joystick1Button1;
     public KeyCode animalPS4Key3 = KeyCode.Joystick1Button2;
@@ -73,6 +73,10 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
+		// Dont process if we are frozen
+		if(Time.timeScale == 0)
+			return;
+
         if (controlledAnimal == null)
         {
             controlledAnimal = stackManager.currentAnimal.GetComponent<AnimalBehaviour>();
@@ -326,7 +330,7 @@ public class InputManager : MonoBehaviour
 
         if (usePS4Controller)
         {
-            if (Input.GetAxis("PS4_TRIGGER_R") > 0.0f)
+            if (Input.GetAxis("PS4_BUTTON_R2") > 0.0f)
             {
                 // Setup throwing mode
                 if (throwingMode == false)

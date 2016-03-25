@@ -47,13 +47,19 @@ public class AnimalBehaviour : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip walkAudio;
+	private AudioSource audioSource;
 
     protected void Awake()
     {
+		// Access stack manager
         if(!stackManager)
         {
             stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
         }
+
+		// Access audio source
+		audioSource = Utility.HandleComponent<AudioSource>(gameObject);
+		audioSource.clip = walkAudio;
 
         // Default flags
         isControllable = false;
@@ -82,6 +88,7 @@ public class AnimalBehaviour : MonoBehaviour
         // Ignore our own colliders
         Physics.IgnoreCollision(GetComponent<Collider>(), triggerBox.GetComponent<Collider>());
 
+		// Set respawn position
         startPosition = transform.position;
     }
 
@@ -292,11 +299,17 @@ public class AnimalBehaviour : MonoBehaviour
         {
             // We are stationary
             isMoving = false;
+
+			if(audioSource.isPlaying)
+				audioSource.Stop();
         }
         else
         {
             // We are moving
             isMoving = true;
+			
+			if(!audioSource.isPlaying)
+				audioSource.Play();
         }
     }
 

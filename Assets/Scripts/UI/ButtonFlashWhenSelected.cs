@@ -16,10 +16,14 @@ public class ButtonFlashWhenSelected : MonoBehaviour, ISelectHandler, IDeselectH
     private Color highlightedColor;
     private float animationFrame = 0;
 
-    void Start()
+	[Header("Text Scaling")]
+	public int textSelect = 70;
+	public int textDeselect = 50;
+
+    void Awake()
     {
-        // Get access to button
-        button = GetComponent<Button>();
+		// Access button component
+		button = GetComponent<Button>();
 
         // Starting state
         transitionState = TransitionState.Down;
@@ -30,22 +34,23 @@ public class ButtonFlashWhenSelected : MonoBehaviour, ISelectHandler, IDeselectH
     }
 
     public void OnSelect(BaseEventData eventData)
-    {
-        Debug.Log("Selected");
+	{
         isSelected = true;
         animationFrame = 0;
         StartCoroutine(Flash());
+
+		GetComponentInChildren<Text>().fontSize = textSelect;
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
-        isSelected = false;
-        StopCoroutine(Flash());
+		isSelected = false;
+		GetComponentInChildren<Text>().fontSize = textDeselect;
     }
 
     private IEnumerator Flash()
     {
-        while(true)
+		while(isSelected)
         {
             // Increase alpha
             animationFrame += Time.deltaTime;
