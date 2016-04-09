@@ -45,7 +45,7 @@ public class InputManager : MonoBehaviour
 
     void Start()
     {
-        // Make sure we have stack manager
+         // Make sure we have stack manager
         if (!stackManager)
         {
             stackManager = Utility.GetComponentFromTag<StackManager>("StackManager");
@@ -136,6 +136,7 @@ public class InputManager : MonoBehaviour
         // Check animal is not being thrown or in mid-air
         if (!controlledAnimal.beingThrown && controlledAnimal.parentStack.Get(0).GetComponent<AnimalBehaviour>().isGrounded)
         {
+            Debug.Log("Able to switch!");
             // Disable move velocity
             controlledAnimal.Stop();
         
@@ -160,7 +161,7 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        //look for the stack the controlled animals stack is currently on top of and remerge with it, before controlledanimal is changed 
+        //look for the stack the controlled animals stack is currently on top of and remerge with it, before controlled animal is changed 
         for (int i =0; i<stackManager.levelStacks.Count; i++)
         {
             if (controlledAnimal.parentStack.Equals(stackManager.levelStacks [i]))

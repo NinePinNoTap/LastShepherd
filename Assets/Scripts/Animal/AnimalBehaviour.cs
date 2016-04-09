@@ -43,9 +43,6 @@ public class AnimalBehaviour : MonoBehaviour
     [Header("Collision Detectors")]
     public GameObject
         triggerBox;
-    [Header("Particle Systems")]
-    public GameObject
-        orbitParticleHandler;
     [Header("Audio")]
     public AudioClip
         walkAudio;
@@ -81,12 +78,6 @@ public class AnimalBehaviour : MonoBehaviour
         triggerBox.AddComponent<AnimalCollider>();
         triggerBox.GetComponent<MeshRenderer>().enabled = false;
 
-        // Assign particle orbiter
-        if (!orbitParticleHandler)
-        {
-            orbitParticleHandler = GetComponentInChildren<OrbitScript>().transform.parent.gameObject;
-        }
-
         // Ignore our own colliders
         Physics.IgnoreCollision(GetComponent<Collider>(), triggerBox.GetComponent<Collider>());
 
@@ -109,9 +100,6 @@ public class AnimalBehaviour : MonoBehaviour
         }
         
         triggerBox.GetComponent<AnimalCollider>().stackManager = stackManager;
-
-        // Initially set orbiting particles to off
-        orbitParticleHandler.SetActive(false);
     }
 
     protected virtual void FixedUpdate()
@@ -263,15 +251,25 @@ public class AnimalBehaviour : MonoBehaviour
     // CHECKS
     //===========================================================================
 
-    void OnCollisionEnter(Collision col)
+    // Stay instead of Enter to avoid problems when animals move between tiles/steps caused by "OnCollisionExit" behaviour
+    void OnCollisionStay(Collision col)
     {
-        // Check if we collided with a tile
-        if (col.gameObject.tag == "Tile")
+        // Check if we collided with a tile or step
+        if (col.gameObject.tag == "Tile" || col.gameObject.tag == "Step")
         {
             isGrounded = true;
-            rigidBody.velocity = Vector3.zero;
+            // Commented out to prevent sticking on walls
+            //rigidBody.velocity = Vector3.zero;
         }
+    }
 
+    
+    void OnCollisionExit(Collision col)
+    {
+        if (col.gameObject.tag == "Tile" || col.gameObject.tag == "Step")
+        {
+            isGrounded = false;
+        }
     }
 
     bool ContactPointsBeneathAnimal(Collision col)
@@ -288,14 +286,6 @@ public class AnimalBehaviour : MonoBehaviour
         }
         Debug.Log(col.gameObject.name + " is beneath " + gameObject.name);
         return true;
-    }
-
-    void OnCollisionExit(Collision col)
-    {
-        if (col.gameObject.name == "Tile")
-        {
-            isGrounded = false;
-        }
     }
     
     protected void MovingCheck()
@@ -333,15 +323,15 @@ public class AnimalBehaviour : MonoBehaviour
         canMove = true;
         isMoving = false;
 
-        // Enable particles
-        orbitParticleHandler.SetActive(true);
-
         // Reset movement velocity
         rigidBody.velocity = new Vector3(0, 0, 0);
 
         rigidBody.isKinematic = false;
         
         triggerBox.GetComponent<AnimalCollider>().Enable();
+
+        // Increase outline width to 0.5
+        GetComponent<Renderer>().material.SetFloat ("_Outline", 0.5f);
     }
     
     public void Deactivate()
@@ -351,9 +341,6 @@ public class AnimalBehaviour : MonoBehaviour
         canMove = false;
         isMoving = false;
 
-        // Disable particles
-        orbitParticleHandler.SetActive(false);
-
         // Reset velocity
         rigidBody.velocity = new Vector3(0, 0, 0);
 
@@ -361,6 +348,9 @@ public class AnimalBehaviour : MonoBehaviour
         rigidBody.isKinematic = true;
 
         triggerBox.GetComponent<AnimalCollider>().Disable();
+
+        // Reduce outline width to 0
+        GetComponent<Renderer>().material.SetFloat ("_Outline", 0.0f);
     }
 
     public IEnumerator DisableMovement()

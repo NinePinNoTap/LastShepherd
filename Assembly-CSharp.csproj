@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{77AF3BA5-BD10-ACC0-FCDB-A8C640DA2DE5}</ProjectGuid>
+	<ProjectGuid>{74A8557D-F3D2-EBF5-502F-1DCCE412DECB}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -50,38 +50,37 @@
      <Compile Include="Assets\Scripts\Animal\AnimalCollider.cs" />
      <Compile Include="Assets\Scripts\Animal\AnimalStack.cs" />
      <Compile Include="Assets\Scripts\Animal\AnimationMovementTest.cs" />
-     <Compile Include="Assets\Scripts\Animal\FrogBehaviour.cs" />
-     <Compile Include="Assets\Scripts\Animal\MonkeyBehaviour.cs" />
-     <Compile Include="Assets\Scripts\Animal\PenguinBehaviour.cs" />
-     <Compile Include="Assets\Scripts\Animal\TurtleBehaviour.cs" />
-     <Compile Include="Assets\Scripts\Audio\AudioManager.cs" />
-     <Compile Include="Assets\Scripts\Audio\AudioTrigger.cs" />
-     <Compile Include="Assets\Scripts\Guard\ConeOfSight.cs" />
-     <Compile Include="Assets\Scripts\Guard\GuardController.cs" />
+     <Compile Include="Assets\Scripts\Animated Water\water.cs" />
+     <Compile Include="Assets\Scripts\Animated Water\waterWaves.cs" />
+     <Compile Include="Assets\Scripts\Managers\AudioManager.cs" />
      <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-     <Compile Include="Assets\Scripts\Managers\GameOverManager.cs" />
      <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
      <Compile Include="Assets\Scripts\Managers\LoadingScreenManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\MainMenuManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\SplashScreenManager.cs" />
      <Compile Include="Assets\Scripts\Managers\StackManager.cs" />
      <Compile Include="Assets\Scripts\Managers\ThrowManager.cs" />
      <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
+     <Compile Include="Assets\Scripts\Mechanics\AudioTrigger.cs" />
      <Compile Include="Assets\Scripts\Mechanics\ColouredTile.cs" />
      <Compile Include="Assets\Scripts\Mechanics\Interactable.cs" />
      <Compile Include="Assets\Scripts\Mechanics\LevelCompleteCheckpoint.cs" />
      <Compile Include="Assets\Scripts\Misc\EscapeButton.cs" />
      <Compile Include="Assets\Scripts\Misc\GameSaveData.cs" />
-     <Compile Include="Assets\Scripts\Misc\ObjectHighlighter.cs" />
      <Compile Include="Assets\Scripts\Misc\Singleton.cs" />
      <Compile Include="Assets\Scripts\Misc\Trajectories.cs" />
      <Compile Include="Assets\Scripts\Misc\Utility.cs" />
      <Compile Include="Assets\Scripts\Particles\LandingParticles.cs" />
      <Compile Include="Assets\Scripts\Particles\OrbitScript.cs" />
+     <Compile Include="Assets\Scripts\UI\ButtonFlashWhenSelected.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonExitGame.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonGoToScene.cs" />
      <Compile Include="Assets\Scripts\UI\Buttons\ButtonLoadingScreen.cs" />
+     <Compile Include="Assets\Scripts\UI\Buttons\ButtonReload.cs" />
      <Compile Include="Assets\Scripts\UI\LoadingScreenAnimation.cs" />
      <Compile Include="Assets\Scripts\UI\TeamnameBlinker.cs" />
      <None Include="Assets\Shader\Outline.shader" />
+     <None Include="Assets\Shader\Outline Diffuse.shader" />
      <None Include="Assets\Shader\Gradient.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
