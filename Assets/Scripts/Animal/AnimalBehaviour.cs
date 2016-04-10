@@ -8,44 +8,42 @@ public enum AnimalSpecies
     MONKEY,
     PENGUIN,
     TURTLE
-}
-;
+};
 
 public class AnimalBehaviour : MonoBehaviour
 {
     [Header("Components")]
-    public StackManager
-        stackManager;
+    public StackManager stackManager;
     public AnimalStack parentStack;
     public int animalIndex; // Index of animal in its stack
     public LayerMask layerMask;
     public Rigidbody rigidBody;
+
     [Header("Game Mechanics")]
-    public AnimalSpecies
-        animalSpecies = AnimalSpecies.NONE;
+    public AnimalSpecies animalSpecies = AnimalSpecies.NONE;
+
     [Header("Stacking and Merging")]
-    public float
-        animalHeight = 1.0f;
+    public float animalHeight = 1.0f;
     public Vector3 stackLocalPosition;
+
     [Header("Flags")]
-    public bool
-        isControllable;
+    public bool isControllable;
     public bool isMoving;
     public bool isGrounded;
     public bool canMove;
     public bool beingThrown;
+
     [Header("Movement")]
-    public float
-        moveSpeed = 5.0f;
+    public float moveSpeed = 5.0f;
     public float disableMoveDuration = 0.5f;
     public Vector3 currentVelocity;
     public Vector3 startPosition;
+
     [Header("Collision Detectors")]
-    public GameObject
-        triggerBox;
+    public GameObject triggerBox;
+
     [Header("Audio")]
-    public AudioClip
-        walkAudio;
+    public AudioClip walkAudio;
     private AudioSource audioSource;
 
     protected void Awake()
@@ -296,17 +294,20 @@ public class AnimalBehaviour : MonoBehaviour
         // Return true if either x/z velocity is not 0
         if (rigidBody.velocity.x == 0 && rigidBody.velocity.z == 0)
         {
-            // We are stationary
+            // Disable movement if we were moving
             isMoving = false;
+
+            GetComponent<Animator>().SetBool("isMoving", isMoving);
 
             if (audioSource.isPlaying)
                 audioSource.Stop();
         }
         else
         {
-            // We are moving
             isMoving = true;
-            
+
+            GetComponent<Animator>().SetBool("isMoving", isMoving);
+                        
             if (!audioSource.isPlaying)
                 audioSource.Play();
         }
@@ -331,7 +332,14 @@ public class AnimalBehaviour : MonoBehaviour
         triggerBox.GetComponent<AnimalCollider>().Enable();
 
         // Increase outline width to 0.5
-        GetComponent<Renderer>().material.SetFloat ("_Outline", 0.5f);
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        if(renderers.Length > 0)
+        {
+            for(int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].material.SetFloat("_Outline", 0.5f);
+            }
+        }
     }
     
     public void Deactivate()
@@ -350,7 +358,14 @@ public class AnimalBehaviour : MonoBehaviour
         triggerBox.GetComponent<AnimalCollider>().Disable();
 
         // Reduce outline width to 0
-        GetComponent<Renderer>().material.SetFloat ("_Outline", 0.0f);
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        if(renderers.Length > 0)
+        {
+            for(int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].material.SetFloat("_Outline", 0.0f);
+            }
+        }
     }
 
     public IEnumerator DisableMovement()

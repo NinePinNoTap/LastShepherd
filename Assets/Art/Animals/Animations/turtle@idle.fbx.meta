@@ -1,36 +1,34 @@
 fileFormatVersion: 2
-guid: 92d016073745d06458473223b474f43f
-timeCreated: 1458428010
+guid: 0cfbc65a82dabbc4ea1c12a78cd9048f
+timeCreated: 1460298175
 licenseType: Free
 ModelImporter:
-  serializedVersion: 18
+  serializedVersion: 19
   fileIDToRecycleName:
     100000: eye_left
     100002: eye_right
     100004: face_bandana
-    100006: transform1
-    100008: //RootNode
-    100010: turtle_flipper_l1
-    100012: turtle_flipper_l2
-    100014: turtle_flipper_r1
-    100016: turtle_flipper_r2
-    100018: turtle_head
-    100020: turtle_shell_bottom
-    100022: turtle_shell_top
-    100024: turtle_tail
+    100006: //RootNode
+    100008: turtle_flipper_l1
+    100010: turtle_flipper_l2
+    100012: turtle_flipper_r1
+    100014: turtle_flipper_r2
+    100016: turtle_head
+    100018: turtle_shell_bottom
+    100020: turtle_shell_top
+    100022: turtle_tail
     400000: eye_left
     400002: eye_right
     400004: face_bandana
-    400006: transform1
-    400008: //RootNode
-    400010: turtle_flipper_l1
-    400012: turtle_flipper_l2
-    400014: turtle_flipper_r1
-    400016: turtle_flipper_r2
-    400018: turtle_head
-    400020: turtle_shell_bottom
-    400022: turtle_shell_top
-    400024: turtle_tail
+    400006: //RootNode
+    400008: turtle_flipper_l1
+    400010: turtle_flipper_l2
+    400012: turtle_flipper_r1
+    400014: turtle_flipper_r2
+    400016: turtle_head
+    400018: turtle_shell_bottom
+    400020: turtle_shell_top
+    400022: turtle_tail
     2300000: eye_left
     2300002: eye_right
     2300004: face_bandana
@@ -64,7 +62,7 @@ ModelImporter:
     4300016: turtle_tail
     4300018: face_bandana
     4300020: turtle_head
-    7400000: walk
+    7400000: Take 001
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -73,6 +71,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    resampleRotations: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -80,68 +79,16 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 1
-    animationRotationError: .5
-    animationPositionError: .5
-    animationScaleError: .5
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: walk
-      takeName: Take 001
-      firstFrame: 1
-      lastFrame: 30
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: eye_left
-        weight: 1
-      - path: eye_right
-        weight: 1
-      - path: face_bandana
-        weight: 1
-      - path: transform1
-        weight: 1
-      - path: turtle_flipper_l1
-        weight: 1
-      - path: turtle_flipper_l2
-        weight: 1
-      - path: turtle_flipper_r1
-        weight: 1
-      - path: turtle_flipper_r2
-        weight: 1
-      - path: turtle_head
-        weight: 1
-      - path: turtle_shell_bottom
-        weight: 1
-      - path: turtle_shell_top
-        weight: 1
-      - path: turtle_tail
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
+    clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 10
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -158,7 +105,6 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 3
   importAnimation: 1
@@ -166,16 +112,18 @@ ModelImporter:
   humanDescription:
     human: []
     skeleton: []
-    armTwist: .5
-    foreArmTwist: .5
-    upperLegTwist: .5
-    legTwist: .5
-    armStretch: .0500000007
-    legStretch: .0500000007
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: fdeb4189d5875dc4987c5cbc3f50290c
-timeCreated: 1458431230
+timeCreated: 1460290217
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -20,6 +20,15 @@ ModelImporter:
     100024: transform22
     100026: Wing_left
     100028: Wing_right
+    100030: knot
+    100032: knot_tail1
+    100034: knot_tail2
+    100036: mask 1
+    100038: Penguin1
+    100040: transform23
+    100042: transform24
+    100044: transform25
+    100046: transform26
     400000: beek_bottom
     400002: beek_top
     400004: body
@@ -35,6 +44,15 @@ ModelImporter:
     400024: transform22
     400026: Wing_left
     400028: Wing_right
+    400030: knot
+    400032: knot_tail1
+    400034: knot_tail2
+    400036: mask 1
+    400038: Penguin1
+    400040: transform23
+    400042: transform24
+    400044: transform25
+    400046: transform26
     2300000: beek_bottom
     2300002: beek_top
     2300004: body
@@ -101,7 +119,7 @@ ModelImporter:
       name: idle
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 24
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -124,37 +142,55 @@ ModelImporter:
       transformMask:
       - path: 
         weight: 1
-      - path: beek_bottom
-        weight: 1
-      - path: beek_top
-        weight: 1
-      - path: body
-        weight: 1
-      - path: eye_left
-        weight: 1
-      - path: eye_right
-        weight: 1
-      - path: foot_ski_left
-        weight: 1
-      - path: foot_ski_right
-        weight: 1
-      - path: hair1
-        weight: 1
-      - path: hair2
-        weight: 1
       - path: mask
         weight: 1
-      - path: tail
+      - path: Penguin1
         weight: 1
-      - path: transform22
+      - path: Penguin1/beek_bottom
         weight: 1
-      - path: Wing_left
+      - path: Penguin1/beek_top
         weight: 1
-      - path: Wing_right
+      - path: Penguin1/body
+        weight: 1
+      - path: Penguin1/eye_left
+        weight: 1
+      - path: Penguin1/eye_right
+        weight: 1
+      - path: Penguin1/foot_ski_left
+        weight: 1
+      - path: Penguin1/foot_ski_right
+        weight: 1
+      - path: Penguin1/hair1
+        weight: 1
+      - path: Penguin1/hair2
+        weight: 1
+      - path: Penguin1/knot
+        weight: 1
+      - path: Penguin1/knot/transform25
+        weight: 1
+      - path: Penguin1/knot_tail1
+        weight: 1
+      - path: Penguin1/knot_tail1/transform24
+        weight: 1
+      - path: Penguin1/knot_tail2
+        weight: 1
+      - path: Penguin1/knot_tail2/transform23
+        weight: 1
+      - path: Penguin1/mask 1
+        weight: 1
+      - path: Penguin1/mask 1/transform26
+        weight: 1
+      - path: Penguin1/tail
+        weight: 1
+      - path: Penguin1/transform22
+        weight: 1
+      - path: Penguin1/Wing_left
+        weight: 1
+      - path: Penguin1/Wing_right
         weight: 1
       maskType: 0
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0.8000001
+      additiveReferencePoseFrame: 1
     isReadable: 1
   meshes:
     lODScreenPercentages: []

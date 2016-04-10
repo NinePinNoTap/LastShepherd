@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 34a9660384369b44ab4178b29cc653d7
-timeCreated: 1458428010
+guid: 3cc13de786e476c468c33409724f21db
+timeCreated: 1460290216
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -18,38 +18,7 @@ ModelImporter:
     100020: monkey_foot_right
     100022: monkey_mouth
     100024: monkey_tail
-    100026: polySurface12
-    100028: polySurface13
-    100030: polySurface14
-    100032: polySurface16
-    100034: polySurface17
-    100036: polySurface18
-    100038: polySurface19
-    100040: polySurface20
-    100042: polySurface21
-    100044: polySurface22
-    100046: polySurface23
-    100048: polySurface6
-    100050: polySurface7
-    100052: polySurface8
-    100054: polySurface9
-    100056: sweat_band
-    100058: transform24
-    100060: transform25
-    100062: transform26
-    100064: transform27
-    100066: transform28
-    100068: transform29
-    100070: transform30
-    100072: transform31
-    100074: transform32
-    100076: transform33
-    100078: transform34
-    100080: transform35
-    100082: transform36
-    100084: transform37
-    100086: transform38
-    100088: transform39
+    100026: sweat_band
     400000: body
     400002: eye_left
     400004: eye_right
@@ -63,38 +32,7 @@ ModelImporter:
     400020: monkey_foot_right
     400022: monkey_mouth
     400024: monkey_tail
-    400026: polySurface12
-    400028: polySurface13
-    400030: polySurface14
-    400032: polySurface16
-    400034: polySurface17
-    400036: polySurface18
-    400038: polySurface19
-    400040: polySurface20
-    400042: polySurface21
-    400044: polySurface22
-    400046: polySurface23
-    400048: polySurface6
-    400050: polySurface7
-    400052: polySurface8
-    400054: polySurface9
-    400056: sweat_band
-    400058: transform24
-    400060: transform25
-    400062: transform26
-    400064: transform27
-    400066: transform28
-    400068: transform29
-    400070: transform30
-    400072: transform31
-    400074: transform32
-    400076: transform33
-    400078: transform34
-    400080: transform35
-    400082: transform36
-    400084: transform37
-    400086: transform38
-    400088: transform39
+    400026: sweat_band
     2300000: eye_left
     2300002: eye_right
     2300004: hair1
@@ -131,7 +69,7 @@ ModelImporter:
     4300018: monkey_foot_left
     4300020: monkey_mouth
     4300022: sweat_band
-    7400000: walk
+    7400000: idle
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -155,10 +93,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: walk
+      name: idle
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 30
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -198,68 +136,6 @@ ModelImporter:
       - path: body/monkey_ear_right
         weight: 1
       - path: body/monkey_tail
-        weight: 1
-      - path: body/polySurface6
-        weight: 1
-      - path: body/polySurface6/transform38
-        weight: 1
-      - path: body/polySurface7
-        weight: 1
-      - path: body/polySurface7/transform36
-        weight: 1
-      - path: body/polySurface8
-        weight: 1
-      - path: body/polySurface8/transform37
-        weight: 1
-      - path: body/polySurface9
-        weight: 1
-      - path: body/polySurface9/transform39
-        weight: 1
-      - path: body/polySurface12
-        weight: 1
-      - path: body/polySurface12/transform35
-        weight: 1
-      - path: body/polySurface13
-        weight: 1
-      - path: body/polySurface13/transform34
-        weight: 1
-      - path: body/polySurface14
-        weight: 1
-      - path: body/polySurface14/transform33
-        weight: 1
-      - path: body/polySurface16
-        weight: 1
-      - path: body/polySurface16/transform25
-        weight: 1
-      - path: body/polySurface17
-        weight: 1
-      - path: body/polySurface17/transform29
-        weight: 1
-      - path: body/polySurface18
-        weight: 1
-      - path: body/polySurface18/transform28
-        weight: 1
-      - path: body/polySurface19
-        weight: 1
-      - path: body/polySurface19/transform32
-        weight: 1
-      - path: body/polySurface20
-        weight: 1
-      - path: body/polySurface20/transform26
-        weight: 1
-      - path: body/polySurface21
-        weight: 1
-      - path: body/polySurface21/transform30
-        weight: 1
-      - path: body/polySurface22
-        weight: 1
-      - path: body/polySurface22/transform27
-        weight: 1
-      - path: body/polySurface23
-        weight: 1
-      - path: body/polySurface23/transform31
-        weight: 1
-      - path: body/transform24
         weight: 1
       - path: monkey_foot_left
         weight: 1

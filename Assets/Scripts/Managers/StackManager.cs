@@ -29,6 +29,17 @@ public class StackManager : MonoBehaviour
 		gameAnimals = GameObject.FindGameObjectsWithTag("Animal").ToList();
 
 		gameAnimals = gameAnimals.OrderBy(animal => animal.name).ToList();
+
+        // Fixes a bug where a clone is generated
+        for(int i = 0; i < gameAnimals.Count; i++)
+        {
+            if(gameAnimals[i].name.Contains("Clone"))
+            {
+                gameAnimals.Remove(gameAnimals[i]);
+            }
+        }
+
+        Debug.Log(gameAnimals[0]);
 	}
 
 	void Start()
