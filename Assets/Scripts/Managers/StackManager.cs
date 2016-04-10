@@ -38,8 +38,6 @@ public class StackManager : MonoBehaviour
                 gameAnimals.Remove(gameAnimals[i]);
             }
         }
-
-        Debug.Log(gameAnimals[0]);
 	}
 
 	void Start()

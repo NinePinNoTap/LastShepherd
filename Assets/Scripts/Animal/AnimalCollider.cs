@@ -25,6 +25,7 @@ public class AnimalCollider : MonoBehaviour
         // Set up the box collider
         boxCollider = gameObject.GetComponent<BoxCollider>();
         boxCollider.transform.localScale = new Vector3(1.5f, 1.1f ,1.5f);
+        boxCollider.transform.localPosition = new Vector3(0.0f, 0.5f, 0.0f);
         boxCollider.isTrigger = true;
 
         // Get parent object
@@ -117,13 +118,14 @@ public class AnimalCollider : MonoBehaviour
 
         if(!animalBehaviour.isControllable)
             return;
-
+        
         //===============================
         // Check if object is beneath us
         //===============================
 
         if(CheckBelow(obj))
-        {            
+        {   
+            Debug.Log(obj.name + " is below us");
             if(obj.tag == "Animal")
             {
                 Debug.Log(objParent.name + " hit " + obj.name + " below!");
@@ -172,6 +174,7 @@ public class AnimalCollider : MonoBehaviour
         }
         else if(RaycastToTarget(obj) && isActivated)
         {
+            Debug.Log(obj.tag);
             Debug.Log(obj.name + " is in front");
             if(obj.tag == "Animal")
             {
