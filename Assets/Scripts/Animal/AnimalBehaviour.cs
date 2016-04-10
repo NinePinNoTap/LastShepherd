@@ -297,7 +297,10 @@ public class AnimalBehaviour : MonoBehaviour
             // Disable movement if we were moving
             isMoving = false;
 
-            GetComponent<Animator>().SetBool("isMoving", isMoving);
+            if(GetComponent<Animator>())
+            {
+                GetComponent<Animator>().SetBool("isMoving", isMoving);
+            }
 
             if (audioSource.isPlaying)
                 audioSource.Stop();
@@ -306,7 +309,10 @@ public class AnimalBehaviour : MonoBehaviour
         {
             isMoving = true;
 
-            GetComponent<Animator>().SetBool("isMoving", isMoving);
+            if(GetComponent<Animator>())
+            {
+                GetComponent<Animator>().SetBool("isMoving", isMoving);
+            }
                         
             if (!audioSource.isPlaying)
                 audioSource.Play();

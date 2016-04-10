@@ -137,32 +137,6 @@ ModelImporter:
         weight: 1
       - path: frog1/frog_tongue
         weight: 1
-      - path: frog1/polySurface1
-        weight: 1
-      - path: frog1/polySurface1/transform16
-        weight: 1
-      - path: frog1/polySurface2
-        weight: 1
-      - path: frog1/polySurface2/transform15
-        weight: 1
-      - path: frog1/polySurface6
-        weight: 1
-      - path: frog1/polySurface6/transform14
-        weight: 1
-      - path: frog1/polySurface9
-        weight: 1
-      - path: frog1/polySurface9/transform13
-        weight: 1
-      - path: frog1/polySurface10
-        weight: 1
-      - path: frog1/polySurface10/transform18
-        weight: 1
-      - path: frog1/polySurface11
-        weight: 1
-      - path: frog1/polySurface11/transform17
-        weight: 1
-      - path: frog1/transform12
-        weight: 1
       - path: frog_googles
         weight: 1
       - path: frog_leg_left
