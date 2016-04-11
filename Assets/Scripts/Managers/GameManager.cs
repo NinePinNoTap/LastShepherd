@@ -16,7 +16,10 @@ public class GameManager : Singleton<GameManager>
 
 	[Header("Level Overlay")]
 	public GameObject canvasOverlay;
-	public string keyCode = "PS4_BUTTON_L2";
+	public string pauseKey = "PS4_BUTTON_OPTIONS";
+    public string resetKey = "PS4_BUTTON_CROSS";
+    public string quitKey = "PS4_BUTTON_SQUARE";
+    public bool isShown = false;
 
 	[Header("Game Complete / Game Over")]
 	public string msgGameOver = "Game Over";
@@ -44,16 +47,38 @@ public class GameManager : Singleton<GameManager>
 
 	void Update()
 	{
-		if(Input.GetButtonDown(keyCode))
+        // Toggle Menu
+		if(Input.GetButtonDown(pauseKey))
 		{
-			canvasOverlay.SetActive(true);
-			Time.timeScale = 0.0f;
+            isShown = !isShown;
+
+            canvasOverlay.SetActive(isShown);
+
+            if(isShown)
+            {
+                Time.timeScale = 0.0f;
+            }
+            else
+            {
+                Time.timeScale = 1.0f;
+            }
 		}
-		else if(Input.GetButtonUp(keyCode))
-		{
-			canvasOverlay.SetActive(false);
-			Time.timeScale = 1.0f;
-		}
+
+        // Pause Screen Controls
+        if(isShown)
+        {
+            if(Input.GetButtonDown(resetKey))
+            {
+                Time.timeScale = 1.0f;
+                Application.LoadLevel(Application.loadedLevel);
+            }
+            if(Input.GetButtonDown(quitKey))
+            {
+                Time.timeScale = 1.0f;
+                LoadingScreenManager.LoadScene("MainMenu");
+            }
+        }
+
 	}
 
     public void DoGameComplete()

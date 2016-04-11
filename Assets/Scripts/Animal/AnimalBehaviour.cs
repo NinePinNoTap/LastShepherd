@@ -343,7 +343,7 @@ public class AnimalBehaviour : MonoBehaviour
         {
             for(int i = 0; i < renderers.Length; i++)
             {
-                renderers[i].material.SetFloat("_Outline", 0.5f);
+                renderers[i].material.SetFloat("_Outline", 1f);
             }
         }
     }

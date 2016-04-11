@@ -174,7 +174,6 @@ public class AnimalCollider : MonoBehaviour
         }
         else if(RaycastToTarget(obj) && isActivated)
         {
-            Debug.Log(obj.tag);
             Debug.Log(obj.name + " is in front");
             if(obj.tag == "Animal")
             {

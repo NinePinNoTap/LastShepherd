@@ -90,6 +90,7 @@ public class LoadingScreenAnimation : MonoBehaviour
 
     void OnDestroy()
     {
+        // Stop thread
         StopCoroutine(FadeImage());
     }
 }
