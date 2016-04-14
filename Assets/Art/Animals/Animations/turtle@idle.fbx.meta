@@ -1,0 +1,130 @@
+fileFormatVersion: 2
+guid: 0cfbc65a82dabbc4ea1c12a78cd9048f
+timeCreated: 1460298175
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: eye_left
+    100002: eye_right
+    100004: face_bandana
+    100006: //RootNode
+    100008: turtle_flipper_l1
+    100010: turtle_flipper_l2
+    100012: turtle_flipper_r1
+    100014: turtle_flipper_r2
+    100016: turtle_head
+    100018: turtle_shell_bottom
+    100020: turtle_shell_top
+    100022: turtle_tail
+    400000: eye_left
+    400002: eye_right
+    400004: face_bandana
+    400006: //RootNode
+    400008: turtle_flipper_l1
+    400010: turtle_flipper_l2
+    400012: turtle_flipper_r1
+    400014: turtle_flipper_r2
+    400016: turtle_head
+    400018: turtle_shell_bottom
+    400020: turtle_shell_top
+    400022: turtle_tail
+    2300000: eye_left
+    2300002: eye_right
+    2300004: face_bandana
+    2300006: turtle_flipper_l1
+    2300008: turtle_flipper_l2
+    2300010: turtle_flipper_r1
+    2300012: turtle_flipper_r2
+    2300014: turtle_head
+    2300016: turtle_shell_bottom
+    2300018: turtle_shell_top
+    2300020: turtle_tail
+    3300000: eye_left
+    3300002: eye_right
+    3300004: face_bandana
+    3300006: turtle_flipper_l1
+    3300008: turtle_flipper_l2
+    3300010: turtle_flipper_r1
+    3300012: turtle_flipper_r2
+    3300014: turtle_head
+    3300016: turtle_shell_bottom
+    3300018: turtle_shell_top
+    3300020: turtle_tail
+    4300000: turtle_shell_bottom
+    4300002: turtle_shell_top
+    4300004: eye_right
+    4300006: turtle_flipper_l1
+    4300008: turtle_flipper_r1
+    4300010: turtle_flipper_l2
+    4300012: turtle_flipper_r2
+    4300014: eye_left
+    4300016: turtle_tail
+    4300018: face_bandana
+    4300020: turtle_head
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

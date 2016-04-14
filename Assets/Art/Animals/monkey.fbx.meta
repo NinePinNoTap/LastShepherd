@@ -1,0 +1,171 @@
+fileFormatVersion: 2
+guid: 778b7c8d3f6a4f84c91e6b41decf8b6c
+timeCreated: 1456484050
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: bandana
+    100002: body
+    100004: body 1
+    100006: ear_left
+    100008: ear_right
+    100010: eye_left
+    100012: eye_right
+    100014: foot_left
+    100016: foot_right
+    100018: hair1
+    100020: hair2
+    100022: knot
+    100024: knot_tail1
+    100026: knot_tail2
+    100028: monkey
+    100030: //RootNode
+    100032: monkey_tail
+    100034: mouth
+    100036: nostrils_left
+    100038: nostrils_right
+    100040: toe1_l
+    100042: toe1_r
+    100044: toe2_l
+    100046: toe2_r
+    100048: toe3_l
+    100050: toe3_r
+    100052: transform1
+    100054: transform10
+    100056: transform11
+    100058: transform12
+    100060: transform13
+    100062: transform14
+    100064: transform15
+    100066: transform16
+    100068: transform17
+    100070: transform18
+    100072: transform19
+    100074: transform2
+    100076: transform20
+    100078: transform21
+    100080: transform22
+    100082: transform23
+    100084: transform3
+    100086: transform4
+    100088: transform5
+    100090: transform6
+    100092: transform7
+    100094: transform8
+    100096: transform9
+    400000: bandana
+    400002: body
+    400004: body 1
+    400006: ear_left
+    400008: ear_right
+    400010: eye_left
+    400012: eye_right
+    400014: foot_left
+    400016: foot_right
+    400018: hair1
+    400020: hair2
+    400022: knot
+    400024: knot_tail1
+    400026: knot_tail2
+    400028: //RootNode
+    400030: monkey
+    400032: monkey_tail
+    400034: mouth
+    400036: nostrils_left
+    400038: nostrils_right
+    400040: toe1_l
+    400042: toe1_r
+    400044: toe2_l
+    400046: toe2_r
+    400048: toe3_l
+    400050: toe3_r
+    400052: transform1
+    400054: transform10
+    400056: transform11
+    400058: transform12
+    400060: transform13
+    400062: transform14
+    400064: transform15
+    400066: transform16
+    400068: transform17
+    400070: transform18
+    400072: transform19
+    400074: transform2
+    400076: transform20
+    400078: transform21
+    400080: transform22
+    400082: transform23
+    400084: transform3
+    400086: transform4
+    400088: transform5
+    400090: transform6
+    400092: transform7
+    400094: transform8
+    400096: transform9
+    2300000: body
+    3300000: body
+    4300000: body
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,207 @@
+fileFormatVersion: 2
+guid: 60e82876d7160c94191253ba7452b7a9
+timeCreated: 1460290216
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: eye_left
+    100002: eye_right
+    100004: frog1
+    100006: //RootNode
+    100008: frog_body
+    100010: frog_foot_left
+    100012: frog_foot_right
+    100014: frog_leg_left
+    100016: frog_leg_right
+    100018: frog_mouth
+    100020: frog_tongue
+    100022: google_band
+    100024: googles
+    100026: googles 1
+    100028: grp_tongueSection1
+    100030: grp_tongueSection3
+    100032: joint1
+    100034: joint2
+    100036: joint3
+    100038: joint4
+    100040: nurbsCircle3
+    100042: nurbsCircle4
+    100044: transform39
+    100046: transform40
+    100048: transform41
+    100050: frog_googles
+    400000: eye_left
+    400002: eye_right
+    400004: frog1
+    400006: //RootNode
+    400008: frog_body
+    400010: frog_foot_left
+    400012: frog_foot_right
+    400014: frog_leg_left
+    400016: frog_leg_right
+    400018: frog_mouth
+    400020: frog_tongue
+    400022: google_band
+    400024: googles
+    400026: googles 1
+    400028: grp_tongueSection1
+    400030: grp_tongueSection3
+    400032: joint1
+    400034: joint2
+    400036: joint3
+    400038: joint4
+    400040: nurbsCircle3
+    400042: nurbsCircle4
+    400044: transform39
+    400046: transform40
+    400048: transform41
+    400050: frog_googles
+    2300000: eye_left
+    2300002: eye_right
+    2300004: frog_body
+    2300006: frog_foot_left
+    2300008: frog_foot_right
+    2300010: frog_leg_left
+    2300012: frog_leg_right
+    2300014: frog_mouth
+    2300016: googles
+    2300018: frog_googles
+    2300020: frog_tongue
+    3300000: eye_left
+    3300002: eye_right
+    3300004: frog_body
+    3300006: frog_foot_left
+    3300008: frog_foot_right
+    3300010: frog_leg_left
+    3300012: frog_leg_right
+    3300014: frog_mouth
+    3300016: googles
+    3300018: frog_googles
+    3300020: frog_tongue
+    4300000: frog_leg_right
+    4300002: frog_foot_right
+    4300004: frog_body
+    4300006: frog_tongue
+    4300008: frog_mouth
+    4300010: eye_right
+    4300012: eye_left
+    4300014: frog_leg_left
+    4300016: frog_foot_left
+    4300018: googles
+    4300020: frog_googles
+    7400000: idle
+    9500000: //RootNode
+    13700000: frog_tongue
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: idle
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: frog1
+        weight: 1
+      - path: frog1/eye_left
+        weight: 1
+      - path: frog1/eye_right
+        weight: 1
+      - path: frog1/frog_body
+        weight: 1
+      - path: frog1/frog_mouth
+        weight: 1
+      - path: frog1/frog_tongue
+        weight: 1
+      - path: frog_googles
+        weight: 1
+      - path: frog_leg_left
+        weight: 1
+      - path: frog_leg_right
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

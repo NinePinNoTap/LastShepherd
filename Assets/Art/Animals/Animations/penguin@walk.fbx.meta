@@ -1,0 +1,349 @@
+fileFormatVersion: 2
+guid: 16e5fc6ec1ce8054f82eb63309251999
+timeCreated: 1460290215
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: bandana
+    100002: beek_bottom
+    100004: beek_top
+    100006: body
+    100008: body 1
+    100010: ear_left
+    100012: ear_right
+    100014: eye_left
+    100016: eye_right
+    100018: foot_left
+    100020: foot_right
+    100022: foot_ski_left
+    100024: foot_ski_right
+    100026: hair1
+    100028: hair2
+    100030: knot
+    100032: knot_tail1
+    100034: knot_tail2
+    100036: mask
+    100038: mask 1
+    100040: monkey
+    100042: monkey_tail
+    100044: mouth
+    100046: nostrils_left
+    100048: nostrils_right
+    100050: pCone1
+    100052: pCone5
+    100054: pCone6
+    100056: pCone7
+    100058: pCube1
+    100060: pCube2
+    100062: pCube3
+    100064: pCube5
+    100066: pCube7
+    100068: pCube8
+    100070: Penguin
+    100072: Penguin1
+    100074: //RootNode
+    100076: polySurface2
+    100078: polySurface3
+    100080: pSphere10
+    100082: pSphere4
+    100084: pSphere7
+    100086: pSphere9
+    100088: tail
+    100090: toe1_l
+    100092: toe1_r
+    100094: toe2_l
+    100096: toe2_r
+    100098: toe3_l
+    100100: toe3_r
+    100102: transform1
+    100104: transform10
+    100106: transform11
+    100108: transform12
+    100110: transform13
+    100112: transform14
+    100114: transform15
+    100116: transform16
+    100118: transform17
+    100120: transform18
+    100122: transform19
+    100124: transform2
+    100126: transform20
+    100128: transform21
+    100130: transform22
+    100132: transform23
+    100134: transform24
+    100136: transform25
+    100138: transform26
+    100140: transform27
+    100142: transform3
+    100144: transform4
+    100146: transform5
+    100148: transform6
+    100150: transform7
+    100152: transform8
+    100154: transform9
+    100156: Wing_left
+    100158: Wing_right
+    400000: bandana
+    400002: beek_bottom
+    400004: beek_top
+    400006: body
+    400008: body 1
+    400010: ear_left
+    400012: ear_right
+    400014: eye_left
+    400016: eye_right
+    400018: foot_left
+    400020: foot_right
+    400022: foot_ski_left
+    400024: foot_ski_right
+    400026: hair1
+    400028: hair2
+    400030: knot
+    400032: knot_tail1
+    400034: knot_tail2
+    400036: mask
+    400038: mask 1
+    400040: monkey
+    400042: monkey_tail
+    400044: mouth
+    400046: nostrils_left
+    400048: nostrils_right
+    400050: pCone1
+    400052: pCone5
+    400054: pCone6
+    400056: pCone7
+    400058: pCube1
+    400060: pCube2
+    400062: pCube3
+    400064: pCube5
+    400066: pCube7
+    400068: pCube8
+    400070: Penguin
+    400072: Penguin1
+    400074: //RootNode
+    400076: polySurface2
+    400078: polySurface3
+    400080: pSphere10
+    400082: pSphere4
+    400084: pSphere7
+    400086: pSphere9
+    400088: tail
+    400090: toe1_l
+    400092: toe1_r
+    400094: toe2_l
+    400096: toe2_r
+    400098: toe3_l
+    400100: toe3_r
+    400102: transform1
+    400104: transform10
+    400106: transform11
+    400108: transform12
+    400110: transform13
+    400112: transform14
+    400114: transform15
+    400116: transform16
+    400118: transform17
+    400120: transform18
+    400122: transform19
+    400124: transform2
+    400126: transform20
+    400128: transform21
+    400130: transform22
+    400132: transform23
+    400134: transform24
+    400136: transform25
+    400138: transform26
+    400140: transform27
+    400142: transform3
+    400144: transform4
+    400146: transform5
+    400148: transform6
+    400150: transform7
+    400152: transform8
+    400154: transform9
+    400156: Wing_left
+    400158: Wing_right
+    2300000: beek_bottom
+    2300002: beek_top
+    2300004: body
+    2300006: eye_left
+    2300008: eye_right
+    2300010: foot_ski_left
+    2300012: foot_ski_right
+    2300014: hair1
+    2300016: hair2
+    2300018: mask
+    2300020: tail
+    2300022: Wing_left
+    2300024: Wing_right
+    3300000: beek_bottom
+    3300002: beek_top
+    3300004: body
+    3300006: eye_left
+    3300008: eye_right
+    3300010: foot_ski_left
+    3300012: foot_ski_right
+    3300014: hair1
+    3300016: hair2
+    3300018: mask
+    3300020: tail
+    3300022: Wing_left
+    3300024: Wing_right
+    4300000: body
+    4300002: beek_top
+    4300004: beek_bottom
+    4300006: Wing_right
+    4300008: Wing_left
+    4300010: foot_ski_right
+    4300012: hair1
+    4300014: tail
+    4300016: eye_right
+    4300018: foot_ski_left
+    4300020: eye_left
+    4300022: hair2
+    4300024: mask
+    7400000: walk
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: walk
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 48
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: mask
+        weight: 1
+      - path: Penguin1
+        weight: 1
+      - path: Penguin1/beek_bottom
+        weight: 1
+      - path: Penguin1/beek_top
+        weight: 1
+      - path: Penguin1/body
+        weight: 1
+      - path: Penguin1/eye_left
+        weight: 1
+      - path: Penguin1/eye_right
+        weight: 1
+      - path: Penguin1/foot_ski_left
+        weight: 1
+      - path: Penguin1/foot_ski_right
+        weight: 1
+      - path: Penguin1/hair1
+        weight: 1
+      - path: Penguin1/hair2
+        weight: 1
+      - path: Penguin1/knot
+        weight: 1
+      - path: Penguin1/knot/transform26
+        weight: 1
+      - path: Penguin1/knot_tail1
+        weight: 1
+      - path: Penguin1/knot_tail1/transform24
+        weight: 1
+      - path: Penguin1/knot_tail2
+        weight: 1
+      - path: Penguin1/knot_tail2/transform25
+        weight: 1
+      - path: Penguin1/mask 1
+        weight: 1
+      - path: Penguin1/mask 1/transform27
+        weight: 1
+      - path: Penguin1/tail
+        weight: 1
+      - path: Penguin1/transform22
+        weight: 1
+      - path: Penguin1/Wing_left
+        weight: 1
+      - path: Penguin1/Wing_right
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c210e558d9e06884bbdd7498c87b5898,
+    type: 3}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
